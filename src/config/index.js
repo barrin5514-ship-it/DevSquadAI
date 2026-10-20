@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { aiConfig } from '../providers/config.js';
 export function loadConfig(env = process.env) {
   const required = key => { if (!env[key]?.trim()) throw new Error(`Missing configuration: ${key}`); return env[key].trim(); };
   const integer = (key, fallback, max) => { const n = Number(env[key] ?? fallback); if (!Number.isInteger(n) || n < 1 || n > max) throw new Error(`Invalid configuration: ${key}`); return n; };
@@ -6,5 +7,6 @@ export function loadConfig(env = process.env) {
   if (!/^[A-Z_][A-Z0-9_]*$/.test(config.apiKeyEnv) || !['silent','error','info'].includes(config.logLevel)) throw new Error('Invalid configuration');
   const inside = (root, item) => { const r = path.relative(root, item); return !r || (!r.startsWith('..') && !path.isAbsolute(r)); };
   if (inside(config.workspace, config.database) || inside(config.workspace, config.backups) || inside(config.backups, config.database)) throw new Error('Database, workspace and backup storage must be separate');
+  config.ai = aiConfig(env);
   return Object.freeze(config);
 }
