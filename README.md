@@ -1,6 +1,6 @@
-# Dev Squad AI — Checkpoint 1
+# Dev Squad AI — Checkpoint 2
 
-A local backend for saving development projects, tasks, context, files, and agent history. No frontend, generated-code execution, or live AI requests are included.
+A local backend for development projects, interchangeable AI providers, reviewed code drafts and learning memory. Real provider HTTP adapters are implemented; no credentials were available for live verification. There is no frontend or generated-code execution.
 
 ## Install and run
 
@@ -20,7 +20,7 @@ If your managed Windows machine uses a system certificate authority, Node may ne
 
 Required: `DATABASE_PATH`, `WORKSPACE_DIR`, `BACKUP_DIR`. Relative paths resolve from the terminal's current directory. Database and backups must be outside the workspace, and the database must be outside the backup folder. An external drive can be configured later by using an absolute workspace path; no particular drive is assumed. Startup fails safely if storage cannot be opened.
 
-Optional: `PORT` (3000), `HOST` (127.0.0.1), `REQUEST_TIMEOUT_MS` (30000), `TOKEN_LIMIT` (4096), `LOG_LEVEL` (info, error, silent), `AI_PROVIDER` and `AI_MODEL` (none), and `AI_API_KEY_ENV` (the name of a future key variable, not its value). AI settings are reserved for later adapters. Request timeout controls HTTP request receipt, not future AI execution. Logs contain fixed operational messages, never request bodies, credentials, or stack traces. Fatal CLI failures still print a safe error even in silent mode.
+Optional: `PORT` (3000), `HOST` (127.0.0.1), `REQUEST_TIMEOUT_MS` (30000), `TOKEN_LIMIT` (4096), `LOG_LEVEL` (info, error, silent), `AI_PROVIDER` and `AI_MODEL` (none), and `AI_API_KEY_ENV` (the name of a future key variable, not its value). Legacy AI_PROVIDER, AI_MODEL and AI_API_KEY_ENV remain compatible configuration fields; Checkpoint 2 uses per-provider settings in PROVIDER_SETUP.md. Request timeout also bounds provider calls. Logs contain fixed operational messages, never request bodies, credentials, or stack traces. Fatal CLI failures still print a safe error even in silent mode.
 
 Never put secrets in project descriptions, context, provider metadata, or prompts. Keys belong only in environment variables; `.env` and local databases are ignored by Git.
 
@@ -41,7 +41,7 @@ Successful responses use `{"data": ...}`. Errors use `{"error":{"message":"..."}
 | GET | /api/agents | Safe agent registry |
 | GET | /api/providers | Safe provider registry, initially empty |
 
-Project statuses: active, paused, completed, archived. Task creation always produces pending work. Unknown fields are rejected. Project names are limited to 200 characters; other text fields to 10,000. No task execution or resumption endpoint exists yet.
+Project statuses: active, paused, completed, archived. Task creation always produces pending work. Unknown fields are rejected. Project names are limited to 200 characters; other text fields to 10,000. Coding submissions use the generation endpoint below. No background execution or automatic resumption exists.
 
 Example in PowerShell:
 
@@ -73,4 +73,45 @@ To restore:
 
 Database backups do not include generated workspace files. Back those up separately while writes are stopped. Restoration tests demonstrate the same fresh-destination approach using temporary data.
 
-See ARCHITECTURE.md and DATABASE_SCHEMA.md for developer details. Stop at Checkpoint 1; later work requires review and approval.
+See ARCHITECTURE.md and DATABASE_SCHEMA.md for developer details. Stop at Checkpoint 2; Checkpoint 3 requires review and approval.
+
+
+## Checkpoint 2 API
+
+See PROVIDER_SETUP.md before making real calls. Existing routes remain available. New routes use the same data/error envelope. Static-output validation failures can trigger bounded fallback; all-provider failure returns 503 with the recorded task ID. No paid provider is automatically used.
+
+| Method | Path | Body or purpose |
+|---|---|---|
+| GET | /api/providers/availability | Five adapter configuration/cooldown states |
+| GET | /api/models | Configured candidate models; not a claim of live verification |
+| POST | /api/providers/:id/check | `{}`; check configured model catalog connectivity |
+| GET | /api/positions | Five positions and permissions |
+| POST | /api/agents/:id/models | providerId, model; add a configured model assignment |
+| POST | /api/projects/:id/generate | request; optional category, mode, complexity, agentId, taskId |
+| GET | /api/drafts/:id | Retrieve a draft and static checks |
+| GET | /api/tasks/:id/drafts | All candidate/revision drafts for a task |
+| GET | /api/usage | Optional provider, agent, project, task query filters |
+| GET | /api/performance | Recent agent/provider/model/category statistics |
+| POST | /api/mistakes | Record a mistake; see LEARNING_MEMORY.md |
+| GET | /api/projects/:id/mistakes | Recent mistake history |
+| POST | /api/mistakes/:id/corrections | Record correction and manual verification evidence |
+| POST | /api/lessons | correctionId, summary, category |
+| POST | /api/lessons/:id/approve | approvedBy; enforces verification prerequisite |
+| GET | /api/projects/:id/lessons | category query; only verified approved lessons |
+| POST | /api/tasks/:id/tests | draftId, passed (boolean), evidence, recordedBy |
+| POST | /api/tasks/:id/reviews | draftId, reviewerIdentity, status, findings; requiredCorrections for rejection |
+| GET | /api/tasks/:id/reviews | Workflow state, hierarchy and actual review records |
+| POST | /api/tasks/:id/approve | draftId, approvedBy; requires tests and senior approval |
+
+Example after configuring a verified free provider:
+
+```powershell
+$project = Invoke-RestMethod http://127.0.0.1:3000/api/projects -Method Post -ContentType 'application/json' -Body '{"name":"Calculator demo"}'
+Invoke-RestMethod "http://127.0.0.1:3000/api/projects/$($project.data.id)/generate" -Method Post -ContentType 'application/json' -Body '{"request":"Create a JavaScript calculator function","mode":"standard"}'
+```
+
+Generation initially supports JavaScript plus JSON/Markdown/text supporting files. Successful syntax checks do not prove behavior. Behavioral tests must be performed separately in an appropriate controlled environment and their real evidence recorded; this application does not execute the draft. No task becomes complete without a senior review and user approval. Manual review identities/evidence are trusted operator attestations, not authenticated claims.
+
+The API is for trusted local clients only and has no user authentication. Browser-origin mutations are rejected, but that is not network authentication. Leave HOST at 127.0.0.1 and do not expose this server. Keys stay in environment configuration, are not put into prompts or persisted, and provider errors are sanitized.
+
+**Live status:** all five adapters are mock-tested; none are live-verified. A configured key/model and authorized smoke test remain necessary to demonstrate the live-generation definition-of-done item. Optional providers can remain unavailable. See AI_DATA_FLOW.md for implemented versus deferred steps.
