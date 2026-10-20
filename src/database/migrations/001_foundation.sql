@@ -1,0 +1,17 @@
+CREATE TABLE ai_providers (id TEXT PRIMARY KEY, provider_name TEXT NOT NULL, model_name TEXT NOT NULL, configuration_metadata TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(configuration_metadata)), enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN (0,1)));
+CREATE TABLE agents (id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, capabilities TEXT NOT NULL CHECK(json_valid(capabilities)), status TEXT NOT NULL CHECK(status IN ('ready','disabled','manual_review')), provider_id TEXT REFERENCES ai_providers(id), system_prompt TEXT NOT NULL DEFAULT '');
+CREATE TABLE projects (id TEXT PRIMARY KEY, name TEXT NOT NULL CHECK(length(trim(name)) BETWEEN 1 AND 200), description TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','paused','completed','archived')), workspace_path TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE tasks (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), description TEXT NOT NULL CHECK(length(trim(description)) BETWEEN 1 AND 10000), assigned_agent TEXT REFERENCES agents(id), status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','running','requires_review','completed','failed')), created_at TEXT NOT NULL, updated_at TEXT NOT NULL, completed_at TEXT);
+CREATE TABLE agent_executions (id TEXT PRIMARY KEY, task_id TEXT NOT NULL REFERENCES tasks(id), agent_id TEXT NOT NULL REFERENCES agents(id), status TEXT NOT NULL CHECK(status IN ('running','requires_review','completed','failed')), result_summary TEXT, error_information TEXT, started_at TEXT NOT NULL, ended_at TEXT);
+CREATE TABLE token_usage (id TEXT PRIMARY KEY, execution_id TEXT NOT NULL REFERENCES agent_executions(id), provider_id TEXT NOT NULL REFERENCES ai_providers(id), input_tokens INTEGER NOT NULL CHECK(input_tokens>=0), output_tokens INTEGER NOT NULL CHECK(output_tokens>=0), estimated_cost REAL NOT NULL CHECK(estimated_cost>=0), timestamp TEXT NOT NULL);
+CREATE TABLE project_context (id TEXT PRIMARY KEY, project_id TEXT NOT NULL UNIQUE REFERENCES projects(id), context_summary TEXT NOT NULL DEFAULT '', important_decisions TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(important_decisions)), updated_at TEXT NOT NULL);
+CREATE TABLE project_files (id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id), relative_path TEXT NOT NULL, file_metadata TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(file_metadata)), modified_at TEXT NOT NULL, UNIQUE(project_id, relative_path));
+CREATE TABLE error_logs (id TEXT PRIMARY KEY, task_id TEXT REFERENCES tasks(id), category TEXT NOT NULL, safe_message TEXT NOT NULL, timestamp TEXT NOT NULL);
+CREATE INDEX tasks_project ON tasks(project_id, created_at);
+CREATE INDEX tasks_agent ON tasks(assigned_agent);
+CREATE INDEX executions_task ON agent_executions(task_id);
+CREATE INDEX executions_agent ON agent_executions(agent_id);
+CREATE INDEX agents_provider ON agents(provider_id);
+CREATE INDEX tokens_execution ON token_usage(execution_id);
+CREATE INDEX tokens_provider ON token_usage(provider_id);
+CREATE INDEX errors_task ON error_logs(task_id);
