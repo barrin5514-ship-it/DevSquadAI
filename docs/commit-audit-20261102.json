@@ -1,0 +1,11 @@
+{
+  "revision": "74e46656b74ffb6e7af3840fb063f823f773ad72",
+  "files": 124,
+  "maxFileBytes": 144999,
+  "forbiddenPaths": [],
+  "largeFiles": [],
+  "reachableBlobsScanned": 150,
+  "actualCredentialMatches": 0,
+  "credentialPatternMatches": 0,
+  "pass": true
+}

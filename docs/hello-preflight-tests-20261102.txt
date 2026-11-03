@@ -1,0 +1,23 @@
+✔ child environment excludes provider credentials and native hello arguments disable tools (2.5428ms)
+✔ green requires an actual terminal hello event; partial, tool and error results fail (0.4912ms)
+✔ batch requires owner confirmation, persists only sanitized results and never calls DeepSeek (104.4297ms)
+✔ concurrent hello clicks cannot duplicate a running batch (83.1512ms)
+✔ console endpoints enforce same-origin session and do not return secrets (266.436ms)
+✔ public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization (0.6032ms)
+✔ native hello refuses API-billed auth, bounds output and sanitizes failure text (9.9224ms)
+✔ role endpoint binds exact job/version and protects role rotation with console session (261.9359ms)
+✔ one hello consumes exactly three HTTP slots, holds cap and records real usage without accepting a task (225.3897ms)
+✔ wrong task/model/database, extra output, tampered file and payload cannot authorize HTTP (555.3728ms)
+✔ expiration before checks or during balance cannot dispatch a POST (190.6872ms)
+✔ unavailable model, insufficient funds and configured global budget stop generation (561.998ms)
+✔ unknown POST keeps its full cap and never retries, including from a reconstructed scope (266.1882ms)
+✔ concurrent scope attempts cannot duplicate a GET or mutate the in-flight result (202.7491ms)
+✔ truncated hello is never verified and immutable scope cannot be replenished (149.6057ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3938.7973

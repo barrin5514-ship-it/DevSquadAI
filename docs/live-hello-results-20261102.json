@@ -1,0 +1,57 @@
+{
+  "hubHTTPStatus": 200,
+  "id": "3886520e-fa4e-410c-8f2e-a639860c1cba",
+  "results": [
+    {
+      "agent": "deepseek",
+      "ok": true,
+      "kind": "live",
+      "model": "deepseek-flash",
+      "httpStatus": 200,
+      "elapsedMs": 846,
+      "timeoutMs": 90000,
+      "finishReason": "stop",
+      "text": "hello",
+      "usage": {
+        "input": 11,
+        "output": 1,
+        "total": 12,
+        "reasoning": null,
+        "cachedInput": 0
+      },
+      "calculatedCostUSD": 0.0000045,
+      "costBasis": "Calculated using peak uncached rates; provider did not supply an invoice.",
+      "message": "DeepSeek replied hello.",
+      "heldUSD": 0.001
+    },
+    {
+      "agent": "codex",
+      "ok": true,
+      "kind": "live",
+      "text": "hello",
+      "finishReason": "turn.completed",
+      "usage": {
+        "input_tokens": 15039,
+        "output_tokens": 5,
+        "cached_input_tokens": 0
+      },
+      "elapsedMs": 22405,
+      "timeoutMs": 90000
+    },
+    {
+      "agent": "claude",
+      "ok": true,
+      "kind": "live",
+      "text": "hello",
+      "finishReason": "success",
+      "usage": {
+        "input_tokens": 2,
+        "output_tokens": 4,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 1703
+      },
+      "elapsedMs": 27549,
+      "timeoutMs": 90000
+    }
+  ]
+}

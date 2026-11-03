@@ -1,0 +1,23 @@
+{
+  "oldRowsChecked": 112,
+  "originalRowsChanged": [],
+  "requests": [
+    {
+      "kind": "models",
+      "state": "complete"
+    },
+    {
+      "kind": "balance",
+      "state": "complete"
+    },
+    {
+      "kind": "post",
+      "state": "complete"
+    }
+  ],
+  "scopeOutcome": "completed",
+  "heldUSD": 0.001,
+  "taskState": "PENDING",
+  "integrity": "ok",
+  "environmentUnchanged": true
+}

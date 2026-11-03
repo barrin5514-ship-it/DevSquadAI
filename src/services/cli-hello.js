@@ -10,11 +10,11 @@ export const cliFailure=code=>({ok:false,kind:'live',code,message:messages[code]
 // Dev Squad API keys and API-billing overrides never reach either child process.
 export function cliEnvironment(env=process.env){
  const result={};for(const key of ['SystemRoot','WINDIR','COMSPEC','PATH','PATHEXT','TEMP','TMP','USERPROFILE','HOME','LOCALAPPDATA','APPDATA','PROGRAMFILES','ProgramFiles'])if(env[key])result[key]=env[key];
- return {...result,DISABLE_AUTOUPDATER:'1',CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC:'1'};
+ return {...result,DISABLE_AUTOUPDATER:'1',CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC:'1',CLAUDE_CODE_MAX_RETRIES:'0',CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES:'0',CLAUDE_CODE_DISABLE_REFUSAL_RETRY:'1',CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK:'1',CLAUDE_CODE_RETRY_WATCHDOG:'0',CLAUDE_CODE_MAX_TURNS:'1',CLAUDE_CODE_DISABLE_THINKING:'1'};
 }
 export function helloArguments(agent){
- if(agent==='codex')return ['exec','--ignore-user-config','--ephemeral','--json','--skip-git-repo-check','--sandbox','read-only','--disable','shell_tool','--disable','multi_agent','--disable','apps','--disable','plugins','-c','model_providers.openai.request_max_retries=0','-c','model_providers.openai.stream_max_retries=0','Reply with exactly the word hello. Do not use tools.'];
- if(agent==='claude')return ['--print','--restricted','--tools','','--strict-mcp-config','--mcp-config','{"mcpServers":{}}','--setting-sources','','--settings','{"disableAllHooks":true}','--no-session-persistence','--output-format','json','--max-budget-usd','0.001','Reply with exactly the word hello. Do not use tools.'];
+ if(agent==='codex')return ['exec','--ignore-user-config','--ephemeral','--json','--skip-git-repo-check','--sandbox','read-only','--disable','shell_tool','--disable','multi_agent','--disable','apps','--disable','plugins','-c','model_provider="devsquad_hello"','-c','model_providers.devsquad_hello.name="OpenAI"','-c','model_providers.devsquad_hello.base_url="https://chatgpt.com/backend-api/codex"','-c','model_providers.devsquad_hello.wire_api="responses"','-c','model_providers.devsquad_hello.requires_openai_auth=true','-c','model_providers.devsquad_hello.request_max_retries=0','-c','model_providers.devsquad_hello.stream_max_retries=0','Reply with exactly the word hello. Do not use tools.'];
+ if(agent==='claude')return ['--print','--restricted','--tools','','--strict-mcp-config','--mcp-config','{"mcpServers":{}}','--setting-sources','','--settings','{"disableAllHooks":true}','--no-session-persistence','--output-format','json','Reply with exactly the word hello. Do not use tools.'];
  throw Error('Unknown CLI agent');
 }
 function usage(value){const out={};for(const key of ['input_tokens','output_tokens','cached_input_tokens','cache_read_input_tokens','cache_creation_input_tokens'])if(Number.isSafeInteger(value?.[key])&&value[key]>=0)out[key]=value[key];return out;}

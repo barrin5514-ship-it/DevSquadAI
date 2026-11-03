@@ -1,3 +1,4 @@
+import {helloHeld} from './paid-hello.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
@@ -78,7 +79,7 @@ export class ScopedPaidReview {
     const fresh=this.db.prepare("SELECT evidence,started_at FROM paid_review_http WHERE scope_id=? AND kind='balance' AND state='complete'").get(s.id);
     const other=this.db.prepare("SELECT coalesce(sum(held_usd),0) amount FROM paid_review_scopes WHERE id<>? AND outcome<>'completed'").get(s.id).amount;
     const legacy=this.db.prepare("SELECT coalesce(sum(reserved_usd),0) amount FROM paid_request_quotes WHERE status IN ('reserved','unknown') AND id NOT IN (SELECT quote_id FROM paid_review_scopes WHERE quote_id IS NOT NULL)").get().amount;
-    if(Date.now()-Date.parse(fresh.started_at)>60000||JSON.parse(fresh.evidence).availableUSD<other+legacy+s.maximumUSD)fail();
+    if(Date.now()-Date.parse(fresh.started_at)>60000||JSON.parse(fresh.evidence).availableUSD<other+legacy+helloHeld(this.db)+s.maximumUSD)fail();
     const j=this.team.expect(id,['AWAITING_REVIEW']);this.team.senior.current(id,s.reviewId);
     if(this.db.prepare('SELECT 1 FROM team_task_locks WHERE task_id=?').get(id))fail();
     const op='scoped-'+s.id;this.db.prepare("INSERT INTO team_operations VALUES (?,?,?,'started',NULL,?,?)").run(op,id,JSON.stringify({purpose:'review',scopeId:s.id,quoteId:q.id}),stamp(),stamp());

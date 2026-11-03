@@ -1,6 +1,6 @@
-# DeepSeek hello — awaiting owner cost approval
+# DeepSeek hello — approved one-shot completed
 
-Prepared 2026-11-02. **No paid request sent, no active grant created, no approval clock started.**
+Historical preparation on 2026-11-02 initially had no paid request or active clock. The owner later approved the exact one-shot test; it completed successfully. See LIVE_HELLO_VERIFICATION_20261102.md. No repeat or ongoing paid permission is implied.
 
 ## Exact proposed test
 - Sanitized, inactive request body: `deepseek-hello-request.json`. It contains no credentials and is not an authorization grant.

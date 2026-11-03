@@ -1,0 +1,43 @@
+✔ child environment excludes provider credentials and native hello arguments disable tools (3.3951ms)
+✔ green requires an actual terminal hello event; partial, tool and error results fail (0.5116ms)
+✔ batch requires owner confirmation, persists only sanitized results and never calls DeepSeek (102.7561ms)
+✔ concurrent hello clicks cannot duplicate a running batch (77.2021ms)
+✔ console endpoints enforce same-origin session and do not return secrets (251.0396ms)
+✔ public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization (0.5243ms)
+✔ native hello refuses API-billed auth, bounds output and sanitizes failure text (14.7557ms)
+✔ role endpoint binds exact job/version and protects role rotation with console session (252.4301ms)
+✔ one hello consumes exactly three HTTP slots, holds cap and records real usage without accepting a task (204.2683ms)
+✔ wrong task/model/database, extra output, tampered file and payload cannot authorize HTTP (515.408ms)
+✔ expiration before checks or during balance cannot dispatch a POST (198.1157ms)
+✔ unavailable model, insufficient funds and configured global budget stop generation (444.5793ms)
+✔ unknown POST keeps its full cap and never retries, including from a reconstructed scope (140.0058ms)
+✔ concurrent scope attempts cannot duplicate a GET or mutate the in-flight result (139.4937ms)
+✔ truncated hello is never verified and immutable scope cannot be replenished (119.0631ms)
+✔ exact bound JSON/non-thinking body follows existing review pipeline while global paid stays disabled (390.8219ms)
+✔ repeated quotes are idempotent and do not replenish the task lifetime allowance (260.883ms)
+✔ payload tampering before startup or after quote prevents dispatch (260.9878ms)
+✔ wrong task, revision, model, provider and database identity cannot create a capability (292.3921ms)
+✔ unrelated tasks and wrong review/output parameters are rejected (234.0132ms)
+✔ expired approval or price lease prevents every request (217.5593ms)
+✔ changed prices or approval file cannot dispatch an existing quote (216.8226ms)
+✔ concurrent callers consume at most one of each HTTP slot and one full allowance (296.6182ms)
+✔ concurrent preflight requests are consumed before fetch, never duplicated (388.8032ms)
+✔ unknown model GET is consumed permanently, including after restart (404.9789ms)
+✔ unavailable model stops after the one GET (330.6937ms)
+✔ insufficient fresh funds stops before POST and does not repeat the balance GET (395.9145ms)
+✔ unknown review retains the full allowance, usage and one-POST limit across restart (514.9102ms)
+✔ price change during preflight blocks POST after exactly two GETs (494.6791ms)
+✔ expired grant cannot dispatch after a successful balance response (817.8379ms)
+✔ a new grant ID cannot reset persistent task request limits (485.3507ms)
+✔ immutable database terms cannot be rewritten and quote tampering cannot dispatch POST (351.8597ms)
+✔ separate SQLite connections share atomic request slots, not per-process counters (362.2974ms)
+✔ removing startup scope or using legacy development cannot bypass the persistent task cap (301.5076ms)
+✔ pending legacy reservations are netted against fresh balance before POST (369.3425ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12204.6559
