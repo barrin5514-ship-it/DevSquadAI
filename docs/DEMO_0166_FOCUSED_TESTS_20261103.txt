@@ -1,0 +1,41 @@
+✔ dashboard sends rotation and selected roles only to the exact saved job/version (10.162ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (6.1873ms)
+✔ messenger Stop works while the ordinary view is busy and targets only that job (3.1234ms)
+✔ preparing a messenger uses bounded defaults and makes no start/pickup request (2.1132ms)
+✔ demo preparation is offline, ID-bound, idempotent, on its own branch; no active grant or acceptance (1269.8034ms)
+✔ production isolation fails closed before any process, paid dispatch or generated test (2301.4726ms)
+✔ unrelated task and missing included-usage/spending approval cannot reach worker (4316.6471ms)
+✔ only the bound source file can be written; shell, tests, traversal and extra files rejected (6734.0863ms)
+✔ base revision, test tampering and unexpected files are rejected (1486.3264ms)
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (1.1222ms)
+✔ native transport uses fixed argument arrays, stdin, no API credentials, bounded output and no retry (3.7671ms)
+✔ timeout, cancellation, quota and unknown results never retry and are classified conservatively (8.4984ms)
+✔ mock connectors finish full messenger loop and independently execute nine tests on exact fixture source (4825.3582ms)
+✔ pricing proposal binds the exact JSON and does not represent an active grant or guaranteed invoice (0.7447ms)
+✔ late checkpoint failure preserves original and revised source evidence, and unauthorized source edits are rejected (4584.2388ms)
+✔ an expired approval cannot consume a model-check slot (978.7814ms)
+✔ review importer rejects wrong revision/test bindings and invented reviewer execution without approving (22642.6204ms)
+✔ imported independent review persists, freezes tests and preserves explicit owner acceptance (3261.1336ms)
+✔ one native call cannot be replenished by moving the same worker into another role (3394.1977ms)
+✔ public price verification uses uncached peak rates and rejects price/model changes (0.9103ms)
+✔ owner scope preparation uses actual dashboard action time, does not dispatch, and cannot reset clocks (1543.4279ms)
+✔ price failure or missing exact consent cannot create a live scope (1179.1314ms)
+✔ isolation receipt binds exact job, root, base, executable and all denial checks; no weaker fallback (1249.4243ms)
+✔ scoped builder makes one model GET, balance GET, POST; records tokens and full cap in existing spending ledger (1936.9946ms)
+✔ concurrent attempts and unknown POST outcomes retain reservation and cannot replenish request slots (1778.7408ms)
+✔ builder rejects expired, altered payload, different task/model/database and changed pricing before dispatch (13694.1585ms)
+✔ parent view identifies the pending owner decision and links to the exact child without accepting it (15.5568ms)
+✔ project verification names unmet review/correction requirements and never offers acceptance for them (10.5628ms)
+✔ project verification becomes available only with completed children in this project and plan (8.9871ms)
+✔ eligible revision renders existing acceptance but still requires an explicit checked acknowledgement (3.3827ms)
+✔ missing current draft and historical/wrong-task/unapproved review never render acceptance (11.3027ms)
+✔ plain-English explanation appears above unchanged code and test pass meaning stays explanatory (2.1374ms)
+✔ future or stale summaries have an honest fallback and still allow inspection of exact code (2.6527ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78490.7227

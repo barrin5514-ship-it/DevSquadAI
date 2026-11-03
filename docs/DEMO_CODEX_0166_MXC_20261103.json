@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-03",
+  "backend": "mxc",
+  "profile": "root denied, demo workspace only, network off, shared temp denied",
+  "modelRequests": 0,
+  "exitCode": 0,
+  "elapsedMs": 1303,
+  "timeoutMs": 30000,
+  "timedOut": false,
+  "startupPassed": true,
+  "setupRefreshError": false,
+  "sanitizedDiagnostic": "[No shareable summary supplied]",
+  "confinementVerified": false
+}

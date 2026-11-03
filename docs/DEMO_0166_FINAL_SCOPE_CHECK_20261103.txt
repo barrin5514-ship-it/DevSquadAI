@@ -1,0 +1,13 @@
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (1.9762ms)
+✔ imported independent review persists, freezes tests and preserves explicit owner acceptance (2640.9627ms)
+✔ native API-key or expired authentication cannot reach inference transport (4.4077ms)
+✔ owner scope preparation uses actual dashboard action time, does not dispatch, and cannot reset clocks (2291.7849ms)
+✔ Stop during public pricing verification fences scope creation without dispatch (1864.8902ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7230.9151

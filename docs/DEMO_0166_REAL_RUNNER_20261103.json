@@ -1,0 +1,16 @@
+{
+  "input": "trusted incomplete offline placeholder; no model generation",
+  "expected": "9 failing tests, no false pass",
+  "result": {
+    "kind": "isolated_runner",
+    "backend": "mxc",
+    "revisionHash": "fa17abb09c619806d4ca6634fccd23042228b723c90ec770a37028b9243e345d",
+    "passed": false,
+    "count": 0,
+    "failed": 9,
+    "exitCode": 1,
+    "elapsedMs": 726,
+    "outputHash": "1df170fd6ac05dde87d58ba55ecb1308daa17013704fd1b6c134b35e53b31ca8",
+    "testsExecuted": true
+  }
+}

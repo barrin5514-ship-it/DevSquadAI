@@ -27,6 +27,7 @@ export function consoleRoutes(team,service){
  r.post('/settings/webhook',(req,res)=>send(res,team.webhook.configure(req.body)));
  r.get('/messenger',(req,res)=>send(res,team.messenger.status()));
  r.get('/demo-workers',(req,res)=>send(res,team.demoWorkers.status()));
+ r.post('/demo-workers/:id/approve-scopes',async(req,res)=>send(res,await team.demoApproval.prepare(req.params.id,req.body)));
  r.post('/demo-workers/prepare',(req,res)=>{team.fields(req.body,['approvedBy','prepareOnly']);if(req.body.approvedBy!=='owner'||req.body.prepareOnly!==true)throw new ApiError(403,'Owner authorization for offline preparation is required');send(res,team.demoWorkers.prepare(service),201);});
  r.post('/messenger/setup-sample',async(req,res)=>{team.fields(req.body,['approvedBy','confirmSample']);if(req.body.approvedBy!=='owner'||req.body.confirmSample!==true)throw new ApiError(403,'Approve the fake report and possible Zapier task usage first');send(res,await team.messenger.setupSample());});
  r.post('/shared-jobs/:id/messenger/prepare',(req,res)=>{team.fields(req.body,['maxRounds','timeoutSeconds'],[]);send(res,team.messenger.prepare(req.params.id,req.body),201);});

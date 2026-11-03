@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-03",
+  "cliVersion": "codex-cli 0.166.0",
+  "ownerReportedDaemonVersion": "0.166.0",
+  "attempts": 1,
+  "modelRequests": 0,
+  "exitCode": 0,
+  "elapsedMs": 14517,
+  "timeoutMs": 20000,
+  "timedOut": false,
+  "startupPassed": true,
+  "setupRefreshError": false,
+  "confinementVerified": false
+}

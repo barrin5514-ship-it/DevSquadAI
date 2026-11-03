@@ -65,7 +65,7 @@ export class BigThreeCoordinator {
  cancel(id){const j=this.read(id);if(['running','ready'].includes(j.status)){this.save(id,j.version,j.lease,'paused',{...j.state,blocker:'Stopped by owner; confirm any running worker ended before restarting.'},'owner_stop',j.state.currentWorker);this.db.prepare('UPDATE shared_jobs SET lease=NULL WHERE id=?').run(id);}}
  async run(id,{oneStep=false,prompt=null,signal=null}={}){let j=this.read(id);if(signal?.aborted)throw new ApiError(409,'Job was stopped');if(!['ready','paused'].includes(j.status)||j.state.blocker?.startsWith('Interrupted')||j.state.blocker?.startsWith('Unknown')||j.state.blocker?.startsWith('Stopped'))throw new ApiError(409,'Job cannot safely resume');
   const task=this.team.get(j.task_id);
-  if(!task.parent_id||!this.team.get(task.parent_id).owner_plan_approval||!['PENDING','ASSIGNED','BLOCKED','CHANGES_REQUESTED'].includes(task.state))throw new ApiError(409,'Task is no longer eligible for a worker');
+  const importedDemo=task.state==='AWAITING_REVIEW'&&['test','review'].includes(j.state.phase)&&this.db.prepare('SELECT 1 FROM demo_artifacts WHERE job_id=? AND task_id=? AND draft_id=?').get(id,j.task_id,task.draft_id);if(!task.parent_id||!this.team.get(task.parent_id).owner_plan_approval||(!['PENDING','ASSIGNED','BLOCKED','CHANGES_REQUESTED'].includes(task.state)&&!importedDemo))throw new ApiError(409,'Task is no longer eligible for a worker');
   if(this.db.prepare('SELECT 1 FROM team_task_locks WHERE task_id=?').get(j.task_id))throw new ApiError(409,'Existing task operation is locked');
   const lease=randomUUID();const lock=this.db.prepare("UPDATE shared_jobs SET lease=? WHERE id=? AND version=? AND lease IS NULL").run(lease,id,j.version);if(lock.changes!==1)throw new ApiError(409,'Job already locked');
   try{
@@ -101,7 +101,7 @@ export class BigThreeCoordinator {
      active=false;
      if(result?.complete!==true)throw {code:'incomplete',stopped:true};
      const lastStep={id:randomUUID(),role,agent:worker,report:cleanReport(result.report||'Worker finished this role. No detailed report or independently executed tests were supplied.',this.configuredSecrets()),at:timestamp()};
-     if(j.state.phase==='review')return this.save(id,j.version,lease,'awaiting_owner',{...j.state,lastStep,blocker:null,currentStep:'Worker reports recorded; application review and owner gates still apply'},'review_recorded',worker);
+     if(j.state.phase==='review')return this.save(id,j.version,lease,'awaiting_owner',{...j.state,lastStep,reviewResult:result.review||null,blocker:null,currentStep:'Independent review recorded; final owner acceptance required'},'review_recorded',worker);
      const built=j.state.phase==='build';
      j=this.save(id,j.version,lease,oneStep?'ready':'running',{...j.state,lastStep,authors:built?[...new Set([...j.state.authors,worker])]:j.state.authors,phase:built?'test':'review',currentStep:built?'Testing':'Independent review',lastFailure:null,blocker:null},built?'build_finished':'test_report_recorded',worker);
      if(oneStep)return j;

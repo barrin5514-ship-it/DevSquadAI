@@ -16,7 +16,7 @@ export class MessengerLoop {
  }
  get(id){const row=this.db.prepare('SELECT * FROM messenger_jobs WHERE job_id=?').get(id);if(!row)throw new ApiError(404,'Messenger loop not prepared');return row;}
  detail(id){const row=this.get(id);return {...row,rounds:this.db.prepare('SELECT * FROM messenger_rounds WHERE job_id=? ORDER BY round').all(id).map(r=>({...r,prompt_json:r.prompt_json?JSON.parse(r.prompt_json):null})),events:this.db.prepare('SELECT kind,round,detail,created_at FROM messenger_events WHERE job_id=? ORDER BY id DESC LIMIT 100').all(id)};}
- status(){return {github:this.reader.status(),defaultRounds:3,defaultTimeoutSeconds:300,pollSeconds:this.interval/1000,loops:this.db.prepare('SELECT job_id FROM messenger_jobs ORDER BY updated_at DESC LIMIT 100').all().map(r=>this.detail(r.job_id)),liveWorkersAvailable:false};}
+ status(){return {github:this.reader.status(),defaultRounds:3,defaultTimeoutSeconds:300,pollSeconds:this.interval/1000,loops:this.db.prepare('SELECT job_id FROM messenger_jobs ORDER BY updated_at DESC LIMIT 100').all().map(r=>this.detail(r.job_id)),liveWorkersAvailable:this.team.demoWorkers?.status().isolation.ready===true};}
  event(id,kind,detail){const row=this.get(id);this.db.prepare('INSERT INTO messenger_events(job_id,round,kind,detail,created_at) VALUES (?,?,?,?,?)').run(id,row.round,kind,detail,now());}
  prepare(id,{maxRounds=3,timeoutSeconds=300}={}){
   const job=this.team.coordinator.read(id);if(!['ready','paused'].includes(job.status))throw new ApiError(409,'Prepare an unfinished shared job first');

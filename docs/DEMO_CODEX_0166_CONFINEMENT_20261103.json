@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "jobId": "b5e4176a-ad93-4614-8980-e07ab63bf320",
+  "taskId": "34076590-93a0-496d-9238-acd8ccb0502b",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\5b67bb7d-6d35-46c4-bb60-fb7257219631",
+  "baseRevision": "57e0ef22e96349861edf4da2f9ae3529e225ef3f",
+  "backend": "mxc",
+  "fingerprint": "9dd3e1af258afd23ee448596fb4402f93acc6239310d7cb8233ed6a20ce30bfa",
+  "checks": {
+    "insideRead": true,
+    "insideWrite": true,
+    "outsideReadDenied": true,
+    "outsideWriteDenied": true,
+    "credentialDecoyDenied": true,
+    "junctionDenied": true,
+    "childReadDenied": true,
+    "networkDenied": true
+  },
+  "passed": true,
+  "exitCode": 0,
+  "elapsedMs": 15274,
+  "modelRequests": 0,
+  "sanitizedDiagnostic": "[No shareable summary supplied]",
+  "verifiedAt": "2026-11-03T15:36:33.989Z"
+}

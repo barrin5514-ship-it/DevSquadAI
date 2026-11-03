@@ -1,0 +1,7 @@
+{
+  "purpose": "Diagnose configuration rejection only; no model or outside-file access",
+  "exitCode": 1,
+  "transportError": null,
+  "sanitizedDiagnostic": "Error: filesystem path `\":minimal\"` must be absolute, use `~/...`, or start with `:`",
+  "setupRefreshError": false
+}

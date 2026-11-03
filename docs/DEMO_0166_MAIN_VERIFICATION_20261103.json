@@ -1,0 +1,22 @@
+{
+  "originalRecordsPreserved": true,
+  "changedTables": [],
+  "envUnchanged": true,
+  "integrity": "ok",
+  "migrations": 12,
+  "isolation": {
+    "ready": true,
+    "backend": "mxc",
+    "reason": "Verified demo-only filesystem, child-process and network boundary. Paid/native execution grants remain separate."
+  },
+  "scopeCount": 0,
+  "nativeAttempts": 0,
+  "reviewImports": 0,
+  "taskState": "PENDING",
+  "loopState": "ready",
+  "githubReaderConfigured": false,
+  "githubReaderReady": false,
+  "webhookEnabled": false,
+  "dashboardHttp": 200,
+  "applicationCodeLoaded": "final revision"
+}

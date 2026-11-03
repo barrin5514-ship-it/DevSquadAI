@@ -142,3 +142,6 @@ In Dev Squad, prepare a shared job from an owner-approved plan, then Prepare mes
 - [Current pricing](https://zapier.com/pricing)
 - [Fine-grained token creation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 - [GitHub Contents read permission and ref](https://docs.github.com/en/rest/repos/contents#get-repository-content)
+
+## Demo-only worker update — 2026-11-03
+The tiny to-do demo now has a verified MXC launcher and strict SQLite artifact/test/review import. This does not enable general repository workers. Use DEMO_READY_0166_20261103.md for the exact private-reader configuration and owner-only scope preparation/start steps. No scope, live call or Zap publication was performed by this implementation task.
