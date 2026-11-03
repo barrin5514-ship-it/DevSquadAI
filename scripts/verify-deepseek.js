@@ -1,0 +1,2 @@
+import fs from 'node:fs';import {loadConfig} from '../src/config/index.js';import {checkDeepSeek} from '../src/services/deepseek-connection.js';import {saveVerification} from '../src/services/provider-verification.js';
+if(fs.existsSync('.env'))process.loadEnvFile('.env');const config=loadConfig(),settings=config.ai.providers.find(p=>p.id==='deepseek');const result=await checkDeepSeek(settings,fetch);saveVerification(config,settings,result);console.log(JSON.stringify(result,null,2));

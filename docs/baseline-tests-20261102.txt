@@ -1,0 +1,379 @@
+✔ pilot independent fixed cases pass mock only and detect broken buffer implementation (15.7257ms)
+✔ pilot templates cannot serve as an active scope or start an approval clock (2.134ms)
+✔ pilot adapter mock preserves exact model, low thinking, native JSON, cap and single dispatch (26.5993ms)
+✔ pilot adapter mock treats truncation and empty final response as incomplete without retry (0.9225ms)
+✔ additive migration preserves original project, task and context data (200.1652ms)
+✔ provider configuration requires models and credentials, and does not guess free access (1.1298ms)
+✔ cerebras adapter sends documented request shape and normalizes usage (mock) (21.2099ms)
+✔ groq adapter sends documented request shape and normalizes usage (mock) (0.4867ms)
+✔ gemini adapter sends documented request shape and normalizes usage (mock) (0.5077ms)
+✔ openrouter adapter sends documented request shape and normalizes usage (mock) (0.369ms)
+✔ huggingface adapter sends documented request shape and normalizes usage (mock) (0.3858ms)
+✔ missing API keys never make network requests (0.6228ms)
+✔ paid and unconfirmed models are blocked before network activity (0.3742ms)
+✔ rate limit creates bounded cooldown without exposing remote error body (0.9814ms)
+✔ timeouts abort requests safely (33.9682ms)
+✔ invalid, truncated and credential-echoing provider responses are rejected (1.9361ms)
+✔ generation creates persistent drafts without writing generated files (217.8059ms)
+✔ standard mode switches providers after failure with bounded attempts (186.0495ms)
+✔ quality mode keeps multiple checked candidates with explicit comparison limits (330.1474ms)
+✔ all provider failures persist escalation and do not loop (66.0121ms)
+✔ budgets persist across restart and prevent more calls (206.3465ms)
+✔ unknown usage remains null, while invalid output still records reported usage (124.963ms)
+✔ unsafe paths, unsupported types, duplicate files and malformed JavaScript are rejected (266.9725ms)
+✔ syntax checking does not execute generated code (168.2587ms)
+✔ positions and permissions prevent QA agent from generating code (73.5099ms)
+✔ mistakes, corrections, approval and lessons persist with duplicate detection (75.3544ms)
+✔ unverified corrections cannot produce trusted lessons; retrieval is scoped and bounded (85.5077ms)
+✔ lessons are passed only as reference data and cannot bypass review (188.9909ms)
+✔ legacy completion cannot bypass required DeepSeek team review (186.9724ms)
+✔ historical rejection and corrected drafts retain evidence and require new review (360.9256ms)
+✔ Codex manual fallback is disabled unless authorized (235.2075ms)
+✔ AI endpoints validate bodies and hide provider secrets (899.0482ms)
+✔ historically rejected draft cannot regain approval by replacing test evidence (221.608ms)
+✔ unknown usage is persisted as null rather than invented zeros (231.3019ms)
+✔ connectivity checks are separate from generation verification (mock) (1.1774ms)
+✔ oversized provider bodies and null JSON responses are rejected (2.2108ms)
+✔ budget reservation is atomic across concurrent generation requests (221.1867ms)
+✔ usage filtering works by provider, agent, project and task (244.2281ms)
+✔ model reassignment is explicit and persists without changing orchestrator code (245.6269ms)
+✔ obsolete Codex configuration cannot restore retired manual reviews (250.7992ms)
+✔ new coding workflow and in-flight usage require review after restart (265.8359ms)
+✔ cost is estimated only when both prices and token counts are available (228.2393ms)
+✔ escaped credential echoes are rejected before draft persistence (1.0958ms)
+✔ usage filter rejects inherited object property names (90.3251ms)
+✔ owner revision preserves source and frozen review, records provenance and inherits no tests/approval (320.31ms)
+✔ revision rejects stale source, non-owner, invalid syntax, unchanged content and active review without mutation (387.1244ms)
+✔ revision requires new evidence and new frozen review while preserving awaiting-authorization history (322.4006ms)
+✔ local summary is linked to exact database/task/revision/content and reads without mutating artifacts (36.5472ms)
+✔ wrong database, task, revision and stale file/draft hashes cannot explain another artifact (102.4235ms)
+✔ missing, malformed and oversized sidecars never hide code or make a network request (23.3318ms)
+✔ malformed summary structure is rejected while a test explanation remains separate from test evidence (32.8631ms)
+✔ Codex limit -> other profile reads saved work -> Claude independent review; owner gate untouched (107.4836ms)
+✔ all exhausted pauses, preserves retry evidence and never invokes unapproved DeepSeek (118.5933ms)
+✔ unknown outcomes pause without next worker; arbitrary errors never enter diagnostics (109.7119ms)
+✔ parallel starts, stale callbacks, secret-bearing progress, and non-approved tasks are rejected (74.5084ms)
+✔ restart fencing preserves history, invalidates a prior worker, and blocks unsafe recovery (70.2827ms)
+✔ timeout is bounded; no next worker until termination is proven (82.811ms)
+✔ all recognized stopped limit signals fail over without retries; same-family review excluded (702.2288ms)
+✔ main focus parks backups and no connector or global live routing is enabled (62.1929ms)
+✔ console browser project creation persists requirements and preserves existing SQLite records (221.2451ms)
+✔ console rejects empty, oversized, credential-bearing and unexpected project fields before persistence (181.8368ms)
+✔ console protects browser mutations against cross-origin, missing token, non-JSON and DNS-rebinding hosts (247.8898ms)
+✔ console manual plans can be edited, returned, rejected and approved without creating premature tasks (602.0794ms)
+✔ console requires session opt-in and individual authorization before a mocked planning request (299.5351ms)
+✔ console planning rejects disabled models and malformed responses, recording failures without retry (272.3206ms)
+✔ console complete mocked calculator workflow enforces review and owner acceptance (844.3153ms)
+✔ console owner can return verified work for correction but cannot bypass a fresh independent review (991.3496ms)
+✔ console dashboard serves scripts, styling, redirect and safe settings without keys (305.5824ms)
+✔ console planning attempts are bounded and overlapping requests cannot duplicate dispatch (409.2236ms)
+✔ gemini adapter completes a mocked checkpointed draft only after distinct owner gates (662.5311ms)
+✔ mistral adapter completes a mocked checkpointed draft only after distinct owner gates (320.5847ms)
+✔ nvidia adapter completes a mocked checkpointed draft only after distinct owner gates (288.3628ms)
+✔ cloudflare adapter completes a mocked checkpointed draft only after distinct owner gates (330.3824ms)
+✔ expired, paid-plan, changed model, changed account or rotated key cannot activate (72.9828ms)
+✔ Cloudflare unknown or exhausted neurons and UTC rollover block generation (143.2952ms)
+✔ NVIDIA requires non-production trial evidence and bounded remaining requests (52.6032ms)
+✔ regular NVIDIA dashboard dispatch uses verified model reasoning off without evaluation mode (236.8585ms)
+✔ reasoning fix cannot dispatch NVIDIA with missing free-account authorization (103.7024ms)
+✔ read-only 403 is sanitized and cannot establish account eligibility (60.0839ms)
+✔ read-only 429 is sanitized and cannot establish account eligibility (59.1816ms)
+✔ read-only 503 is sanitized and cannot establish account eligibility (72.68ms)
+✔ Groq failure hands off to activated Gemini with a verified checkpoint and no duplicate operation (369.9361ms)
+✔ 503 Retry-After sets bounded delay, never automatically retries the same model (3.2111ms)
+✔ legacy workflow cannot bypass new-provider team plan and operation approvals (285.5763ms)
+✔ owner activation is separate from free evidence and revocation stops dispatch without modifying saved work (237.8437ms)
+✔ new provider context budget rejects oversized checkpoint prompts before dispatch (271.1759ms)
+✔ shared free request reservations survive clock advancement and cannot reuse exhausted trial allowance (463.7012ms)
+✔ new provider receipt expiry disables routing and never claims a permanent free entitlement (134.2368ms)
+✔ nonretryable new-provider 403 requires explicit owner re-verification before any subsequent attempt (359.1215ms)
+✔ initializes all nine domain tables with foreign keys and migrations (507.2711ms)
+✔ migrations and agent seeding are idempotent (53.4034ms)
+✔ project creation, retrieval, listing and update API (212.0057ms)
+✔ tasks persist after restart and pending tasks are not rerun (70.6426ms)
+✔ context and decisions persist after restart (85.3665ms)
+✔ interrupted tasks and executions require review after restart (69.383ms)
+✔ all registry, health and task endpoints return expected data (194.6381ms)
+✔ invalid inputs and unknown agents return 400 (207.285ms)
+✔ missing project and task IDs return 404 (143.794ms)
+✔ SQL-like user text remains data (68.7103ms)
+✔ workspace traversal and Windows special paths are rejected (50.3544ms)
+✔ workspace rejects directory symlinks or junctions (54.2773ms)
+✔ files are tracked, never executed and require overwrite approval (80.8331ms)
+✔ configuration validates required values, ranges and storage separation (0.5933ms)
+✔ unexpected API errors hide internal details (72.2636ms)
+✔ safe provider registry excludes private metadata (73.7442ms)
+✔ active database backups verify and restore into isolated fresh storage (105.9917ms)
+✔ backup failure preserves source data (66.8875ms)
+✔ actual server starts from environment and serves health (531.3174ms)
+✔ malformed and oversized JSON return safe client errors (159.4723ms)
+✔ dangling workspace junctions are rejected before writes (104.2739ms)
+✔ backup directory failures return a safe message (98.7161ms)
+✔ 3.8 uses documented low thinking, shared cap and native JSON schema; joins only final text (21.1199ms)
+✔ thinking controls are model-specific and invalid 3.8 controls fail before HTTP (1.4254ms)
+✔ MAX_TOKENS never becomes a draft even with parseable final JSON; safe partial and usage survive (0.6757ms)
+✔ empty final content is incomplete even with STOP and thought text present (0.9135ms)
+✔ diagnostic previews are bounded and omit literal or JSON-escaped credential echoes (1.29ms)
+✔ unexpected finish metadata is not copied into sanitized errors (0.4495ms)
+✔ OpenRouter zero-price constraint also protects legacy adapter callers (19.5318ms)
+✔ routing ranks by category and excludes trial, paid and unconfirmed providers (91.6593ms)
+✔ Cerebras runtime configuration stays blocked even with free confirmation and a key (67.6467ms)
+✖ 429 checkpoints and hands off to a distinct free model with actual token ledger (96.9674ms)
+✔ handoff prompt contains approved plan, durable snapshot, prior errors and no credentials (239.0612ms)
+✔ all free providers exhausted pauses with bounded attempts and preserved checkpoint (143.1394ms)
+✔ fallback consent false retains a single authorized request (91.323ms)
+✔ completed operation ID replays recorded result without another model call (201.5765ms)
+✔ task lock prevents overlapping dispatch and duplicate database drafts (212.3114ms)
+✔ checkpoint write failure rolls back assignment and preserves previous snapshot (71.3862ms)
+✔ checkpoints are immutable and integrity check fails closed on tampering (65.629ms)
+✔ pause and restart preserve snapshots; resume needs new authorization and live policy (989.5955ms)
+✔ restart reconciles interrupted operation and never resubmits it (87.2062ms)
+✖ ambiguous timeout or malformed response can only retry distinct models within owner scope (96.7012ms)
+✖ partial draft/test/correction evidence remains immutable through provider handoff (308.6771ms)
+✔ provider retry-after HTTP date is respected and error body is discarded (1.1138ms)
+✔ cooldown and exponential backoff survive restart and exclude providers (188.4701ms)
+✔ provider switch cannot bypass unapproved plan or manual reviewer independence (153.0715ms)
+✔ dashboard checkpoints/capacity contain recorded facts and no invented completion (272.2248ms)
+✔ DeepSeek default cannot balance-check, generate or join free routing (121.2659ms)
+✔ paid reservation counts on dispatch day for a quote issued before midnight (262.8067ms)
+✔ second backend cannot reset a running owner or erase task locks (132.9939ms)
+✔ upgrade snapshots existing unfinished tasks without changing task or event history (151.9674ms)
+✔ no free capacity pauses without dispatch and never activates prepaid access (162.0766ms)
+✔ paid session opt-out cannot be bypassed by a valid quote and confirmation (128.996ms)
+✔ DeepSeek mock execution requires exact quote/owner/balance and records usage/draft (296.0369ms)
+✔ DeepSeek spending limits fail closed before POST and persist across restart (187.537ms)
+✔ unknown balance, expired pricing, stale quote and unknown cost reject paid dispatch (299.3266ms)
+✔ ambiguous paid failure is never retried and retains conservative budget reservation (133.4941ms)
+✔ three developer handoff preserves checkpoint through Groq rate limit and Laguna failure (383.8464ms)
+✔ free launch retirement excludes MiniMax at exact noon deadline and Laguna on October 31 (136.6ms)
+✖ truncated provider response is discarded while checkpoint and reported usage survive fallback (192.672ms)
+✔ parent view identifies the pending owner decision and links to the exact child without accepting it (17.5387ms)
+✔ project verification names unmet review/correction requirements and never offers acceptance for them (4.9857ms)
+✔ project verification becomes available only with completed children in this project and plan (2.439ms)
+✔ eligible revision renders existing acceptance but still requires an explicit checked acknowledgement (2.1846ms)
+✔ missing current draft and historical/wrong-task/unapproved review never render acceptance (8.6085ms)
+✔ plain-English explanation appears above unchanged code and test pass meaning stays explanatory (1.4986ms)
+✔ future or stale summaries have an honest fallback and still allow inspection of exact code (1.4197ms)
+✔ disposable grants reject production databases, paid models, oversized limits and expired consent (3.5085ms)
+✔ memory-only owner evaluation keeps false free flags and consumes bounded authorization (21.9698ms)
+✔ NVIDIA no-thinking uses documented field, preserves reasoning usage and diagnostics (0.5192ms)
+✔ structured function access failures omit raw account IDs and raw messages (0.742ms)
+✔ non-JSON HTTP errors retain status and Retry-After without hidden retries (0.8388ms)
+✔ truncated response preserves actual usage and finish reason but never returns draft (0.5172ms)
+✔ timeouts before HTTP headers report phase, unknown status and no retry (22.0189ms)
+✔ scoped evaluation is never an automatic routing candidate and cannot complete without senior approval (89.3347ms)
+✔ current access errors remove automatic eligibility without deleting historical generation evidence (70.0754ms)
+✔ DeepSeek read-only account and USD balance verification works with paid generation disabled (362.3769ms)
+✔ DeepSeek balance unavailable, zero balance and unsupported model never invent readiness (170.3459ms)
+✔ DeepSeek authentication failure is sanitized and key rotation invalidates observations (124.3336ms)
+✔ read-only DeepSeek dashboard endpoint needs owner confirmation and session capability (223.3583ms)
+✔ catalog 403 classification distinguishes network, model permission, auth and rate limits without raw messages (0.3019ms)
+✔ large account catalog passes bounded preflight while model responses retain smaller cap (21.9292ms)
+✔ successful live evidence stays distinct from account verification and retirement wins (76.8597ms)
+✔ exact bound JSON/non-thinking body follows existing review pipeline while global paid stays disabled (514.9042ms)
+✔ repeated quotes are idempotent and do not replenish the task lifetime allowance (245.148ms)
+✔ payload tampering before startup or after quote prevents dispatch (209.6059ms)
+✔ wrong task, revision, model, provider and database identity cannot create a capability (270.9059ms)
+✔ unrelated tasks and wrong review/output parameters are rejected (223.1701ms)
+✔ expired approval or price lease prevents every request (211.8178ms)
+✔ changed prices or approval file cannot dispatch an existing quote (229.3506ms)
+✔ concurrent callers consume at most one of each HTTP slot and one full allowance (282.4777ms)
+✔ concurrent preflight requests are consumed before fetch, never duplicated (261.8387ms)
+✔ unknown model GET is consumed permanently, including after restart (353.4474ms)
+✔ unavailable model stops after the one GET (374.0348ms)
+✔ insufficient fresh funds stops before POST and does not repeat the balance GET (847.9528ms)
+✔ unknown review retains the full allowance, usage and one-POST limit across restart (558.4799ms)
+✔ price change during preflight blocks POST after exactly two GETs (429.7433ms)
+✔ expired grant cannot dispatch after a successful balance response (2494.8144ms)
+✔ a new grant ID cannot reset persistent task request limits (432.2049ms)
+✔ immutable database terms cannot be rewritten and quote tampering cannot dispatch POST (336.5208ms)
+✔ separate SQLite connections share atomic request slots, not per-process counters (744.368ms)
+✔ removing startup scope or using legacy development cannot bypass the persistent task cap (327.0058ms)
+✔ pending legacy reservations are netted against fresh balance before POST (429.2844ms)
+✔ active roster and dashboard expose seven developers and only DeepSeek senior (211.7394ms)
+✔ disabled DeepSeek freezes review and checkpoints but never sends a paid request (235.0548ms)
+✔ paid review requires specific owner consent, records usage and still needs final owner approval (234.6786ms)
+✔ rejected review reaches developer corrections and corrected draft needs separately authorized re-review (391.5287ms)
+✔ failed or malformed review cannot approve or automatically retry; request and unknown spend persist (227.9712ms)
+✔ model approval without passing frozen tests is rejected and actual token usage retained (234.4806ms)
+✔ DeepSeek-authored drafts cannot be reviewed by DeepSeek under a different model or author label (217.4271ms)
+✔ stale quote or changed current draft cannot send a review POST (206.7656ms)
+✔ concurrent paid review and duplicate quotes cannot duplicate a model request (218.0701ms)
+✔ restart reconciles an interrupted paid review and preserves frozen evidence without retry (230.0701ms)
+✔ historical CLI packets and findings remain readable but cannot approve the new workflow (220.5292ms)
+✔ a frozen review snapshot cannot be rewritten and a review quote cannot buy development (303.4801ms)
+✔ quote expiry during the balance check prevents the model POST (293.6776ms)
+✔ an incomplete provider review report stays unapproved and preserves actual usage (297.0003ms)
+✔ status distinguishes configured keys, historical live evidence and disabled routing without requests (107.6003ms)
+✔ historical API tests do not override missing free confirmation or excluded Gemini routing (95.942ms)
+✔ only DeepSeek is active senior and missing configuration pauses reviews (223.0005ms)
+✔ historical CLI authentication snapshots are ignored and never expose credentials (359.6408ms)
+✔ status never reads retired CLI evidence files (62.2212ms)
+✔ console connection projection is read-only, secret-free and creates no reviewer execution (188.8477ms)
+✖ dashboard exposes bounded key-bound catalog evidence and quota without calling providers (71.21ms)
+✔ expired or mismatched-key evidence never claims connection verification (91.1453ms)
+✖ failed catalog checks remain failures beside historical generation and cooldown disables routing (60.4473ms)
+✔ preview serves identical fictional sample screens, isolated styles and no live requests (225.5051ms)
+✔ task grant validates actual database identity, project/task relationship, key, provider and model (174.0955ms)
+✔ catalog visibility is required; scoped owner attestation never enables routing or fabricates account receipts (269.0745ms)
+✔ unrelated tasks and databases cannot consume or assign a scoped model (94.909ms)
+✔ concurrent grant instances consume the durable shared limit exactly once per slot and survive reconstruction (133.9746ms)
+✔ expired and modified scopes cannot dispatch, including expiry between availability and transport (115.8831ms)
+✔ atomic task operation, request cap and exhausted grant prevent duplicate POST; mandatory review preserved (622.8808ms)
+✔ scope forbids fallback and oversized or mismatched endpoints before network (217.3737ms)
+✔ free confirmation remains mandatory even when a scope and catalog record exist (91.619ms)
+✔ same-origin scoped verification endpoint rejects other tasks and repeats without outbound requests (353.1584ms)
+✔ task-only session permission leaves global live off and cannot authorize unrelated tasks (720.7414ms)
+✔ current account-access denial blocks scoped generation despite historical catalog success (220.355ms)
+✔ team creation, manual plan and owner-approved decomposition reuse project/tasks (90.4544ms)
+✔ team assignment prefers Groq and rejects unverified, paid, disabled models (520.7679ms)
+✔ team invalid transitions and premature parent verification are rejected (58.7287ms)
+✔ team live dispatch needs server opt-in and separate request authorization (132.2978ms)
+✔ team generation persists draft and actual tokens without writing or executing files (228.3246ms)
+✔ team review packets contain immutable draft diff and test evidence (211.4319ms)
+✔ team senior verification does not bypass final owner acceptance (221.0556ms)
+✔ team approval requires passing frozen evidence and rejects manual imports (224.0997ms)
+✔ team rejection and correction use a new draft and invalidate old approval paths (396.9327ms)
+✔ team provider failures are recorded and bounded to three explicit attempts (173.5097ms)
+✔ team provider 429 cooldown persists across restart (144.1258ms)
+✔ team restart blocks interrupted execution without automatic retry (90.2652ms)
+✔ owner drafts require DeepSeek review and retired agents cannot author or review (222.4704ms)
+✔ team rejects credentials and legacy mutation bypasses (304.5515ms)
+✔ team OpenRouter checks current free account catalog and enforces zero-price route (283.4631ms)
+✔ team rejects changed OpenRouter prices before generating (164.1914ms)
+✔ team concurrent dispatch cannot duplicate a task request (286.8158ms)
+✔ team dashboard and API expose progress without credentials or browser mutations (297.601ms)
+✔ team validates drafts without executing them and preserves unknown usage (290.9078ms)
+✔ team budget exhaustion prevents further provider calls (347.3311ms)
+✔ team rejects decoded credential echoes in generated files (149.3416ms)
+✔ team enforces provider input policy before any outbound request (128.9144ms)
+ℹ tests 249
+ℹ suites 0
+ℹ pass 243
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 58203.193
+
+✖ failing tests:
+
+test at tests\handoffs.test.js:18:1
+✖ 429 checkpoints and hands off to a distinct free model with actual token ledger (96.9674ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BLOCKED'
+  - 'AWAITING_REVIEW'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:18:263)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BLOCKED',
+    expected: 'AWAITING_REVIEW',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\handoffs.test.js:28:1
+✖ ambiguous timeout or malformed response can only retry distinct models within owner scope (96.7012ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BLOCKED'
+  - 'AWAITING_REVIEW'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:28:234)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BLOCKED',
+    expected: 'AWAITING_REVIEW',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\handoffs.test.js:29:1
+✖ partial draft/test/correction evidence remains immutable through provider handoff (308.6771ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BLOCKED'
+  - 'AWAITING_REVIEW'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:29:517)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BLOCKED',
+    expected: 'AWAITING_REVIEW',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\handoffs.test.js:53:1
+✖ truncated provider response is discarded while checkpoint and reported usage survive fallback (192.672ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BLOCKED'
+  - 'AWAITING_REVIEW'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:53:498)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BLOCKED',
+    expected: 'AWAITING_REVIEW',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\status.test.js:13:1
+✖ dashboard exposes bounded key-bound catalog evidence and quota without calling providers (71.21ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/status.test.js:13:355)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\status.test.js:15:1
+✖ failed catalog checks remain failures beside historical generation and cooldown disables routing (60.4473ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /cooldown/. Input:
+  
+  'Free-model verification expired'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/status.test.js:15:604)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Free-model verification expired',
+    expected: /cooldown/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,14 @@
+{
+  "documentType": "INACTIVE_PAYLOAD_PLAN_NOT_A_DISPATCH_BODY",
+  "active": false,
+  "model": "gemini-3.8-flash",
+  "method": "POST",
+  "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
+  "generationConfig": {
+    "maxOutputTokens": 1024,
+    "responseMimeType": "application/json",
+    "thinkingConfig": { "thinkingLevel": "low" }
+  },
+  "plannedTaskPrompt": "Build src/time-budget.js exporting planTime(durationsMinutes, availableHours, includeBuffer=false), and test/time-budget.test.js exporting runTests() without running on import. Require a dense array of finite nonnegative numeric durations, finite nonnegative numeric hours and boolean buffer; reject invalid inputs without coercion and reject arithmetic overflow. Return exactly totalMinutes=sum, bufferMinutes=20% of total if requested else 0, requiredMinutes=total+buffer, remainingMinutes=hours*60-required, fits=remaining>=0. Do not round or mutate inputs. Empty array and zeros are valid. Include basic explicit assertions for normal addition, 20% buffer, exact fit, over-capacity, decimal tolerance and invalid input. No logging, I/O, network or import-time assertions. Return only the application's native JSON files artifact with those two ES-module files; no Markdown.",
+  "instructions": "The real existing pipeline supplies its actual system instructions, schema and task/checkpoint context after project creation. This plan is not the final serialized request, receipt, generated artifact or review payload. Recalculate input estimate from that complete body before approval. No project files or personal data should be sent."
+}

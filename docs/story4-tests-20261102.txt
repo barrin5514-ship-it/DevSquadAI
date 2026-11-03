@@ -1,0 +1,35 @@
+✖ dashboard sends rotation and selected roles only to the exact saved job/version (8.8315ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (3.192ms)
+✔ empty setting and restart both disable delivery without network calls (3.6089ms)
+✔ webhook rejects private addresses, lookalike hosts, userinfo, redirects and non-Zapier URLs (1.0942ms)
+✔ one enabled delivery sends only the report and never leaks the URL or source in status (1.5597ms)
+✔ unknown delivery outcome is retained in this session and never retried (0.565ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 258.9224
+
+✖ failing tests:
+
+test at tests\big-three-ui.test.js:14:1
+✖ dashboard sends rotation and selected roles only to the exact saved job/version (8.8315ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'deepseek'
+  - 'claude-code'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/big-three-ui.test.js:16:109)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'deepseek',
+    expected: 'claude-code',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

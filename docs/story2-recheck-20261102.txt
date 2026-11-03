@@ -1,0 +1,27 @@
+✔ Codex limit -> other profile reads saved work -> Claude independent review; owner gate untouched (210.4759ms)
+✔ all exhausted pauses, preserves retry evidence and never invokes unapproved DeepSeek (187.0366ms)
+✔ unknown outcomes pause without next worker; arbitrary errors never enter diagnostics (162.6457ms)
+✔ parallel starts, stale callbacks, secret-bearing progress, and non-approved tasks are rejected (167.5779ms)
+✔ restart fencing preserves history, invalidates a prior worker, and blocks unsafe recovery (145.8058ms)
+✔ timeout is bounded; no next worker until termination is proven (156.5124ms)
+✔ all recognized stopped limit signals fail over without retries; same-family review excluded (671.1607ms)
+✔ main focus parks backups and no connector or global live routing is enabled (192.4345ms)
+✔ default roles rotate three times back to their original assignments, with immutable history (169.3278ms)
+✔ all three agents can fill each role in mock-only jobs; no report grants acceptance (283.1762ms)
+✔ DeepSeek mock limit hands saved build to Codex, then tests and independent Claude review finish (225.8032ms)
+✔ late role change cannot make a partial builder its own reviewer (184.1314ms)
+✔ child environment excludes provider credentials and native hello arguments disable tools (1.8561ms)
+✔ green requires an actual terminal hello event; partial, tool and error results fail (0.7231ms)
+✔ batch requires owner confirmation, persists only sanitized results and never calls DeepSeek (382.7472ms)
+✔ concurrent hello clicks cannot duplicate a running batch (116.6673ms)
+✔ console endpoints enforce same-origin session and do not return secrets (336.08ms)
+✔ public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization (0.8116ms)
+✔ native hello refuses API-billed auth, bounds output and sanitizes failure text (27.1885ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6021.9932

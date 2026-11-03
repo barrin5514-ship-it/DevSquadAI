@@ -1,0 +1,28 @@
+✔ exact bound JSON/non-thinking body follows existing review pipeline while global paid stays disabled (544.2136ms)
+✔ repeated quotes are idempotent and do not replenish the task lifetime allowance (281.4268ms)
+✔ payload tampering before startup or after quote prevents dispatch (303.4852ms)
+✔ wrong task, revision, model, provider and database identity cannot create a capability (332.1961ms)
+✔ unrelated tasks and wrong review/output parameters are rejected (322.3995ms)
+✔ expired approval or price lease prevents every request (320.6294ms)
+✔ changed prices or approval file cannot dispatch an existing quote (666.6937ms)
+✔ concurrent callers consume at most one of each HTTP slot and one full allowance (645.2053ms)
+✔ concurrent preflight requests are consumed before fetch, never duplicated (566.0037ms)
+✔ unknown model GET is consumed permanently, including after restart (400.5368ms)
+✔ unavailable model stops after the one GET (313.3355ms)
+✔ insufficient fresh funds stops before POST and does not repeat the balance GET (366.8636ms)
+✔ unknown review retains the full allowance, usage and one-POST limit across restart (442.8195ms)
+✔ price change during preflight blocks POST after exactly two GETs (365.2969ms)
+✔ expired grant cannot dispatch after a successful balance response (383.6353ms)
+✔ a new grant ID cannot reset persistent task request limits (486.5304ms)
+✔ immutable database terms cannot be rewritten and quote tampering cannot dispatch POST (308.6949ms)
+✔ separate SQLite connections share atomic request slots, not per-process counters (830.775ms)
+✔ removing startup scope or using legacy development cannot bypass the persistent task cap (290.0932ms)
+✔ pending legacy reservations are netted against fresh balance before POST (333.427ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9424.5882

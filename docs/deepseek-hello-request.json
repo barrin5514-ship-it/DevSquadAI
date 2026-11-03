@@ -1,0 +1,9 @@
+{
+  "model": "deepseek-flash",
+  "messages": [
+    { "role": "user", "content": "Reply with exactly the word hello." }
+  ],
+  "thinking": { "type": "disabled" },
+  "max_tokens": 32,
+  "stream": false
+}

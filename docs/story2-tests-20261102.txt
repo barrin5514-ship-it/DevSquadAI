@@ -1,0 +1,173 @@
+✔ Codex limit -> other profile reads saved work -> Claude independent review; owner gate untouched (949.6173ms)
+✔ all exhausted pauses, preserves retry evidence and never invokes unapproved DeepSeek (604.9001ms)
+✔ unknown outcomes pause without next worker; arbitrary errors never enter diagnostics (611.6535ms)
+✔ parallel starts, stale callbacks, secret-bearing progress, and non-approved tasks are rejected (90870.9651ms)
+✔ restart fencing preserves history, invalidates a prior worker, and blocks unsafe recovery (1020.4352ms)
+✔ timeout is bounded; no next worker until termination is proven (1060.6217ms)
+✖ all recognized stopped limit signals fail over without retries; same-family review excluded (779.55ms)
+✔ main focus parks backups and no connector or global live routing is enabled (750.3871ms)
+✔ OpenRouter zero-price constraint also protects legacy adapter callers (167.3765ms)
+✖ routing ranks by category and excludes trial, paid and unconfirmed providers (12.95ms)
+✔ Cerebras runtime configuration stays blocked even with free confirmation and a key (1065.1394ms)
+✔ 429 checkpoints and hands off to a distinct free model with actual token ledger (2465.2237ms)
+✖ handoff prompt contains approved plan, durable snapshot, prior errors and no credentials (4.5857ms)
+✖ all free providers exhausted pauses with bounded attempts and preserved checkpoint (2.0541ms)
+✔ fallback consent false retains a single authorized request (1045.2429ms)
+✔ completed operation ID replays recorded result without another model call (1722.9016ms)
+✔ task lock prevents overlapping dispatch and duplicate database drafts (2333.7897ms)
+✔ checkpoint write failure rolls back assignment and preserves previous snapshot (1144.5072ms)
+✔ checkpoints are immutable and integrity check fails closed on tampering (986.5309ms)
+✔ pause and restart preserve snapshots; resume needs new authorization and live policy (3165.2213ms)
+✔ restart reconciles interrupted operation and never resubmits it (3247.8021ms)
+✖ ambiguous timeout or malformed response can only retry distinct models within owner scope (6563.8784ms)
+✔ partial draft/test/correction evidence remains immutable through provider handoff (4882.7525ms)
+✔ provider retry-after HTTP date is respected and error body is discarded (15.8778ms)
+✔ cooldown and exponential backoff survive restart and exclude providers (2282.6559ms)
+✔ provider switch cannot bypass unapproved plan or manual reviewer independence (2671.8991ms)
+✔ dashboard checkpoints/capacity contain recorded facts and no invented completion (3677.3012ms)
+✔ DeepSeek default cannot balance-check, generate or join free routing (1986.9829ms)
+✔ paid reservation counts on dispatch day for a quote issued before midnight (2872.0915ms)
+✔ second backend cannot reset a running owner or erase task locks (2209.8834ms)
+✔ upgrade snapshots existing unfinished tasks without changing task or event history (1820.6289ms)
+✔ no free capacity pauses without dispatch and never activates prepaid access (1420.9936ms)
+✔ paid session opt-out cannot be bypassed by a valid quote and confirmation (636.2909ms)
+✔ DeepSeek mock execution requires exact quote/owner/balance and records usage/draft (1595.435ms)
+✔ DeepSeek spending limits fail closed before POST and persist across restart (800.4087ms)
+✔ unknown balance, expired pricing, stale quote and unknown cost reject paid dispatch (1429.9201ms)
+✔ ambiguous paid failure is never retried and retains conservative budget reservation (1446.9647ms)
+✖ three developer handoff preserves checkpoint through Groq rate limit and Laguna failure (4.5401ms)
+✖ free launch retirement excludes MiniMax at exact noon deadline and Laguna on October 31 (709.7816ms)
+✔ truncated provider response is discarded while checkpoint and reported usage survive fallback (2246.3732ms)
+✔ status distinguishes configured keys, historical live evidence and disabled routing without requests (775.9169ms)
+✔ historical API tests do not override missing free confirmation or excluded Gemini routing (606.4679ms)
+✔ only DeepSeek is active senior and missing configuration pauses reviews (492.5436ms)
+✔ historical CLI authentication snapshots are ignored and never expose credentials (674.1568ms)
+✔ status never reads retired CLI evidence files (600.0761ms)
+✔ console connection projection is read-only, secret-free and creates no reviewer execution (1657.3618ms)
+✔ dashboard exposes bounded key-bound catalog evidence and quota without calling providers (812.0611ms)
+✔ expired or mismatched-key evidence never claims connection verification (1221.1321ms)
+✔ failed catalog checks remain failures beside historical generation and cooldown disables routing (750.7163ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 42
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 177837.7006
+
+✖ failing tests:
+
+test at tests\big-three.test.js:51:1
+✖ all recognized stopped limit signals fail over without retries; same-family review excluded (779.55ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'codex-school',
+  +   'codex-school'
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/big-three.test.js:53:219)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'codex-school', 'codex-school' ],
+    expected: [ 'codex-school' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\handoffs.test.js:18:1
+✖ routing ranks by category and excludes trial, paid and unconfirmed providers (12.95ms)
+  Error [ERR_INVALID_STATE]: Invalid state: MockTimers is already enabled!
+      at MockTimers.enable (node:internal/test_runner/mock/mock_timers:736:13)
+      at fixture (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:8:41)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:18:172)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    code: 'ERR_INVALID_STATE'
+  }
+
+test at tests\handoffs.test.js:21:1
+✖ handoff prompt contains approved plan, durable snapshot, prior errors and no credentials (4.5857ms)
+  Error [ERR_INVALID_STATE]: Invalid state: MockTimers is already enabled!
+      at MockTimers.enable (node:internal/test_runner/mock/mock_timers:736:13)
+      at fixture (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:8:41)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:21:190)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    code: 'ERR_INVALID_STATE'
+  }
+
+test at tests\handoffs.test.js:22:1
+✖ all free providers exhausted pauses with bounded attempts and preserved checkpoint (2.0541ms)
+  Error [ERR_INVALID_STATE]: Invalid state: MockTimers is already enabled!
+      at MockTimers.enable (node:internal/test_runner/mock/mock_timers:736:13)
+      at fixture (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:8:41)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:22:184)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    code: 'ERR_INVALID_STATE'
+  }
+
+test at tests\handoffs.test.js:30:1
+✖ ambiguous timeout or malformed response can only retry distinct models within owner scope (6563.8784ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'BLOCKED'
+  - 'AWAITING_REVIEW'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:30:234)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'BLOCKED',
+    expected: 'AWAITING_REVIEW',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\handoffs.test.js:50:1
+✖ three developer handoff preserves checkpoint through Groq rate limit and Laguna failure (4.5401ms)
+  Error [ERR_INVALID_STATE]: Invalid state: MockTimers is already enabled!
+      at MockTimers.enable (node:internal/test_runner/mock/mock_timers:736:13)
+      at fixture (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:8:41)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:50:189)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    code: 'ERR_INVALID_STATE'
+  }
+
+test at tests\handoffs.test.js:52:1
+✖ free launch retirement excludes MiniMax at exact noon deadline and Laguna on October 31 (709.7816ms)
+  Error [ERR_INVALID_STATE]: Invalid state: MockTimers is already enabled!
+      at MockTimers.enable (node:internal/test_runner/mock/mock_timers:736:13)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/handoffs.test.js:52:133)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    code: 'ERR_INVALID_STATE'
+  }

@@ -1,6 +1,8 @@
-# Dev Squad AI — Checkpoint 2
+> Current policy (2026-11-02): Big Three roles rotate per job. Default: DeepSeek Builder, Codex Tester, Claude Code Reviewer. Builders cannot review their own step. Other providers are parked; older assignments below are historical. See docs/BIG_THREE_PLAN.md.
 
-A local backend for development projects, interchangeable AI providers, reviewed code drafts and learning memory. Real provider HTTP adapters are implemented; no credentials were available for live verification. There is no frontend or generated-code execution.
+# Dev Squad AI — Interactive Mission Control
+
+A local development workspace with an interactive browser dashboard, interchangeable AI providers, reviewed code drafts, and learning memory. Open http://127.0.0.1:3000/team to create projects, manage plans and assignments, authorize requests, and record reviews. Generated code is never automatically executed.
 
 ## Install and run
 
@@ -10,7 +12,7 @@ Requires Node.js 24 or newer (the built-in SQLite module avoids another database
 2. Run `npm install`.
 3. Copy `.env.example` to `.env` and adjust the storage locations if needed.
 4. Run `npm start`.
-5. Open http://127.0.0.1:3000/api/health. Expect `{"data":{"status":"ok"}}`.
+5. Open http://127.0.0.1:3000/team. See [Dashboard guide](DASHBOARD_GUIDE.md). Health remains available at http://127.0.0.1:3000/api/health.
 
 The default server listens only on your own computer. This checkpoint has no authentication or multi-user authorization. Do not expose it to a network; network deployment requires authentication and access controls. Use one backend process per database. Request bodies are limited to 32 KB.
 
@@ -73,7 +75,7 @@ To restore:
 
 Database backups do not include generated workspace files. Back those up separately while writes are stopped. Restoration tests demonstrate the same fresh-destination approach using temporary data.
 
-See ARCHITECTURE.md and DATABASE_SCHEMA.md for developer details. Stop at Checkpoint 2; Checkpoint 3 requires review and approval.
+See ARCHITECTURE.md, DATABASE_SCHEMA.md and ORCHESTRATOR_ARCHITECTURE.md for developer details.
 
 
 ## Checkpoint 2 API
@@ -114,4 +116,22 @@ Generation initially supports JavaScript plus JSON/Markdown/text supporting file
 
 The API is for trusted local clients only and has no user authentication. Browser-origin mutations are rejected, but that is not network authentication. Leave HOST at 127.0.0.1 and do not expose this server. Keys stay in environment configuration, are not put into prompts or persisted, and provider errors are sanitized.
 
-**Live status:** all five adapters are mock-tested; none are live-verified. A configured key/model and authorized smoke test remain necessary to demonstrate the live-generation definition-of-done item. Optional providers can remain unavailable. See AI_DATA_FLOW.md for implemented versus deferred steps.
+**Provider status:** adapters are mock-tested. Prior live Groq and OpenRouter benchmark evidence is recorded in PROMPT_LOG.md and FREE_MODEL_BENCHMARK.md; it is not a claim of present uptime. Gemini remains excluded from team routing. No live provider requests were made to test the interactive dashboard.
+
+## Team orchestration foundation
+
+The interactive dashboard is at `/team` after starting the backend. See [Dashboard guide](DASHBOARD_GUIDE.md) for browser controls and manual boundaries. See [ORCHESTRATOR_ARCHITECTURE.md](ORCHESTRATOR_ARCHITECTURE.md) for action endpoints, [AGENT_ROLES.md](AGENT_ROLES.md) for the owner/Claude/Codex hierarchy, and [SENIOR_REVIEW_WORKFLOW.md](SENIOR_REVIEW_WORKFLOW.md) for manual evidence handoffs.
+
+The workflow keeps live calls off by default (`TEAM_LIVE_ENABLED=false`). The owner can explicitly enable free-request controls for the current session in Settings, then separately authorize each request. This does not change `.env`, provider free confirmations, or billing. Plans, independent review receipts and owner acceptance are explicit; generated drafts are never automatically applied, tested on the host, deployed or pushed.
+
+Browser writes use the dedicated same-origin `/api/console` boundary with a per-process capability. Legacy API browser-mutation restrictions remain unchanged. This is a trusted localhost application, not a multi-user authenticated service. Run `npm test -- --test-concurrency=1` for the complete mocked suite.
+
+
+## Multi-model recovery update
+
+Durable hashed checkpoints, explicit free-provider fallback consent, category-based smart assignment and owner-authorized resume are available in the existing /team dashboard. Cerebras trial models and optional prepaid DeepSeek remain disabled; Claude/Codex reviews remain manual. See ORCHESTRATOR_ARCHITECTURE.md, DASHBOARD_GUIDE.md and PROVIDER_SETUP.md for scope, configuration, budgets and current verification limits. Linux/WSL2 automatic review is retired from the active roadmap; historical investigations are preserved.
+
+
+## Current AI team
+
+Developers: Groq (primary), Poolside Laguna (development/testing), MiniMax (development/debugging). DeepSeek is the Senior Developer and sole lead independent reviewer. Paid usage stays disabled until configured and individually authorized; a paused review is never reported as approval. Claude/Codex manual integrations are retired from the active application and preserved only in audit history. See SENIOR_REVIEW_WORKFLOW.md for the new flow and its self-review/billing limits.

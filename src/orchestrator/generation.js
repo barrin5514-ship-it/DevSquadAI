@@ -1,3 +1,4 @@
+import {expansionReason,assertExpansionFree} from '../services/expansion-policy.js';
 import { randomUUID } from 'node:crypto';
 import { ProviderAdapter } from '../providers/adapter.js';
 import { ApiError } from '../middleware/errors.js';
@@ -11,12 +12,14 @@ const POLICY=`You create JavaScript code drafts for human review. Return only JS
 export class GenerationService {
   constructor(store,workspace,config,options={}){
     this.store=store;this.db=store.db;this.workspace=workspace;this.config=config;
-    this.providers=config.ai.providers.map(p=>new ProviderAdapter(p,{fetchImpl:options.fetchImpl,timeout:config.timeout,tokenLimit:config.tokenLimit}));
+    this.providers=config.ai.providers.map(p=>new ProviderAdapter({...p,...(p.requiresVerification?{verificationReason:()=>expansionReason(config,p),verifyBeforeGenerate:()=>assertExpansionFree(config,p,this.db)}:{})},{fetchImpl:options.fetchImpl,timeout:p.timeout||config.timeout,tokenLimit:config.tokenLimit}));
     this.usage=new UsageService(this.db,config.ai);this.learning=new LearningMemory(store);this.reviews=new ReviewService(store,config.ai);
     for(const p of this.providers.filter(p=>p.model)){
-      this.db.prepare('INSERT INTO ai_providers (id,provider_name,model_name,enabled) VALUES (?,?,?,1) ON CONFLICT(id) DO UPDATE SET model_name=excluded.model_name,enabled=1').run(p.id,p.id,p.model);
+      if(p.requiresVerification)continue;
+      this.db.prepare('INSERT INTO ai_providers (id,provider_name,model_name,enabled) VALUES (?,?,?,?) ON CONFLICT(id) DO UPDATE SET model_name=excluded.model_name,enabled=excluded.enabled').run(p.id,p.id,p.model,p.id==='deepseek'||p.requiresVerification?0:1);
       // Initial compatibility assignment; later reassignment is explicit and persisted.
-      if(!this.db.prepare('SELECT 1 FROM agent_models WHERE provider_id=?').get(p.id))this.db.prepare('INSERT OR IGNORE INTO agent_models VALUES (?,?,?)').run('junior',p.id,p.model);
+      if(!this.db.prepare('SELECT 1 FROM agent_models WHERE provider_id=?').get(p.id))this.db.prepare('INSERT OR IGNORE INTO agent_models VALUES (?,?,?)').run(p.id==='deepseek'?'senior':'junior',p.id,p.model);
+      if(p.id==='deepseek')this.db.prepare("UPDATE OR IGNORE agent_models SET agent_id='senior' WHERE provider_id='deepseek' AND agent_id='junior'").run();
     }
     this.db.prepare("UPDATE task_workflows SET state='requires_review',updated_at=? WHERE state='generating'").run(now());
     this.db.prepare("UPDATE usage_events SET outcome='interrupted' WHERE outcome='started'").run();
@@ -26,14 +29,15 @@ export class GenerationService {
   models(){return this.providers.filter(p=>p.model).map(p=>({provider:p.id,model:p.model,capabilities:p.capabilities,freeAccessConfirmed:p.free,source:'operator_configuration',liveVerified:false}));}
   assign(agentId,body){
     object(body,['providerId','model'],['providerId','model']);
-    if(!this.db.prepare('SELECT id FROM agents WHERE id=?').get(agentId))throw new ApiError(404,'Agent not found');
+    if(!this.db.prepare("SELECT id FROM agents WHERE id=? AND lower(id) NOT IN ('claude','codex') AND lower(name) NOT LIKE '%claude%' AND lower(name) NOT LIKE '%codex%'").get(agentId))throw new ApiError(404,'Agent not found');
     const p=this.provider(text(body.providerId,'providerId'));
     if(!p.model||body.model!==p.model)throw new ApiError(400,'Model must match configured provider model');
+    if(p.requiresVerification)throw new ApiError(409,'Use the owner-approved team workflow for newly integrated providers');
     this.db.prepare('INSERT OR IGNORE INTO agent_models VALUES (?,?,?)').run(agentId,p.id,p.model);
     return this.db.prepare('SELECT * FROM agent_models WHERE agent_id=?').all(agentId);
   }
   candidates(agent,category,complexity,inputBytes){
-    return this.providers.filter(p=>p.availability().available && p.capabilities.includes('coding') && inputBytes<=p.maxInputBytes && this.db.prepare('SELECT 1 FROM agent_models WHERE agent_id=? AND provider_id=? AND model=?').get(agent.id,p.id,p.model))
+    return this.providers.filter(p=>!p.requiresVerification&&p.availability().available && p.capabilities.includes('coding') && inputBytes<=p.maxInputBytes && this.db.prepare('SELECT 1 FROM agent_models WHERE agent_id=? AND provider_id=? AND model=?').get(agent.id,p.id,p.model))
       .map(p=>{const perf=this.db.prepare('SELECT * FROM agent_performance WHERE agent_id=? AND provider_id=? AND model=? AND category=?').get(agent.id,p.id,p.model,category);
         const reliability=perf?(perf.successful_results+1)/(perf.attempts+2):0.5;
         return {p,score:reliability*10+p.quality*(complexity==='high'?2:1)};})
@@ -46,6 +50,7 @@ export class GenerationService {
   drafts(taskId){this.store.task(taskId);return this.db.prepare('SELECT id FROM generated_drafts WHERE task_id=? ORDER BY created_at').all(taskId).map(d=>this.draft(d.id));}
   async generate(projectId,body){
     object(body,['request','category','mode','complexity','agentId','taskId'],['request']);
+    if(body.taskId&&this.db.prepare('SELECT 1 FROM team_jobs WHERE task_id=?').get(body.taskId))throw new ApiError(409,'Use team generation endpoints for team tasks');
     const request=text(body.request,'request',8000),category=text(body.category||'coding','category',80),mode=choice(body.mode||'standard',['standard','quality'],'mode'),complexity=choice(body.complexity||'normal',['normal','high'],'complexity');
     const project=this.store.project(projectId),agentId=text(body.agentId||'junior','agentId',100);
     const agent=this.db.prepare('SELECT * FROM agents WHERE id=?').get(agentId);

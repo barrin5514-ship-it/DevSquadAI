@@ -1,1 +1,20 @@
-{"name":"dev-squad-ai","version":"0.1.0","private":true,"type":"module","engines":{"node":">=24.0.0"},"scripts":{"start":"node src/server.js","test":"node --test","backup":"node scripts/backup.js"},"dependencies":{"express":"^5.1.0"}}
+{
+  "name": "dev-squad-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node --use-system-ca src/server.js",
+    "test": "node --max-old-space-size=256 --test --test-concurrency=1",
+    "backup": "node scripts/backup.js",
+    "verify:free": "node --use-system-ca scripts/verify-free-developers.js",
+    "verify:deepseek": "node --use-system-ca scripts/verify-deepseek.js",
+    "verify:developers": "node --use-system-ca scripts/verify-developers.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

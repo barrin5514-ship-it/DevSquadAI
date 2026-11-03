@@ -8,5 +8,7 @@ export function loadConfig(env = process.env) {
   const inside = (root, item) => { const r = path.relative(root, item); return !r || (!r.startsWith('..') && !path.isAbsolute(r)); };
   if (inside(config.workspace, config.database) || inside(config.workspace, config.backups) || inside(config.backups, config.database)) throw new Error('Database, workspace and backup storage must be separate');
   config.ai = aiConfig(env);
+  config.teamLiveEnabled = env.TEAM_LIVE_ENABLED === 'true';
+  config.teamFocus = env.TEAM_FOCUS === 'big_three' ? 'big_three' : 'legacy';
   return Object.freeze(config);
 }

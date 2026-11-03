@@ -1,0 +1,18 @@
+✔ dashboard sends rotation and selected roles only to the exact saved job/version (6.9139ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (3.2116ms)
+✔ child environment excludes provider credentials and native hello arguments disable tools (1.4838ms)
+✔ green requires an actual terminal hello event; partial, tool and error results fail (0.4815ms)
+✔ batch requires owner confirmation, persists only sanitized results and never calls DeepSeek (76.8111ms)
+✔ concurrent hello clicks cannot duplicate a running batch (60.4074ms)
+✔ console endpoints enforce same-origin session and do not return secrets (160.7875ms)
+✔ public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization (0.5846ms)
+✔ native hello refuses API-billed auth, bounds output and sanitizes failure text (8.0327ms)
+✔ role endpoint binds exact job/version and protects role rotation with console session (213.2929ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 997.2156
