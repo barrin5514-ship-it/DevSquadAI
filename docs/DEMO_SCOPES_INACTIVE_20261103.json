@@ -1,0 +1,73 @@
+{
+  "templateOnly": true,
+  "executionAuthorized": false,
+  "jobId": "b5e4176a-ad93-4614-8980-e07ab63bf320",
+  "taskId": "34076590-93a0-496d-9238-acd8ccb0502b",
+  "branch": "demo/friday-todo-20261106",
+  "baseRevision": "57e0ef22e96349861edf4da2f9ae3529e225ef3f",
+  "approvedAt": null,
+  "expiresAt": null,
+  "deepseek": {
+    "model": "deepseek-flash",
+    "maximumUSD": 0.01,
+    "capKind": "Application-enforced local cap, not a provider-side dollar guarantee",
+    "maxModelGET": 1,
+    "maxBalanceGET": 1,
+    "maxPOST": 1,
+    "maxOutput": 1024,
+    "thinking": "disabled",
+    "timeoutMs": 90000,
+    "noRetry": true,
+    "noFallback": true,
+    "payloadHash": "92a90fc18d4fb53445cab45ddfaf0d7185227e60cb379b6a247106ff07dd2ff4",
+    "payload": {
+      "model": "deepseek-flash",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Return only JSON with exactly one files entry: {\"files\":[{\"path\":\"src/todo.js\",\"content\":\"ES module source\"}]}. No tools, dependencies, commands, secrets or other files. Write plain-English comments. The owner must approve the finished work."
+        },
+        {
+          "role": "user",
+          "content": "Implement createTodoList() as a named ES-module export. Each instance has add(text), toggle(id), remove(id), list(). add trims nonempty text, rejects nonstrings/blank text, returns a new item {id,text,done:false}; IDs must be unique and stable. toggle flips done and returns a copy; remove deletes an item; both reject unknown IDs. list returns independent copies, so callers cannot mutate saved state. Instances are independent. Keep data in memory. No imports, file access, network, timers, process, eval or code execution. A static HTML shell and independent tests are supplied by the owner. Do not modify them."
+        }
+      ],
+      "thinking": {
+        "type": "disabled"
+      },
+      "max_tokens": 1024,
+      "stream": false,
+      "response_format": {
+        "type": "json_object"
+      }
+    }
+  },
+  "native": {
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-personal",
+      "reviewer": "claude-code"
+    },
+    "callsPerNativeAgent": 1,
+    "includedUsageOnly": true,
+    "noRetry": true,
+    "noFallback": true,
+    "claudeUsage": "Owner confirmed: 44% used, extra usage OFF",
+    "nativeAuthenticationMustBeRechecked": true
+  },
+  "messenger": {
+    "maxRounds": 3,
+    "waitSeconds": 300,
+    "stopRequired": true
+  },
+  "activationRequired": "Owner protected dashboard action; no clocks or grants created by this template",
+  "activationBindingsRequired": [
+    "actual database identity",
+    "current key fingerprint",
+    "unchanged repository base",
+    "fresh official prices",
+    "actual owner action timestamp",
+    "expiration no more than 30 minutes",
+    "matching verified isolation proof"
+  ]
+}
