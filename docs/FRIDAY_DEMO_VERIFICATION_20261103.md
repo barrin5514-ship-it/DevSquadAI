@@ -52,3 +52,11 @@ The first mock connector test incorrectly supplied Claude JSON to the Codex pars
 ## Final bounded checks
 
 Final post-check:14/15 passed; the one failure was a5-second local Git preparation timeout under memory pressure. Raised only the local Git preparation bound to20seconds (worker90-second limits unchanged). A bounded rerun of that failure plus CLI parsing/pricing tests passed3/3 in2.183s. No full suite repeated after these small corrections. The hub test command now explicitly enumerates its24 first-party test files, avoiding unfinished tests in ignored demo workspaces; --list verified scope without executing them. Final task remainsPENDING; no active grant or live attempt.
+
+## Conditional approval recheck — 2026-11-03
+
+Step1 FAIL / unresolved. Read-only diagnostics found Windows error32 (sharing violation) around node_repl.exe runtime validation in the saved sandbox log. Corrected the earlier CLI syntax: this installed CLI uses `codex sandbox`, not `codex sandbox windows`. Reset only this chat's temporary JavaScript kernel, not other helper processes, applications or authentication. One correctly formed non-model echo in the prepared demo, using the existing managed workspace profile, failed with exit1 and setup-refresh error in1064ms (20-second bound, no timeout). This did not verify filesystem isolation. The process stderr did not independently supply error32 on this latest attempt; saved diagnostic evidence and current failure are distinguished.
+
+Owner explicitly required stop on failure. Therefore step2 artifact/review mock verification and step3 current CLI account/allowance checks were NOT RUN in this attempt. No grant/approval clock was created, no model/provider request or Zapier action occurred, and no sandbox policy, credentials, application code or database was changed. Conditional paid/included-call approval remains INACTIVE because all prerequisites did not pass.
+
+Next diagnostic step: owner saves work, fully quits/reopens Codex desktop to release possible runtime-file locks. That is a recommendation, not a proven fix. Do not kill unidentified helper processes, switch to weaker sandboxing, disable protections or publish/start the Zap as a workaround. Public official reference: https://learn.chatgpt.com/docs/windows/windows-sandbox . Exact sanitized probe result is in CODEX_SANDBOX_RECHECK_20261103.json.

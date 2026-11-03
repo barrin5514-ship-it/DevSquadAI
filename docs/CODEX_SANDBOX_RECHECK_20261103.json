@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-03",
+  "modelRequests": 0,
+  "probe": "one correctly formed non-model command in prepared demo",
+  "exitCode": 1,
+  "elapsedMs": 1064,
+  "timeoutMs": 20000,
+  "timedOut": false,
+  "startupPassed": false,
+  "setupRefreshError": true,
+  "sharingViolation": false,
+  "readIsolationVerified": false
+}
