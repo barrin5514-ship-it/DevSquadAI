@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-03",
+  "ownerReportedPCReboot": true,
+  "modelRequests": 0,
+  "attempts": 1,
+  "probe": "non-model sandbox echo in ID-bound demo",
+  "exitCode": 1,
+  "elapsedMs": 1233,
+  "timeoutMs": 20000,
+  "timedOut": false,
+  "startupPassed": false,
+  "setupRefreshError": true,
+  "sharingViolation": false,
+  "errorCategories": [],
+  "readIsolationVerified": false,
+  "latestSanitizedLog": {
+    "log": "sandbox.2026-11-03.log",
+    "categories": [
+      "runtime read/execute validation failed",
+      "setup refresh had errors"
+    ],
+    "osErrorCodes": [
+      32
+    ],
+    "executables": [
+      "node_repl.exe",
+      "codex-windows-sandbox-setup.exe",
+      "codex.exe"
+    ]
+  }
+}
