@@ -37,7 +37,7 @@ test('concurrent hello clicks cannot duplicate a running batch',async t=>{
 });
 test('console endpoints enforce same-origin session and do not return secrets',async t=>{
  const f=fixture(t),server=f.app.app.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(resolve=>server.close(resolve)));const base='http://127.0.0.1:'+server.address().port,token=(await(await fetch(base+'/api/console/session')).json()).data.token;
- const request=auth=>fetch(base+'/api/console/big-three/hello',{method:'POST',headers:{'Content-Type':'application/json','X-Dashboard-Token':auth},body:JSON.stringify({approvedBy:'owner',confirmIncluded:true})});assert.equal((await request('')).status,403);assert.equal(f.calls,0);const good=await request(token);assert.equal(good.status,200);assert.ok(!(await good.text()).includes('connection-test-secret'));
+ const request=auth=>fetch(base+'/api/console/big-three/hello',{method:'POST',headers:{'Content-Type':'application/json','X-Dashboard-Token':auth},body:JSON.stringify({approvedBy:'owner',confirmIncluded:true})});assert.equal((await request('')).status,403);assert.equal(f.calls,0);const good=await request(token);assert.equal(good.status,410);assert.equal(f.calls,0);assert.ok(!(await good.text()).includes('connection-test-secret'));
 });
 test('public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization',()=>{
  assert.equal(helloEstimate.conservativeUSD,(helloEstimate.inputTokensReserved*helloEstimate.inputUSDPerMillion+helloEstimate.outputTokensMax*helloEstimate.outputUSDPerMillion)/1e6);assert.ok(helloEstimate.conservativeUSD<helloEstimate.localCapUSD&&helloEstimate.localCapUSD<0.01);assert.equal(helloEstimate.thinking,'disabled');

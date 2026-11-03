@@ -1,0 +1,23 @@
+✔ child environment excludes provider credentials and native hello arguments disable tools (1.1924ms)
+✔ green requires an actual terminal hello event; partial, tool and error results fail (0.9302ms)
+✔ batch requires owner confirmation, persists only sanitized results and never calls DeepSeek (112.7759ms)
+✔ concurrent hello clicks cannot duplicate a running batch (77.3805ms)
+✔ console endpoints enforce same-origin session and do not return secrets (179.7055ms)
+✔ public-price hello estimate is arithmetically correct, conservative, under one cent and not authorization (0.2487ms)
+✔ native hello refuses API-billed auth, bounds output and sanitizes failure text (5.5801ms)
+✔ role endpoint binds exact job/version and protects role rotation with console session (263.153ms)
+✔ DeepSeek read-only account and USD balance verification works with paid generation disabled (139.5219ms)
+✔ DeepSeek balance unavailable, zero balance and unsupported model never invent readiness (220.3853ms)
+✔ DeepSeek authentication failure is sanitized and key rotation invalidates observations (117.1486ms)
+✔ read-only DeepSeek dashboard endpoint needs owner confirmation and session capability (238.4743ms)
+✔ catalog 403 classification distinguishes network, model permission, auth and rate limits without raw messages (0.2709ms)
+✔ large account catalog passes bounded preflight while model responses retain smaller cap (20.9505ms)
+✔ successful live evidence stays distinct from account verification and retirement wins (103.4188ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2079.9944

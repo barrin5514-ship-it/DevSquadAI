@@ -70,7 +70,7 @@ test('empty webhook or missing read-only token cannot start, and another job can
 });
 test('console Stop requires dashboard capability and direct run cannot bypass waiting',async t=>{
  const f=fixture(t),server=f.r.app.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(r=>server.close(r)));const base='http://127.0.0.1:'+server.address().port+'/api/console',cap=(await(await fetch(base+'/session')).json()).data.token;
- const post=(route,body,auth=cap)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json','X-Dashboard-Token':auth},body:JSON.stringify(body)});assert.equal((await post('/shared-jobs/'+f.job.id+'/messenger/stop',{},'')).status,403);assert.equal((await post('/shared-jobs/'+f.job.id+'/run',{})).status,409);assert.equal((await post('/shared-jobs/'+f.job.id+'/messenger/stop',{})).status,200);assert.equal(f.r.team.messenger.get(f.job.id).status,'stopped');
+ const post=(route,body,auth=cap)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json','X-Dashboard-Token':auth},body:JSON.stringify(body)});assert.equal((await post('/shared-jobs/'+f.job.id+'/messenger/stop',{},'')).status,403);assert.equal((await post('/shared-jobs/'+f.job.id+'/run',{})).status,410);assert.equal((await post('/shared-jobs/'+f.job.id+'/messenger/stop',{})).status,200);assert.equal(f.r.team.messenger.get(f.job.id).status,'stopped');
 });
 
 test('Stop during GitHub pickup rejects a late matching prompt without starting another worker',async t=>{

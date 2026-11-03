@@ -1,0 +1,35 @@
+✔ Big Three shows project picker, task box and Run without any consent or scope controls (5.7629ms)
+✔ Run posts only the selected project, task and duplicate-protection ID (2.8421ms)
+✔ Stop remains visible and operational even while the ordinary page is busy (1.6982ms)
+✔ new task selection keeps prior project chats in history without dispatch (1.4226ms)
+✔ stuck alert uses an on-screen alert role and does not silently resume work (1.2056ms)
+✔ Stop remains visible when the owner selects another project or chat (1.5439ms)
+✔ sidebar has separate Projects, Big Three and earlier-work navigation (3.6939ms)
+✔ active project renderer has no spending-scope, call-count, round-cap or consent action (1.2695ms)
+✔ parent view identifies the pending owner decision and links to the exact child without accepting it (4.6305ms)
+✔ project verification names unmet review/correction requirements and never offers acceptance for them (4.8315ms)
+✔ project verification becomes available only with completed children in this project and plan (2.6999ms)
+✔ eligible revision keeps explicit owner acceptance as a button without a consent checkbox (1.869ms)
+✔ missing current draft and historical/wrong-task/unapproved review never render acceptance (8.0974ms)
+✔ plain-English explanation appears above unchanged code and test pass meaning stays explanatory (1.5745ms)
+✔ future or stale summaries have an honest fallback and still allow inspection of exact code (1.3627ms)
+✔ ordinary project runs without scopes, budgets, call grants, round caps or messenger setup (151.952ms)
+✔ different problems allow more than three rounds and more than one call to each agent (322.3206ms)
+✔ same failing test three consecutive times pauses and records a durable stuck alert (198.404ms)
+✔ worker patch cannot escape the selected project or read/write credentials (85.334ms)
+✔ a builder cannot review its own step and no owner acceptance is granted (107.645ms)
+✔ duplicate Run and simultaneous chats cannot dispatch twice or share a folder lock (80.4592ms)
+✔ file changes and earlier contents remain in history; changed reviewed files cannot be accepted (131.6769ms)
+✔ unknown native outcome keeps folder locked instead of allowing overlapping work (74.6545ms)
+✔ a recurring test pauses on its third consecutive failure even if other failures differ (280.9036ms)
+✔ hard-linked files cannot redirect a worker write outside its selected folder (83.2326ms)
+✔ syntax startup has a bounded low-RAM allowance and does not execute source (5.0055ms)
+✔ syntax process timeout is infrastructure failure, not incorrectly reported as invalid code (1.5573ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2197.7319

@@ -1,0 +1,13 @@
+{
+  "kind": "first_party_static_fixture_only",
+  "modelRequests": 0,
+  "executed": true,
+  "passed": true,
+  "count": 3,
+  "failed": 0,
+  "failures": [],
+  "summary": "3 tests; 0 failed.",
+  "outputHash": "6059623b6ee4b12004b5a73eca791c5d3b8dfd365cd14b6f2de4a34a475b301b",
+  "revisionHash": "3ff2447b5776c881420cd4aba268eab21b4e66cf7f9a34e9d70536dc337a401b",
+  "backend": "mxc"
+}

@@ -1,4 +1,4 @@
-import {report} from './review-fixture.js';
+import {report,mockReview} from './review-fixture.js';
 import http from 'node:http';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,11 +13,7 @@ async function project(f){const r=await f.post('/projects',{name:'Calculator wor
 async function planned(f){const p=await project(f),url='/tasks/'+p.task.task_id;assert.equal((await f.post(url+'/start-plan',{})).status,200);assert.equal((await f.post(url+'/plan',plan)).status,200);const approval=await f.post(url+'/approve-plan',{approvedBy:'owner',approve:true});return {...p,child:approval.data.children[0]};}
 
 
-async function consoleReview(f,id,decision='approved'){
- Object.assign(f.r.team.paid.settings,{key:'console-paid-mock',model:'deepseek-flash',inputPrice:1,outputPrice:2});Object.assign(f.r.team.paid.policy,{enabled:true,requestLimit:1,dailyLimit:10,totalLimit:100,pricesVerifiedUntil:new Date(Date.now()+3600000).toISOString()});f.r.team.liveOptIn=true;
- const original=f.r.team.fetch;f.r.team.fetch=async url=>new Response(JSON.stringify(url.endsWith('/user/balance')?{is_available:true,balance_infos:[{currency:'USD',total_balance:'100'}]}:{choices:[{message:{content:JSON.stringify(report(decision))},finish_reason:'stop'}],usage:{prompt_tokens:12,completion_tokens:24,total_tokens:36}}));
- try{const request=await f.post('/tasks/'+id+'/packet',{reviewer:'DeepSeek',proposedChanges:'Independent review'});assert.equal(request.status,200);const quote=await f.post('/tasks/'+id+'/review-quote',{reviewId:request.data.id,outputTokens:1024});assert.equal(quote.status,200);return await f.post('/tasks/'+id+'/review-run',{quoteId:quote.data.quoteId,approvedBy:'owner',confirmPaid:true,maximumUSD:quote.data.reservedUSD});}finally{f.r.team.fetch=original;}
-}
+async function consoleReview(f,id,decision='approved'){return {status:200,data:await mockReview(f.r.team,id,decision)};}
 
 test('console browser project creation persists requirements and preserves existing SQLite records',async t=>{const f=await fixture(t);const before=f.r.service.create({name:'Preserved existing project'});const p=await project(f);assert.equal(f.r.store.context(p.project.id).context_summary,requirements);assert.equal(f.r.team.get(p.task.task_id).description,requirements);assert.equal(f.r.store.project(before.id).name,'Preserved existing project');const {DatabaseSync}=await import('node:sqlite');const check=new DatabaseSync(f.config.database,{readOnly:true});assert.equal(check.prepare('SELECT count(*) n FROM projects').get().n,2);check.close();});
 test('console rejects empty, oversized, credential-bearing and unexpected project fields before persistence',async t=>{const f=await fixture(t);for(const body of [{name:'',requirements},{name:'x',requirements:''},{name:'x',requirements:'x'.repeat(8001)},{name:'console-secret',requirements},{name:'x',requirements,unknown:true}])assert.equal((await f.post('/projects',body)).status,400);assert.equal(f.r.store.projects().length,0);});

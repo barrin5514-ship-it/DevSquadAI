@@ -1,0 +1,41 @@
+✔ Big Three shows project picker, task box and Run without any consent or scope controls (4.8552ms)
+✔ Run posts only the selected project, task and duplicate-protection ID (2.2133ms)
+✔ Stop remains visible and operational even while the ordinary page is busy (3.0112ms)
+✔ new task selection keeps prior project chats in history without dispatch (1.993ms)
+✔ stuck alert uses an on-screen alert role and does not silently resume work (1.5363ms)
+✔ Stop remains visible when the owner selects another project or chat (1.335ms)
+✔ sidebar has separate Projects, Big Three and earlier-work navigation (1.3411ms)
+✔ active project renderer has no spending-scope, call-count, round-cap or consent action (1.4043ms)
+✔ parent view identifies the pending owner decision and links to the exact child without accepting it (6.3798ms)
+✔ project verification names unmet review/correction requirements and never offers acceptance for them (7.449ms)
+✔ project verification becomes available only with completed children in this project and plan (3.7411ms)
+✔ eligible revision keeps explicit owner acceptance as a button without a consent checkbox (3.4859ms)
+✔ missing current draft and historical/wrong-task/unapproved review never render acceptance (12.3948ms)
+✔ plain-English explanation appears above unchanged code and test pass meaning stays explanatory (2.3516ms)
+✔ future or stale summaries have an honest fallback and still allow inspection of exact code (2.6598ms)
+✔ ordinary project runs without scopes, budgets, call grants, round caps or messenger setup (271.9893ms)
+✔ different problems allow more than three rounds and more than one call to each agent (535.3071ms)
+✔ same failing test three consecutive times pauses and records a durable stuck alert (301.051ms)
+✔ worker patch cannot escape the selected project or read/write credentials (122.9046ms)
+✔ a builder cannot review its own step and no owner acceptance is granted (215.0497ms)
+✔ duplicate Run and simultaneous chats cannot dispatch twice or share a folder lock (90.5525ms)
+✔ file changes and earlier contents remain in history; changed reviewed files cannot be accepted (207.4038ms)
+✔ unknown native outcome keeps folder locked instead of allowing overlapping work (117.8633ms)
+✔ a recurring test pauses on its third consecutive failure even if other failures differ (348.7693ms)
+✔ hard-linked files cannot redirect a worker write outside its selected folder (72.4624ms)
+✔ a prior Run request ID stays deduplicated after the same chat is resumed (130.2891ms)
+✔ retired demo grant files cannot authorize or block the new project workflow (304.2569ms)
+✔ same known worker problem on three owner-requested continuations shows the stuck alert (280.9098ms)
+✔ project and prepared chat APIs preserve old records without starting or exposing credentials (468.5156ms)
+✔ Run retains session protection and project/duplicate lock but needs no scope or checkbox fields (315.2585ms)
+✔ obsolete scoped/demo and hello dispatch endpoints are retired without outbound requests (425.4342ms)
+✔ syntax startup has a bounded low-RAM allowance and does not execute source (6.0512ms)
+✔ syntax process timeout is infrastructure failure, not incorrectly reported as invalid code (1.6339ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5573.9482

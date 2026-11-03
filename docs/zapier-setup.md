@@ -149,3 +149,7 @@ The tiny to-do demo now has a verified MXC launcher and strict SQLite artifact/t
 ## Current bound-demo run control
 
 Open **Big Three Demo** in the left sidebar. For a fresh eligible demo with setup ready, check **I approve this run: DeepSeek up to $0.01, one included call each for Codex and Claude Code, 3 rounds, 5-minute limit.**, then click **Run Big Three**. The button prepares the exact scope, rechecks actual state, and starts through existing guards. Completed runs stay locked; no retries or scope resets. Saved webhook configuration survives restarts, and no setup steps appear when it is already enabled. See ONE_CLICK_BIG_THREE_20261103.md.
+
+## Current project workflow (supersedes demo start steps)
+
+New work uses Big Three → choose a project → type a task → Run. It uses built-in role handoffs, not the old scoped demo/Zapier start controls. No Zapier publication, spending scope or consent setup is required. Existing Zapier configuration and completed demo history remain preserved; the new runner does not trigger the Zap. See PROJECT_WORKFLOW_20261103.md and DEMO_CALL_AUDIT_20261103.md.

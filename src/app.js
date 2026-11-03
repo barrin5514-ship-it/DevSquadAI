@@ -1,3 +1,4 @@
+import {ProjectStudio} from './services/project-studio.js';
 import {consoleRoutes} from './routes/console.js';
 import {claimRuntime} from './services/runtime-lease.js';
 import express from 'express';
@@ -23,6 +24,7 @@ export function createApp(config, options = {}) {
     const store = new Store(db), service = new ProjectService(store, workspace), app = express();
     const ai = new GenerationService(store, workspace, config, options);
     const team = new TeamOrchestrator(store,workspace,config,ai.usage,options);
+    team.studio=new ProjectStudio(team,service,options.studioOptions||{});
     app.disable('x-powered-by'); app.use(express.json({limit:'32kb'}));
     app.use('/api/console',consoleRoutes(team,service));
     app.use('/api/team',teamRoutes(team));

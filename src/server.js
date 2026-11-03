@@ -9,5 +9,5 @@ try {
   const server = app.listen(config.port, config.host, () => { if(config.logLevel==='info') console.log(`Dev Squad AI listening on port ${config.port}`); });
   server.requestTimeout = config.timeout;
   server.on('error', () => { console.error('Server could not start'); db.close(); process.exitCode=1; });
-  for(const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>{team.messenger.close();server.close(()=>db.close());});
+  for(const signal of ['SIGINT','SIGTERM']) process.once(signal,async()=>{await team.studio.close();team.messenger.close();server.close(()=>db.close());});
 } catch { console.error('Startup failed. Check configuration and storage permissions.'); process.exitCode=1; }

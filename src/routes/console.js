@@ -21,26 +21,28 @@ export function consoleRoutes(team,service){
   next();
  });
  r.get('/session',(req,res)=>send(res,{token}));
+ // Old scoped/demo dispatch is retired. Existing records remain readable, but
+ // cannot start an unexpected paid job through an obsolete control.
+ r.use((req,res,next)=>{if(req.method==='POST'&&/^(?:\/big-three\/hello|\/demo-workers\/|\/messenger\/setup-sample|\/shared-jobs\/[^/]+\/(?:run|messenger\/(?:prepare|start|resume|pickup))|\/tasks\/[^/]+\/(?:shared-job|paid-(?:run|quote)|review-(?:run|quote))|\/paid\/balance)/.test(req.path))return next(new ApiError(410,'The old scoped/demo workflow is retired. Use Projects and Run.'));next();});
+ r.post('/shared-jobs/:id/roles',(req,res)=>{team.fields(req.body,['roles','rotate','version'],['version']);if(!Number.isSafeInteger(req.body.version)||team.coordinator.read(req.params.id).version!==req.body.version)throw new ApiError(409,'The job changed. Refresh before changing roles.');if(req.body.rotate!==undefined&&typeof req.body.rotate!=='boolean')throw new ApiError(400,'Invalid rotation choice');const {lease,...job}=team.coordinator.setRoles(req.params.id,req.body.roles,req.body.rotate===true);send(res,job);});
+ r.post('/paid/verify',async(req,res)=>send(res,await team.paid.inspect(req.body)));
+ r.get('/studio',(req,res)=>send(res,team.studio.list()));
+ r.post('/studio/projects',(req,res)=>send(res,team.studio.project(req.body),201));
+ r.post('/studio/projects/:id/chats',(req,res)=>{team.fields(req.body,['task']);send(res,team.studio.create(req.params.id,req.body.task),201);});
+ r.get('/studio/chats/:id',(req,res)=>send(res,team.studio.detail(req.params.id)));
+ r.post('/studio/projects/:id/run',(req,res)=>send(res,team.studio.start(req.params.id,req.body),202));
+ r.post('/studio/chats/:id/stop',(req,res)=>{team.fields(req.body,[]);send(res,team.studio.stop(req.params.id));});
+ r.post('/studio/chats/:id/accept',(req,res)=>{team.fields(req.body,[]);send(res,team.studio.accept(req.params.id));});
+
  r.get('/big-three/connections',(req,res)=>send(res,team.hubConnections.status()));
- r.post('/big-three/hello',async(req,res)=>send(res,await team.hubConnections.test(req.body)));
  r.get('/settings/webhook',(req,res)=>send(res,team.webhook.status()));
  r.post('/settings/webhook',(req,res)=>send(res,team.webhook.configure(req.body)));
  r.get('/messenger',(req,res)=>send(res,team.messenger.status()));
  r.get('/demo-workers',(req,res)=>send(res,team.demoWorkers.status()));
- r.post('/demo-workers/:id/approve-scopes',async(req,res)=>send(res,await team.demoApproval.prepare(req.params.id,req.body)));
- r.post('/demo-workers/prepare',(req,res)=>{team.fields(req.body,['approvedBy','prepareOnly']);if(req.body.approvedBy!=='owner'||req.body.prepareOnly!==true)throw new ApiError(403,'Owner authorization for offline preparation is required');send(res,team.demoWorkers.prepare(service),201);});
- r.post('/messenger/setup-sample',async(req,res)=>{team.fields(req.body,['approvedBy','confirmSample']);if(req.body.approvedBy!=='owner'||req.body.confirmSample!==true)throw new ApiError(403,'Approve the fake report and possible Zapier task usage first');send(res,await team.messenger.setupSample());});
- r.post('/shared-jobs/:id/messenger/prepare',(req,res)=>{team.fields(req.body,['maxRounds','timeoutSeconds'],[]);send(res,team.messenger.prepare(req.params.id,req.body),201);});
- r.post('/shared-jobs/:id/messenger/start',async(req,res)=>{team.fields(req.body,['approvedBy','confirmLoop']);if(req.body.approvedBy!=='owner'||req.body.confirmLoop!==true)throw new ApiError(403,'Owner approval for this bounded loop is required');send(res,await team.messenger.start(req.params.id));});
  r.post('/shared-jobs/:id/messenger/stop',(req,res)=>{team.fields(req.body,[]);send(res,team.messenger.stop(req.params.id));});
- r.post('/shared-jobs/:id/messenger/resume',(req,res)=>{team.fields(req.body,[]);send(res,team.messenger.resumeWaiting(req.params.id));});
- r.post('/shared-jobs/:id/messenger/pickup',async(req,res)=>{team.fields(req.body,[]);send(res,await team.messenger.poll(req.params.id));});
- r.post('/shared-jobs/:id/roles',(req,res)=>{team.fields(req.body,['roles','rotate','version'],['version']);if(!Number.isSafeInteger(req.body.version)||team.coordinator.read(req.params.id).version!==req.body.version)throw new ApiError(409,'The job changed. Refresh before changing roles.');if(req.body.rotate!==undefined&&typeof req.body.rotate!=='boolean')throw new ApiError(400,'Invalid rotation choice');const {lease,...job}=team.coordinator.setRoles(req.params.id,req.body.roles,req.body.rotate===true);send(res,job);});
  r.get('/shared-jobs/:id',(req,res)=>send(res,{job:team.coordinator.list().find(j=>j.id===req.params.id),history:team.coordinator.history(req.params.id)}));
- r.post('/tasks/:id/shared-job',(req,res)=>{team.fields(req.body,['approvedBy']);if(req.body.approvedBy!=='owner'||team.config.teamFocus!=='big_three')throw new ApiError(403,'Owner-approved Big Three task required');const {lease,...job}=team.coordinator.create(req.params.id);send(res,job,201);});
  // No executable connectors are registered by production. This bounded call pauses
  // cleanly with setup reasons; it cannot turn on a provider or paid fallback.
- r.post('/shared-jobs/:id/run',async(req,res)=>{team.fields(req.body,[]);if(team.config.teamFocus!=='big_three')throw new ApiError(403,'Big Three focus required');if(team.db.prepare('SELECT 1 FROM messenger_jobs WHERE job_id=?').get(req.params.id))throw new ApiError(409,'Use this job’s messenger controls; waiting and Stop cannot be bypassed');const {lease,...job}=await team.coordinator.run(req.params.id);const webhook=await team.webhook.send(job);send(res,{...job,webhook});});
  r.get('/',(req,res)=>send(res,{...team.dashboard(),connections:teamConnectionStatus(team),events:team.db.prepare('SELECT e.*,t.description,t.project_id FROM team_events e JOIN tasks t ON t.id=e.task_id ORDER BY e.id DESC LIMIT 200').all(),reviewQueue:team.db.prepare("SELECT p.id,p.task_id,'DeepSeek' reviewer,p.status,p.created_at,t.project_id,t.description,j.state FROM deepseek_review_requests p JOIN team_jobs j ON j.task_id=p.task_id JOIN tasks t ON t.id=p.task_id WHERE p.draft_id=j.draft_id ORDER BY p.created_at DESC").all(),usage:team.usage.list()}));
  r.post('/tasks/:id/scope-live',(req,res)=>{team.fields(req.body,['approvedBy','confirmIncluded']);if(req.body.approvedBy!=='owner'||req.body.confirmIncluded!==true||!team.taskGrant)throw new ApiError(403,'Owner task-only session authorization required');team.taskGrant.assert(req.params.id);team.taskGrant.sessionEnabled=true;send(res,{taskSessionEnabled:true,globalLiveEnabled:team.liveOptIn});});
  r.post('/tasks/:id/verify-scope',async(req,res)=>{
@@ -68,12 +70,6 @@ export function consoleRoutes(team,service){
  r.post('/tasks/:id/approve-plan',(req,res)=>send(res,team.approvePlan(req.params.id,req.body)));
  r.post('/tasks/:id/verify-children',(req,res)=>{team.fields(req.body,[]);send(res,team.verifyParent(req.params.id));});
  r.post('/tasks/:id/run',async(req,res)=>{team.fields(req.body,['authorizeRequest','expectedModel','allowFallback','category','operationId'],['authorizeRequest','expectedModel']);const task=team.get(req.params.id),model=team.models(req.params.id).find(m=>m.key===task.model_key);if(!model||req.body.expectedModel!==model.model)throw new ApiError(409,'Assignment changed. Refresh and authorize the displayed model again.');send(res,await team.run(req.params.id,{authorizeRequest:req.body.authorizeRequest,...Object.fromEntries(["allowFallback","category","operationId"].filter(k=>req.body[k]!==undefined).map(k=>[k,req.body[k]]))}));});
- r.post('/tasks/:id/review-quote',(req,res)=>{team.fields(req.body,['reviewId','outputTokens']);send(res,team.paid.quote(req.params.id,req.body.outputTokens,req.body.reviewId));});
- r.post('/tasks/:id/review-run',async(req,res)=>send(res,await team.paid.execute(req.params.id,req.body,'review')));
- r.post('/tasks/:id/paid-quote',(req,res)=>{team.fields(req.body,['outputTokens']);send(res,team.paid.quote(req.params.id,req.body.outputTokens));});
- r.post('/tasks/:id/paid-run',async(req,res)=>send(res,await team.paid.execute(req.params.id,req.body)));
- r.post('/paid/verify',async(req,res)=>send(res,await team.paid.inspect(req.body)));
- r.post('/paid/balance',async(req,res)=>{team.fields(req.body,['approvedBy','confirmPaid']);send(res,await team.paid.balance(req.body));});
  r.post('/tasks/:id/resume',async(req,res)=>send(res,await team.resume(req.params.id,req.body)));
  r.post('/tasks/:id/pause',(req,res)=>send(res,team.pause(req.params.id,req.body)));
  r.post('/tasks/:id/auto-assign',(req,res)=>send(res,team.autoAssign(req.params.id,req.body)));

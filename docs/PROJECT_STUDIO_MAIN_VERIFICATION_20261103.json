@@ -1,0 +1,26 @@
+{
+  "originalTables": 50,
+  "originalRowsPreserved": true,
+  "changedOriginalTables": [],
+  "envUnchanged": true,
+  "integrity": "ok",
+  "migrations": 13,
+  "friday": {
+    "status": "ready",
+    "runRequested": false,
+    "eventCount": 1
+  },
+  "oldDemo": {
+    "status": "finished",
+    "round": 3
+  },
+  "studioActive": 0,
+  "policy": {
+    "folderLock": true,
+    "noSelfReview": true,
+    "spendingCap": false,
+    "callLimit": false,
+    "roundLimit": false,
+    "handoffDeadline": false
+  }
+}

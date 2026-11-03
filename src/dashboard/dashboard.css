@@ -75,3 +75,6 @@ button,.project-card h3,.task-card p,.agent-identity h3,.data-list dd{overflow-w
 .agent-facts{font-size:13px}.agent-facts dt{font-size:11px}.agent-card .microcopy{font-size:12px}.model-id{font-size:12px!important}
 @media(max-width:1200px){main{padding:28px 24px}.team-mini>.status-chip{white-space:normal}.hero .field>span{font-size:13px}.hero input,.hero textarea{font-size:14px}}
 @media(max-width:720px){.sidebar{background:linear-gradient(120deg,#2c1b40,#171128)}nav button{font-size:11px}.topbar{height:auto;min-height:62px;gap:8px;padding-top:9px;padding-bottom:9px}.top-actions{gap:8px}main{padding:24px 16px}.panel{padding:20px 16px}.hero>form{border-top-color:#a18abf}.team-mini{flex-wrap:wrap}.team-mini .info{flex:1;min-width:100px}.team-mini>.status-chip{margin-left:43px;max-width:calc(100% - 43px)}.data-list{grid-template-columns:1fr}.page-heading h1{font-size:28px}.stage{flex:1 1 90px}.agent-card .status-chip{font-size:11px}}
+
+/* Stop stays in reach while long chat history scrolls. */
+.studio-stopbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:10px}

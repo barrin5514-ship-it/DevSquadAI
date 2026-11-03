@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { ApiError } from '../middleware/errors.js';
-export function validateDraft(raw, workspace, projectPath) {
+export function validateDraft(raw, workspace, projectPath,{syntaxCheck=spawnSync}={}) {
   let result;
   try{result=JSON.parse(raw);}catch{throw new ApiError(422,'Generated response must be a JSON object');}
   if(!result || Object.keys(result).some(k=>k!=='files') || !Array.isArray(result.files) || result.files.length<1 || result.files.length>10)throw new ApiError(422,'Generated response requires 1 to 10 files');
@@ -17,8 +17,9 @@ export function validateDraft(raw, workspace, projectPath) {
     if(extension==='.json'){try{JSON.parse(file.content);}catch{throw new ApiError(422,'Generated JSON is malformed');}parsed++;}
     if(['.js','.mjs','.cjs'].includes(extension)) {
       // --check parses stdin; it never evaluates the submitted code or imports.
-      const check=spawnSync(process.execPath,[`--input-type=${extension==='.cjs'?'commonjs':'module'}`,'--check'],{input:file.content,timeout:2000,maxBuffer:100000,windowsHide:true,env:{SystemRoot:process.env.SystemRoot||'',PATH:process.env.PATH||''}});
-      if(check.error||check.status!==0)throw new ApiError(422,'Generated JavaScript failed syntax checks');
+      const check=syntaxCheck(process.execPath,[`--input-type=${extension==='.cjs'?'commonjs':'module'}`,'--check'],{input:file.content,timeout:10000,maxBuffer:100000,windowsHide:true,env:{SystemRoot:process.env.SystemRoot||'',PATH:process.env.PATH||''}});
+      if(check.error){const error=new ApiError(503,'JavaScript syntax checker was unavailable or timed out; this is a local runtime problem, not invalid code');error.code='syntax_check_unavailable';throw error;}
+      if(check.status!==0)throw new ApiError(422,'Generated JavaScript failed syntax checks');
       parsed++;
     }
   }

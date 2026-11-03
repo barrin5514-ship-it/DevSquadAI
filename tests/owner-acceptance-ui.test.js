@@ -38,9 +38,9 @@ test('project verification becomes available only with completed children in thi
  const f=fixture();f.child.state='COMPLETED';f.render("state.data.tasks.push({task_id:'unrelated',parent_id:'other-plan',project_id:'other-project',state:'ASSIGNED'});projectCompletionControls(target,parent)");assert.equal(f.button('Verify completed project').disabled,false);assert.deepEqual(f.actions,[]);
  const empty=fixture();empty.render('state.data.tasks=[parent];projectCompletionControls(target,parent)');assert.equal(empty.button('Verify completed project').disabled,true);assert.match(empty.context.target.textContent,/no development tasks/);
 });
-test('eligible revision renders existing acceptance but still requires an explicit checked acknowledgement',async()=>{
+test('eligible revision keeps explicit owner acceptance as a button without a consent checkbox',async()=>{
  const f=fixture();f.render('acceptance(target,child)');const accept=f.button('Accept completed work');assert.ok(accept);assert.deepEqual(f.actions,[]);
- await accept.onclick();assert.equal(f.actions.length,0);const checkbox=f.all().find(n=>n.tagName==='input'&&n.type==='checkbox');assert.equal(checkbox.checked,false);checkbox.checked=true;await accept.onclick();assert.equal(f.actions.length,1);assert.equal(f.actions[0].action,'complete');assert.equal(f.actions[0].body.approvedBy,'owner');assert.equal(f.actions[0].body.approve,true);
+ assert.equal(f.all().some(n=>n.tagName==='input'&&n.type==='checkbox'),false);await accept.onclick();assert.equal(f.actions.length,1);assert.equal(f.actions[0].action,'complete');assert.equal(f.actions[0].body.approvedBy,'owner');assert.equal(f.actions[0].body.approve,true);
 });
 test('missing current draft and historical/wrong-task/unapproved review never render acceptance',()=>{
  for(const setup of ["state.detail.draft=null","state.detail.seniorReviews=[]","state.detail.seniorReviews[0].draft_id='old'","state.detail.seniorReviews[0].task_id='other'","state.detail.seniorReviews[0].status='awaiting_authorization'","state.detail.seniorReviews[0].status='rejected'"]){const f=fixture();f.render(setup+';acceptance(target,child)');assert.equal(f.button('Accept completed work'),undefined);assert.match(f.context.target.textContent,/Owner acceptance unavailable/);assert.equal(f.actions.length,0);}

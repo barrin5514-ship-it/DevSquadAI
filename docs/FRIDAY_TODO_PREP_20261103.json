@@ -1,0 +1,35 @@
+{
+  "projectId": "d6cf55a4-198c-40a7-98b4-8bb6d8c5af95",
+  "chatId": "b38be3dd-b586-440c-922b-755c188a900a",
+  "name": "FRIDAY · Fresh to-do app · 2026-11-06",
+  "status": "ready",
+  "files": [
+    {
+      "file": "package.json",
+      "hash": "aa79795f837eae5aa6e7663a5c8197c126329f6dd4bc41ac56b001fa8dcfe923"
+    },
+    {
+      "file": "README.md",
+      "hash": "4cd6a0d49abb2598e0152bddc848135b114fc98bbadba402f38e2c9126fcaa4b"
+    },
+    {
+      "file": "src/todo.js",
+      "hash": "fa17abb09c619806d4ca6634fccd23042228b723c90ec770a37028b9243e345d"
+    },
+    {
+      "file": "index.html",
+      "hash": "91f1d095a8466dce878139cb6cc24d4d86df7538888ba355a4b4af1fc7e48658"
+    },
+    {
+      "file": "app.js",
+      "hash": "5cf889ed09ed02199adc24d0902b589baf7b6e5caed542b3f9520a328128c2e9"
+    },
+    {
+      "file": "tests/todo.test.js",
+      "hash": "493d6c1b1686ae35b756b85209ea20c6d461e8739f1ad4b870b7afa8cf23e8bc"
+    }
+  ],
+  "url": "http://127.0.0.1:3000/team#project/d6cf55a4-198c-40a7-98b4-8bb6d8c5af95/chat/b38be3dd-b586-440c-922b-755c188a900a",
+  "modelRequests": 0,
+  "runRequests": 0
+}
