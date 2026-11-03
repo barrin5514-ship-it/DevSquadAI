@@ -1,0 +1,12 @@
+✔ pilot independent fixed cases pass mock only and detect broken buffer implementation (42.4751ms)
+✔ pilot templates cannot serve as an active scope or start an approval clock (6.1521ms)
+✔ pilot adapter mock preserves exact model, low thinking, native JSON, cap and single dispatch (109.9231ms)
+✔ pilot adapter mock treats truncation and empty final response as incomplete without retry (2.3222ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 541.192

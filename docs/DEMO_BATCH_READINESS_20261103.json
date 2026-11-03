@@ -1,0 +1,14 @@
+{
+  "jobState": "ready",
+  "taskState": "PENDING",
+  "builderGrants": 0,
+  "workerAttempts": 0,
+  "integrity": "ok",
+  "liveSetup": "not ready",
+  "reason": "Production isolated launcher remains deliberately unimplemented/disabled; native no-extra-usage checks incomplete; business artifact/review import unproven",
+  "modelRequests": 0,
+  "zapierTriggers": 0,
+  "generationRequests": 0,
+  "nativeReadOnlyAccountRpcMethods": 2,
+  "claudeReadOnlyAuthChecks": 1
+}
