@@ -42,7 +42,7 @@ export class TeamOrchestrator {
   this.db.prepare('DELETE FROM team_task_locks').run();
   for(const r of this.db.prepare("SELECT * FROM deepseek_review_requests WHERE status='running'").all())this.senior.fail(r.task_id,r.id,r.execution_id);
   for(const j of this.db.prepare("SELECT * FROM team_jobs WHERE state='IN_PROGRESS'").all())this.move(j.task_id,'BLOCKED','system','Interrupted request; explicit reassignment required');
-  for(const j of this.db.prepare("SELECT task_id FROM team_jobs j WHERE state='VERIFIED' AND parent_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM deepseek_review_requests r WHERE r.task_id=j.task_id AND r.draft_id=j.draft_id AND r.status='approved')").all())if(!this.demoReviews.approved(j))this.move(j.task_id,'AWAITING_REVIEW','system','Retired reviewer approval preserved as history; independent current review required before new completion');
+  for(const j of this.db.prepare("SELECT task_id,draft_id FROM team_jobs j WHERE state='VERIFIED' AND parent_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM deepseek_review_requests r WHERE r.task_id=j.task_id AND r.draft_id=j.draft_id AND r.status='approved')").all())if(!this.demoReviews.approved(j))this.move(j.task_id,'AWAITING_REVIEW','system','Retired reviewer approval preserved as history; independent current review required before new completion');
   for(const j of this.db.prepare('SELECT task_id FROM team_jobs WHERE NOT EXISTS(SELECT 1 FROM team_checkpoints c WHERE c.task_id=team_jobs.task_id)').all())this.checkpoints.save(j.task_id,'Initial durable snapshot of existing task');
  }
  liveAllowed(id){return this.liveOptIn||this.taskGrant?.sessionEnabled===true&&this.taskGrant.allows(id);}

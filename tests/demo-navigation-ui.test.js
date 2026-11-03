@@ -21,10 +21,10 @@ function fixture(){
  return {c,task,job,calls,window,run:code=>vm.runInContext(code,c),all,button:(label,root=c.target)=>all(root).find(n=>n.tagName==='button'&&n.textContent===label),content:()=>elements.get('content')};
 }
 test('bound demo task replaces the legacy picker with three roles and its direct messenger link',async()=>{
- const f=fixture();f.run('taskDetail(target,task)');assert.match(f.c.target.textContent,/Builder.*Tester.*Reviewer/s);assert.doesNotMatch(f.c.target.textContent,/Development model|Select eligible free developer/);const open=f.button('Open Big Three demo controls');assert.ok(open);await open.onclick();assert.equal(f.window.location.hash,'#demo/actual-job');assert.equal(f.run('state.view'),'demo');const view=f.content();assert.ok(f.button('Prepare approved demo scopes',view));assert.equal(f.button('Start messenger loop',view).disabled,true);assert.equal(f.calls.length,0);
+ const f=fixture();f.run('taskDetail(target,task)');assert.match(f.c.target.textContent,/Builder.*Tester.*Reviewer/s);assert.doesNotMatch(f.c.target.textContent,/Development model|Select eligible free developer/);const open=f.button('Open Big Three demo controls');assert.ok(open);await open.onclick();assert.equal(f.window.location.hash,'#demo/actual-job');assert.equal(f.run('state.view'),'demo');const view=f.content();assert.equal(f.button('Prepare approved demo scopes',view),undefined);assert.equal(f.button('Run Big Three',view).disabled,true);assert.equal(f.calls.length,0);
 });
 test('direct demo URL restores the exact saved job on refresh without preparing scopes or dispatching',()=>{
- const f=fixture();f.window.location.hash='#demo/actual-job';assert.equal(f.run('openDashboardLink()'),true);assert.equal(f.run('state.demoJob'),'actual-job');assert.match(f.content().textContent,/exact demo scopes/);assert.equal(f.calls.length,0);
+ const f=fixture();f.window.location.hash='#demo/actual-job';assert.equal(f.run('openDashboardLink()'),true);assert.equal(f.run('state.demoJob'),'actual-job');assert.match(f.content().textContent,/I approve this run:/);assert.equal(f.calls.length,0);
 });
 test('unknown URL and matching names cannot redirect an unrelated task into the demo',()=>{
  const f=fixture();f.run("task.task_id='different-task'");assert.equal(f.run('demoForTask(task)'),undefined);f.window.location.hash='#demo/not-a-job';assert.throws(()=>f.run('openDashboardLink()'),/does not match/);assert.equal(f.calls.length,0);
@@ -38,4 +38,8 @@ test('role edits on the task use only the saved job/version and never authorize 
 
 test('blocked demo exposes messenger controls instead of legacy free-provider resume',()=>{
  const f=fixture();f.run("task.state='BLOCKED';state.detail.checkpoints=[{created_at:'2026-11-03',reason:'Saved demo'}];taskDetail(target,task)");assert.ok(f.button('Open Big Three demo controls'));assert.equal(f.button('Resume with free capacity'),undefined);assert.equal(f.button('Select eligible free developer'),undefined);assert.equal(f.calls.length,0);
+});
+
+test('Big Three Demo sidebar opens its actual saved binding without dispatch or a new job',()=>{
+ const f=fixture();assert.match(fs.readFileSync(new URL('../src/dashboard/index.html',import.meta.url),'utf8'),/data-view="demo"[^>]*>.*?Big Three Demo/);f.run("go('demo')");assert.equal(f.window.location.hash,'#demo/actual-job');assert.equal(f.run('state.demoJob'),'actual-job');assert.equal(f.calls.length,0);
 });

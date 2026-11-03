@@ -29,8 +29,8 @@ function demoForTask(task){const info=state.data.bigThree;return info?.jobs.find
 function openDemo(id){const job=state.data.bigThree?.jobs.find(j=>j.id===id);if(!job||job.state.demoJobId!==job.id||!state.data.bigThree.demoWorkers?.prepared?.some(b=>b.job_id===id))throw Error('This demo link does not match a prepared task.');state.demoJob=id;state.view='demo';window.history.replaceState(null,'',demoUrl(id));draw();window.scrollTo({top:0});}
 function openDashboardLink(){if(!window.location.hash.startsWith('#demo/'))return false;openDemo(decodeURIComponent(window.location.hash.slice(6)));return true;}
 function demoTaskControls(target,t){const job=demoForTask(t);add(target,callout('This task uses the Big Three messenger, not the parked free-provider picker. Opening the controls does not authorize or start a request.'),button('Open Big Three demo controls',()=>openDemo(job.id),'primary'),jobRoleCard(job));}
-function demoView(root){const info=state.data.bigThree,job=info?.jobs.find(j=>j.id===state.demoJob),task=job&&state.data.tasks.find(t=>t.task_id===job.task_id);if(!task||demoForTask(task)?.id!==job.id){root.append(callout('The saved demo job or task is unavailable. No new job was created.',true));return;}add(root,p('Task: '+task.description),button('Back to saved task',()=>openProject(task.project_id,task.task_id),'quiet'),jobRoleCard(job));messengerView(root,{...info,jobs:[job]});root.append(p('Webhook delivery is configured under AI Team. Free backups remain parked. Scope consent, loop consent and final owner acceptance remain separate.','hint'),button('Open AI Team / webhook settings',()=>go('team'),'quiet'));}
-function go(view){window.history?.replaceState(null,'','/team');state.view=view;draw();window.scrollTo({top:0});}
+function demoView(root){const info=state.data.bigThree,job=info?.jobs.find(j=>j.id===state.demoJob),task=job&&state.data.tasks.find(t=>t.task_id===job.task_id);if(!task||demoForTask(task)?.id!==job.id){root.append(callout('The saved demo job or task is unavailable. No new job was created.',true));return;}add(root,p('Task: '+task.description),button('Back to saved task',()=>openProject(task.project_id,task.task_id),'quiet'));messengerView(root,{...info,jobs:[job]});const roles=el('details');add(roles,el('summary','','Roles and saved progress'),jobRoleCard(job));root.append(roles);root.append(p('Webhook delivery is configured under AI Team. Free backups remain parked. Scope consent, loop consent and final owner acceptance remain separate.','hint'),button('Open AI Team / webhook settings',()=>go('team'),'quiet'));}
+function go(view){if(view==='demo'){const info=state.data.bigThree,job=info?.jobs.find(j=>j.id===state.demoJob&&j.state.demoJobId===j.id&&info.demoWorkers?.prepared?.some(b=>b.job_id===j.id))||info?.jobs.find(j=>j.state.demoJobId===j.id&&info.demoWorkers?.prepared?.some(b=>b.job_id===j.id));if(job)return openDemo(job.id);state.demoJob=null;}window.history?.replaceState(null,'','/team');state.view=view;draw();window.scrollTo({top:0});}
 function download(name,content){const url=URL.createObjectURL(new Blob([content],{type:'text/plain'}));const a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function taskModels(){return state.view==='workspace'&&state.detail?.models||state.data.models;}
 function modelSelect(value='groq'){return field('Development model',value,'select',{choices:taskModels().map(m=>[m.key,names[m.key]+(m.available?'':' — unavailable')])});}
@@ -119,12 +119,12 @@ function messengerView(root,info){
  add(box,p('A worker report goes to Zapier; its next prompt returns through the separate handoffs branch. Default: 3 rounds, 5-minute wait.'),p(status.github.ready?'Read-only token confirmed locally. Repository access has not been assumed from that confirmation.':'Setup needed: save GITHUB_HANDOFF_TOKEN locally and confirm Contents read-only. Never paste the token into this dashboard.','hint'));
  const link=el('a','quiet','Open click-by-click Zapier setup');link.href='/team/zapier-setup';link.target='_blank';link.rel='noopener';box.append(link);
  box.append(callout(status.liveWorkersAvailable?'The demo-only MXC isolation proof is valid. Exact paid/native scopes are still required before dispatch.':'No verified live-worker isolation is loaded. Hello replies verify connections only; execution stays disabled.'));
-  if(info.demoWorkers){box.append(p('Friday demo: '+info.demoWorkers.isolation.reason,'hint'));box.append(p(info.demoWorkers.includedUsage,'hint'));box.append(p(info.demoWorkers.paid,'hint'));}
+  if(info.demoWorkers){box.append(p('Friday demo: '+info.demoWorkers.isolation.reason,'hint'));box.append(p(info.demoWorkers.includedUsage,'hint'));if(!info.jobs.some(j=>j.state.demoJobId===j.id))box.append(p(info.demoWorkers.paid,'hint'));}
  for(const job of info.jobs){
   const card=panel(job.state.goal),loop=status.loops.find(l=>l.job_id===job.id);
    const isDemo=job.state.demoJobId===job.id,demoScope=info.demoWorkers?.executionScopes?.find(s=>s.jobId===job.id);
    messengerStartControls(card,info,job,loop,demoScope);
-   if(isDemo&&loop?.status==='ready'&&status.liveWorkersAvailable){if(!demoScope){const paidConsent=check('I authorize the exact demo scopes: deepseek-flash, thinking off, one POST, 1,024 output tokens, 90 seconds, $0.01 local cap, at most one model GET and balance GET, no retries/fallback; one included call each for Codex and Claude. Prepare only; do not start.');add(card,p('The local reservation is not a guaranteed provider-side dollar ceiling. Scope preparation checks public prices and starts a fresh 30-minute approval window.'),paidConsent.wrap,button('Prepare approved demo scopes',async()=>{if(!paidConsent.input.checked)throw Error('Confirm the exact bounded scopes first.');const r=await api('/demo-workers/'+job.id+'/approve-scopes',{approvedBy:'owner',maximumUSD:0.01,confirmExactPaid:true,confirmNativeIncluded:true});await refresh();notify('Scopes prepared; no worker started. Start before '+date(r.expiresAt)+'.');},'quiet'));}else card.append(p('Execution scope: '+demoScope.outcome+' · expires '+date(demoScope.expiresAt)+(demoScope.valid?'':' · unavailable; no clock reset or retry')));}
+   if(isDemo&&demoScope)card.append(p('Execution scope: '+demoScope.outcome+' · expires '+date(demoScope.expiresAt)));
    if(job.state.reviewResult)add(card,p('Independent review: '+job.state.reviewResult.reviewer+' · '+job.state.reviewResult.decision),p(job.state.reviewResult.summary));
   if(!loop){const rounds=field('Maximum rounds','3','number'),seconds=field('Seconds to wait for a prompt','300','number');add(card,rounds.wrap,seconds.wrap,button('Prepare messenger loop',async()=>{await api('/shared-jobs/'+job.id+'/messenger/prepare',{maxRounds:Number(rounds.input.value),timeoutSeconds:Number(seconds.input.value)});await refresh();notify('Loop prepared locally. No worker or external request started.');},'quiet'));}
   else{
@@ -142,7 +142,7 @@ function messengerView(root,info){
 }
 
 // Explain every prerequisite without preparing grants or dispatching a worker.
-function messengerStartMissing(info,job,loop,scope,checked){
+function messengerStartMissing(info,job,loop,scope,checked,prepareOnRun=false){
  const missing=[],status=info.messenger||{};
  if(!loop)missing.push('Click Prepare messenger loop first.');else if(loop.status!=='ready')missing.push('The loop is '+loop.status+'; Start is only available before its first run. Do not retry or reset this job.');
  if(job.status!=='ready')missing.push('The saved job is '+job.status+'; resolve its blocker before starting.');
@@ -150,16 +150,47 @@ function messengerStartMissing(info,job,loop,scope,checked){
  if(!info.webhook?.configured)missing.push('Open AI Team / webhook settings, enter the Zapier Catch Hook URL and click Save webhook setting.');
  if(!info.webhook?.enabled)missing.push('Select Enable report delivery to the saved Zapier URL, then click Save webhook setting.');
  if(status.liveWorkersAvailable!==true)missing.push('The demo isolation check is not ready. Resolve the sandbox blocker; do not bypass it.');
- if(job.state.demoJobId===job.id&&!scope)missing.push('Check the exact demo scopes consent below, then click Prepare approved demo scopes.');
- else if(job.state.demoJobId===job.id&&!scope.valid)missing.push('The execution scope is expired, exhausted or unavailable. It cannot be reset; request a new bounded authorization.');
+ if(job.state.demoJobId===job.id&&!scope&&!prepareOnRun)missing.push('Check the exact demo scopes consent below, then click Prepare approved demo scopes.');
+ else if(job.state.demoJobId===job.id&&scope&&!scope.valid)missing.push('The execution scope is expired, exhausted or unavailable. It cannot be reset; request a new bounded authorization.');
  if(!checked)missing.push('Check I approve this bounded loop using separately authorized workers.');
  return missing;
 }
 function messengerStartControls(card,info,job,loop,scope){
+ if(job.state.demoJobId===job.id)return demoRunControls(card,info,job,loop,scope);
  const consent=check('I approve this bounded loop using separately authorized workers. This does not grant paid usage.'),why=el('div','callout warn');
  const start=button('Start messenger loop',async()=>{const missing=messengerStartMissing(info,job,loop,scope,consent.input.checked);if(missing.length)throw Error(missing.join(' '));await api('/shared-jobs/'+job.id+'/messenger/start',{approvedBy:'owner',confirmLoop:true});await refresh();},'primary');
  const update=()=>{const missing=messengerStartMissing(info,job,loop,scope,consent.input.checked);start.disabled=missing.length>0;why.replaceChildren(el('h3','',missing.length?'Why Start is not available yet':'Ready when you are'));for(const reason of missing)why.append(p('• '+reason));if(!missing.length)why.append(p('All displayed checks are ready. Nothing runs until you click Start messenger loop; backend safeguards are checked again.'));};
  consent.input.onchange=update;update();add(card,why,consent.wrap,start);
+}
+
+// One owner click still passes through the original scope and Start endpoints.
+// A failed/unknown request is never retried, and a finished run is never reset.
+function demoRunMissing(info,job,loop,scope){
+ if(loop?.status==='finished'||job.status==='awaiting_owner')return ['This run has finished. Open the saved task to inspect its review and owner acceptance. Completed runs cannot be replayed.'];
+ const missing=messengerStartMissing(info,job,loop,scope,true,true);
+ if(!scope&&loop&&(loop.round!==0||loop.max_rounds!==3||loop.wait_ms!==300000))missing.push('This demo must have three rounds, a five-minute wait and no previous attempts.');
+ const roles=job.state.roles;if(!scope&&(!roles||roles.builder!=='deepseek'||roles.tester!=='codex-personal'||roles.reviewer!=='claude-code'))missing.push('This approved demo requires DeepSeek Builder, Codex Tester and Claude Code Reviewer.');
+ return missing;
+}
+function demoRunControls(card,info,job,loop,scope){
+ const consent=check('I approve this run: DeepSeek up to $0.01, one included call each for Codex and Claude Code, 3 rounds, 5-minute limit.'),why=el('div','callout warn');let submitting=false;
+ const run=button('Run Big Three',async()=>{
+  if(submitting)return;
+  if(!consent.input.checked)throw Error('Check I approve this run before running the demo.');
+  const missing=demoRunMissing(info,job,loop,scope);if(missing.length)throw Error(missing.join(' '));
+  submitting=true;run.disabled=true;
+  try{
+   if(!scope)await api('/demo-workers/'+job.id+'/approve-scopes',{approvedBy:'owner',maximumUSD:0.01,confirmExactPaid:true,confirmNativeIncluded:true});
+   // Re-read the actual grants and job after preparation, including a Stop or
+   // configuration change while prices were checked. No cached success counts.
+   await refresh(false);const fresh=state.data.bigThree,current=fresh.jobs.find(j=>j.id===job.id),currentLoop=fresh.messenger?.loops.find(l=>l.job_id===job.id),currentScope=fresh.demoWorkers?.executionScopes?.find(s=>s.jobId===job.id);
+   if(!current)throw Error('The saved job is unavailable. No run started.');
+   const remaining=messengerStartMissing(fresh,current,currentLoop,currentScope,true);if(remaining.length)throw Error(remaining.join(' '));
+   await api('/shared-jobs/'+job.id+'/messenger/start',{approvedBy:'owner',confirmLoop:true});await refresh();
+  }finally{submitting=false;update();}
+ },'primary');
+ const update=()=>{const missing=demoRunMissing(info,job,loop,scope),completed=loop?.status==='finished'||job.status==='awaiting_owner';run.disabled=submitting||!consent.input.checked||missing.length>0;consent.input.disabled=completed;why.hidden=missing.length===0;why.className=completed?'callout':'callout warn';why.replaceChildren();if(missing.length){why.append(el('h3','',completed?'Run completed':'What is still needed'));for(const reason of missing)why.append(p('• '+reason));}};
+ consent.input.onchange=update;update();add(card,why,consent.wrap,run,p('Exact limits remain: deepseek-flash, thinking off, one POST, 1,024 output tokens, 90-second worker timeout; at most one model GET and balance GET. No retry or fallback. The $0.01 cap is application-enforced, not a guaranteed provider-side ceiling. Approval expires within 30 minutes. The five-minute limit is the wait for each handoff; Stop and final owner acceptance remain available.','hint'));
 }
 
 function jobRoleCard(job){

@@ -145,3 +145,7 @@ In Dev Squad, prepare a shared job from an owner-approved plan, then Prepare mes
 
 ## Demo-only worker update — 2026-11-03
 The tiny to-do demo now has a verified MXC launcher and strict SQLite artifact/test/review import. This does not enable general repository workers. Use DEMO_READY_0166_20261103.md for the exact private-reader configuration and owner-only scope preparation/start steps. No scope, live call or Zap publication was performed by this implementation task.
+
+## Current bound-demo run control
+
+Open **Big Three Demo** in the left sidebar. For a fresh eligible demo with setup ready, check **I approve this run: DeepSeek up to $0.01, one included call each for Codex and Claude Code, 3 rounds, 5-minute limit.**, then click **Run Big Three**. The button prepares the exact scope, rechecks actual state, and starts through existing guards. Completed runs stay locked; no retries or scope resets. Saved webhook configuration survives restarts, and no setup steps appear when it is already enabled. See ONE_CLICK_BIG_THREE_20261103.md.

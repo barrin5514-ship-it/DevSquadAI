@@ -1,0 +1,35 @@
+✔ dashboard sends rotation and selected roles only to the exact saved job/version (3.7972ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (3.1152ms)
+✔ messenger Stop works while the ordinary view is busy and targets only that job (1.7458ms)
+✔ preparing a messenger uses bounded defaults and makes no start/pickup request (2.7472ms)
+✔ one explicit run consent prepares exact scopes, verifies fresh state, then starts only the same job (2.0691ms)
+✔ Run shows only missing setup and does not require a separate preparation action (1.3305ms)
+✔ valid setup hides the yellow checklist but Run still requires its one consent (1.2164ms)
+✔ non-ready demo still shows disabled Run and names its state without a reset (1.3927ms)
+✔ saving delivery choice keeps a saved URL private; clearing is an explicit separate action (2.083ms)
+✔ failed or unknown preparation never sends Start or retries preparation (1.8879ms)
+✔ a Stop or stale scope after preparation prevents Start using the refreshed state (2.0025ms)
+✔ concurrent clicks cannot prepare twice; an existing valid scope is never replenished (2.5273ms)
+✔ expired scope and completed demo cannot prepare, start, reset or spend again (2.0039ms)
+✔ bound demo task replaces the legacy picker with three roles and its direct messenger link (7.0243ms)
+✔ direct demo URL restores the exact saved job on refresh without preparing scopes or dispatching (2.7365ms)
+✔ unknown URL and matching names cannot redirect an unrelated task into the demo (2.4923ms)
+✔ ordinary task keeps its existing assignment workflow and has no demo controls (3.3905ms)
+✔ role edits on the task use only the saved job/version and never authorize or start work (2.2994ms)
+✔ blocked demo exposes messenger controls instead of legacy free-provider resume (15.753ms)
+✔ Big Three Demo sidebar opens its actual saved binding without dispatch or a new job (2.5399ms)
+✔ unconfigured setting stays off without network calls (2.3446ms)
+✔ webhook rejects private addresses, lookalike hosts, userinfo, redirects and non-Zapier URLs (0.4646ms)
+✔ one enabled delivery sends only the report and never leaks the URL or source in status (1.3218ms)
+✔ unknown delivery outcome is retained in this session and never retried (0.3175ms)
+✔ private webhook setting and enabled choice survive reconstruction without any delivery (9.4864ms)
+✔ corrupt, oversized or invalid-host saved configuration fails closed without exposing content (4.5482ms)
+✔ failed disk save preserves the last in-memory setting and returns a sanitized error (3.1745ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 363.9951
