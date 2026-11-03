@@ -1,0 +1,30 @@
+✔ dashboard sends rotation and selected roles only to the exact saved job/version (4.8513ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (2.9451ms)
+✔ messenger Stop works while the ordinary view is busy and targets only that job (1.7695ms)
+✔ preparing a messenger uses bounded defaults and makes no start/pickup request (1.4924ms)
+✔ demo scope preparation needs its own exact-cost consent and never starts the loop (2.7732ms)
+✔ Start stays visible and explains missing scopes, webhook and unchecked loop consent (1.3067ms)
+✔ even valid scopes cannot enable Start until its separate consent is checked (1.6452ms)
+✔ non-ready loop still shows disabled Start and names its state without offering a reset (1.425ms)
+✔ saving delivery choice keeps a saved URL private; clearing is an explicit separate action (1.3354ms)
+✔ bound demo task replaces the legacy picker with three roles and its direct messenger link (8.1268ms)
+✔ direct demo URL restores the exact saved job on refresh without preparing scopes or dispatching (2.8037ms)
+✔ unknown URL and matching names cannot redirect an unrelated task into the demo (1.9672ms)
+✔ ordinary task keeps its existing assignment workflow and has no demo controls (2.738ms)
+✔ role edits on the task use only the saved job/version and never authorize or start work (1.5143ms)
+✔ blocked demo exposes messenger controls instead of legacy free-provider resume (17.4184ms)
+✔ unconfigured setting stays off without network calls (1.3462ms)
+✔ webhook rejects private addresses, lookalike hosts, userinfo, redirects and non-Zapier URLs (0.467ms)
+✔ one enabled delivery sends only the report and never leaks the URL or source in status (1.6629ms)
+✔ unknown delivery outcome is retained in this session and never retried (0.4299ms)
+✔ private webhook setting and enabled choice survive reconstruction without any delivery (8.4791ms)
+✔ corrupt, oversized or invalid-host saved configuration fails closed without exposing content (3.779ms)
+✔ failed disk save preserves the last in-memory setting and returns a sanitized error (4.5769ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 382.9872

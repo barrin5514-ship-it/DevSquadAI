@@ -36,7 +36,7 @@ Set the confirmation true only after checking those exact permissions. Restart D
 2. Trigger app: **Webhooks by Zapier**. Trigger event: **Catch Hook**. Continue.
 3. Leave “Pick off a Child Key” empty. Copy the generated Catch Hook URL; treat the URL as a secret.
 4. In Dev Squad, open http://127.0.0.1:3000/team → **AI Team** → **Webhook out · optional Zapier report**. Paste it into **Zapier Catch Hook URL**.
-5. Leave it disabled until you approve a setup sample or pilot. To enable the session after approval, tick the enable box and click **Save webhook setting**. The saved URL is hidden and clears on backend restart.
+5. Leave it disabled until you approve a setup sample or pilot. After approval, select **Enable report delivery to the saved Zapier URL** and click **Save webhook setting**. The URL and delivery choice are saved privately beside the database and restored after restart. Leaving the URL box blank preserves the saved URL; **Clear saved webhook** removes it and disables delivery. Saving never sends a report.
 6. To give the trigger a harmless sample, keep the Zap **off**. After separately approving the setup ping, tick the fake-report consent in Dev Squad and click **Send one fake setup report**. No agent runs. If a published Zap is on, however, the sample can invoke its AI/actions and use tasks. No such ping is sent by this implementation task.
 7. Return to Zapier → Test trigger → select the received setup sample. It supplies `jobId`, `round`, `role`, `agent`, `expectedNextRole`, and `report`.
 

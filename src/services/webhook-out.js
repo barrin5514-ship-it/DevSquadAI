@@ -1,19 +1,34 @@
 import {ApiError} from '../middleware/errors.js';
 import {cleanReport} from './report-cleaning.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import {randomUUID} from 'node:crypto';
 
-// Empty means off. The URL is kept only in this backend session, never in Git,
-// logs, job history or browser responses. Restarting returns the setting to off.
+// Empty means off. Keep the private URL beside the database in ignored local
+// storage, never in Git, logs, job history or browser responses.
 export class WebhookOut {
- constructor(team,{fetchImpl=fetch,timeoutMs=5000}={}){this.team=team;this.fetch=fetchImpl;this.timeoutMs=timeoutMs;this.url='';this.enabled=false;this.attempted=new Set();}
- status(){return {configured:Boolean(this.url),enabled:this.enabled,persistence:'This backend session only; restarting disables delivery.'};}
- configure(body){
-  this.team.fields(body,['url','enabled']);if(typeof body.url!=='string'||body.url.length>2000||typeof body.enabled!=='boolean')throw new ApiError(400,'Enter an optional Zapier URL and choose whether to enable it');
-  const value=body.url.trim();
+ constructor(team,{fetchImpl=fetch,timeoutMs=5000}={}){
+  this.team=team;this.fetch=fetchImpl;this.timeoutMs=timeoutMs;this.url='';this.enabled=false;this.attempted=new Set();this.storageError=false;
+  this.file=team.config?.database?path.join(path.dirname(team.config.database),'webhook-out.json'):null;
+  if(this.file&&fs.existsSync(this.file)){try{const stat=fs.lstatSync(this.file);if(!stat.isFile()||stat.isSymbolicLink()||stat.size>4096)throw Error();const saved=JSON.parse(fs.readFileSync(this.file,'utf8'));if(saved.version!==1||Object.keys(saved).sort().join(',')!=='enabled,url,version')throw Error();const value=this.validate({url:saved.url,enabled:saved.enabled});this.url=value;this.enabled=Boolean(value)&&saved.enabled;}catch{this.storageError=true;}}
+ }
+ status(){return {configured:Boolean(this.url),enabled:this.enabled,persistence:this.file?'Saved privately on this computer; restored after restart.':'No persistent storage configured.',storageError:this.storageError};}
+ validate(body){
+  this.team.fields(body,['url','enabled'],['enabled']);if(body.url!==undefined&&(typeof body.url!=='string'||body.url.length>2000)||typeof body.enabled!=='boolean')throw new ApiError(400,'Enter an optional Zapier URL and choose whether to enable it');
+  const value=body.url===undefined?this.url:body.url.trim();
   if(value){let url;try{url=new URL(value);}catch{throw new ApiError(400,'Enter a valid HTTPS Zapier Catch Hook URL');}
    // An exact host prevents the setting becoming a way to call private servers.
    if(url.protocol!=='https:'||url.hostname!=='hooks.zapier.com'||url.port||url.username||url.password||url.hash||!/^\/hooks\/catch\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)||url.search)throw new ApiError(400,'Use an HTTPS hooks.zapier.com/hooks/catch/.../.../ URL');
   }
-  this.url=value;this.enabled=Boolean(value)&&body.enabled;return this.status();
+  return value;
+ }
+ configure(body){
+  const value=this.validate(body),enabled=Boolean(value)&&body.enabled;
+  if(this.file){let temporary=null;try{
+   if(fs.existsSync(this.file)){const stat=fs.lstatSync(this.file);if(!stat.isFile()||stat.isSymbolicLink())throw Error();}
+   temporary=this.file+'.'+randomUUID()+'.tmp';fs.writeFileSync(temporary,JSON.stringify({version:1,url:value,enabled}),{flag:'wx',mode:0o600});fs.renameSync(temporary,this.file);temporary=null;
+  }catch{throw new ApiError(409,'Webhook setting could not be saved locally. No delivery setting was changed.');}finally{if(temporary)try{fs.unlinkSync(temporary);}catch{}}}
+  this.url=value;this.enabled=enabled;this.storageError=false;return this.status();
  }
  async send(job){
   if(!this.enabled||!this.url)return {status:'disabled'};

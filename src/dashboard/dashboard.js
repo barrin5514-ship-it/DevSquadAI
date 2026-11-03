@@ -123,12 +123,13 @@ function messengerView(root,info){
  for(const job of info.jobs){
   const card=panel(job.state.goal),loop=status.loops.find(l=>l.job_id===job.id);
    const isDemo=job.state.demoJobId===job.id,demoScope=info.demoWorkers?.executionScopes?.find(s=>s.jobId===job.id);
+   messengerStartControls(card,info,job,loop,demoScope);
    if(isDemo&&loop?.status==='ready'&&status.liveWorkersAvailable){if(!demoScope){const paidConsent=check('I authorize the exact demo scopes: deepseek-flash, thinking off, one POST, 1,024 output tokens, 90 seconds, $0.01 local cap, at most one model GET and balance GET, no retries/fallback; one included call each for Codex and Claude. Prepare only; do not start.');add(card,p('The local reservation is not a guaranteed provider-side dollar ceiling. Scope preparation checks public prices and starts a fresh 30-minute approval window.'),paidConsent.wrap,button('Prepare approved demo scopes',async()=>{if(!paidConsent.input.checked)throw Error('Confirm the exact bounded scopes first.');const r=await api('/demo-workers/'+job.id+'/approve-scopes',{approvedBy:'owner',maximumUSD:0.01,confirmExactPaid:true,confirmNativeIncluded:true});await refresh();notify('Scopes prepared; no worker started. Start before '+date(r.expiresAt)+'.');},'quiet'));}else card.append(p('Execution scope: '+demoScope.outcome+' · expires '+date(demoScope.expiresAt)+(demoScope.valid?'':' · unavailable; no clock reset or retry')));}
    if(job.state.reviewResult)add(card,p('Independent review: '+job.state.reviewResult.reviewer+' · '+job.state.reviewResult.decision),p(job.state.reviewResult.summary));
   if(!loop){const rounds=field('Maximum rounds','3','number'),seconds=field('Seconds to wait for a prompt','300','number');add(card,rounds.wrap,seconds.wrap,button('Prepare messenger loop',async()=>{await api('/shared-jobs/'+job.id+'/messenger/prepare',{maxRounds:Number(rounds.input.value),timeoutSeconds:Number(seconds.input.value)});await refresh();notify('Loop prepared locally. No worker or external request started.');},'quiet'));}
   else{
    add(card,badge(loop.status.toUpperCase()),p('Round '+loop.round+' / '+loop.max_rounds+' · wait limit '+loop.wait_ms/1000+' seconds'),p(loop.reason||'Progress and handoff history are saved.'));
-    if(loop.status==='ready'){const consent=check('I approve this bounded loop using separately authorized workers. This does not grant paid usage.');const start=button('Start messenger loop',async()=>{if(!consent.input.checked)throw Error('Approve this bounded loop first.');await api('/shared-jobs/'+job.id+'/messenger/start',{approvedBy:'owner',confirmLoop:true});await refresh();},'primary');start.disabled=!status.github.ready||!info.webhook?.enabled||status.liveWorkersAvailable===false||isDemo&&!demoScope?.valid;add(card,consent.wrap,start);}
+
    const stop=el('button','danger','Stop messenger');stop.type='button';stop.disabled=['stopped','finished'].includes(loop.status);stop.onclick=async()=>{stop.disabled=true;try{await api('/shared-jobs/'+job.id+'/messenger/stop',{});await refresh();notify('Stopped. No further step will start.');}catch(error){notify(error.message,true);}finally{stop.disabled=false;}};card.append(stop);
    if(loop.status==='paused')card.append(button('Resume waiting only',async()=>{await api('/shared-jobs/'+job.id+'/messenger/resume',{});await refresh();notify('Waiting resumed with the original deadline; no report resent.');},'quiet'));
    for(const round of loop.rounds){const row=panel('Round '+round.round+' · '+round.role+' · '+round.agent);add(row,p('Report: '+round.report_state+(round.sent_at?' · '+date(round.sent_at):'')),p('Prompt: '+(round.received_at?'received · '+date(round.received_at):loop.status==='finished'?'not requested after final round':'not received')),p(round.report));if(round.prompt_json)add(row,p('Next role: '+round.prompt_json.nextRole),p(round.prompt_json.prompt));card.append(row);}
@@ -138,6 +139,27 @@ function messengerView(root,info){
  }
  if(!info.jobs.length)box.append(p('Prepare an unfinished shared job below after approving its project plan. No real job is created by this page.'));
  box.append(p('A report is a worker statement, not proof that tests ran or owner acceptance was granted.','hint'));root.append(box);
+}
+
+// Explain every prerequisite without preparing grants or dispatching a worker.
+function messengerStartMissing(info,job,loop,scope,checked){
+ const missing=[],status=info.messenger||{};
+ if(!loop)missing.push('Click Prepare messenger loop first.');else if(loop.status!=='ready')missing.push('The loop is '+loop.status+'; Start is only available before its first run. Do not retry or reset this job.');
+ if(job.status!=='ready')missing.push('The saved job is '+job.status+'; resolve its blocker before starting.');
+ if(!status.github?.ready)missing.push('Configure the GitHub handoff reader locally and refresh.');
+ if(!info.webhook?.configured)missing.push('Open AI Team / webhook settings, enter the Zapier Catch Hook URL and click Save webhook setting.');
+ if(!info.webhook?.enabled)missing.push('Select Enable report delivery to the saved Zapier URL, then click Save webhook setting.');
+ if(status.liveWorkersAvailable!==true)missing.push('The demo isolation check is not ready. Resolve the sandbox blocker; do not bypass it.');
+ if(job.state.demoJobId===job.id&&!scope)missing.push('Check the exact demo scopes consent below, then click Prepare approved demo scopes.');
+ else if(job.state.demoJobId===job.id&&!scope.valid)missing.push('The execution scope is expired, exhausted or unavailable. It cannot be reset; request a new bounded authorization.');
+ if(!checked)missing.push('Check I approve this bounded loop using separately authorized workers.');
+ return missing;
+}
+function messengerStartControls(card,info,job,loop,scope){
+ const consent=check('I approve this bounded loop using separately authorized workers. This does not grant paid usage.'),why=el('div','callout warn');
+ const start=button('Start messenger loop',async()=>{const missing=messengerStartMissing(info,job,loop,scope,consent.input.checked);if(missing.length)throw Error(missing.join(' '));await api('/shared-jobs/'+job.id+'/messenger/start',{approvedBy:'owner',confirmLoop:true});await refresh();},'primary');
+ const update=()=>{const missing=messengerStartMissing(info,job,loop,scope,consent.input.checked);start.disabled=missing.length>0;why.replaceChildren(el('h3','',missing.length?'Why Start is not available yet':'Ready when you are'));for(const reason of missing)why.append(p('• '+reason));if(!missing.length)why.append(p('All displayed checks are ready. Nothing runs until you click Start messenger loop; backend safeguards are checked again.'));};
+ consent.input.onchange=update;update();add(card,why,consent.wrap,start);
 }
 
 function jobRoleCard(job){
@@ -162,8 +184,8 @@ function bigThreeView(root){
  const consent=check('My Codex and Claude accounts have included subscription usage available; I authorize one hello check for each.');
  add(section,consent.wrap,button('Test all 3',async()=>{if(!consent.input.checked)throw Error('Confirm included subscription usage first.');const batch=await api('/big-three/hello',{approvedBy:'owner',confirmIncluded:true});await refresh();notify(batch.cached?'Saved hello results displayed. No requests sent.':'Hello checks recorded. Read each result; no ongoing spending permission was enabled.');},'primary'),callout('DeepSeek is not called by this button until its exact paid request is approved. Current conservative hello estimate: $0.0000768; proposed local cap: $0.001. A green result verifies a hello response only.'));
  // A blank URL is intentionally off; the saved URL is never returned to this view.
- const hook=panel('Webhook out · optional Zapier report'),hookUrl=field('Zapier Catch Hook URL','','url',{required:false,placeholder:'Leave empty to keep it off'}),hookEnabled=check('Enable report delivery to the URL I entered for this backend session.');
- add(hook,hookUrl.wrap,hookEnabled.wrap,p(info.webhook?.enabled?'Enabled for this backend session.':'Off. Nothing is sent while the URL is empty.'),p('The URL is not shown after saving. Restarting clears it and disables delivery. Reports exclude source files; owner acceptance remains required.','hint'),button('Save webhook setting',async()=>{await api('/settings/webhook',{url:hookUrl.input.value,enabled:hookEnabled.input.checked});hookUrl.input.value='';await refresh();notify('Webhook setting updated. No test report was sent.');},'quiet'));section.append(hook);
+ const hook=panel('Webhook out · optional Zapier report'),hookUrl=field('Zapier Catch Hook URL','','url',{required:false,placeholder:'Enter URL to save; leave blank to keep saved URL'}),hookEnabled=check('Enable report delivery to the saved Zapier URL');hookEnabled.input.checked=info.webhook?.enabled===true;
+ add(hook,hookUrl.wrap,hookEnabled.wrap,p(info.webhook?.enabled?'Delivery enabled.':info.webhook?.configured?'URL saved; delivery is disabled.':'No URL saved; delivery is disabled.'),p('The private URL and delivery choice are saved locally and restored after restart. Saving never sends a report. Owner acceptance remains required.','hint'),button('Save webhook setting',async()=>{await api('/settings/webhook',{...(hookUrl.input.value.trim()?{url:hookUrl.input.value}:{}),enabled:hookEnabled.input.checked});hookUrl.input.value='';await refresh();notify('Webhook setting updated. No test report was sent.');},'quiet'));hook.append(button('Clear saved webhook',async()=>{await api('/settings/webhook',{url:'',enabled:false});await refresh();notify('Saved webhook cleared; delivery disabled.');},'quiet'));if(info.webhook?.storageError)hook.append(callout('The saved webhook setting could not be loaded. Re-enter the URL to save it safely.',true));section.append(hook);
  messengerView(section,info);
  const sampleConsent=check('I approve one fake setup report to Zapier. If my Zap is on, it may use paid tasks. No agent will run.');
  const sample=button('Send one fake setup report',async()=>{if(!sampleConsent.input.checked)throw Error('Approve the setup report first.');const result=await api('/messenger/setup-sample',{approvedBy:'owner',confirmSample:true});notify(result.status==='delivered'?'Fake report accepted by Zapier. No agent was run.':'Setup report: '+result.status);},'quiet');sample.disabled=!info.webhook?.enabled;add(section,sampleConsent.wrap,sample);
