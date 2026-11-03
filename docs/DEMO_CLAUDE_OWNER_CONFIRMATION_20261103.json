@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-03",
+  "jobId": "b5e4176a-ad93-4614-8980-e07ab63bf320",
+  "taskId": "34076590-93a0-496d-9238-acd8ccb0502b",
+  "agent": "claude-code",
+  "checkStatus": "passed_owner_confirmed",
+  "source": "Owner statement in this chat",
+  "weeklyUsedPercent": 44,
+  "extraUsageEnabled": false,
+  "independentlyVerified": false,
+  "executionStarted": false,
+  "grantCreated": false
+}

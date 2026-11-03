@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-03",
+  "attempts": 1,
+  "modelRequests": 0,
+  "exitCode": 1,
+  "elapsedMs": 1658,
+  "timeoutMs": 20000,
+  "timedOut": false,
+  "startupPassed": false,
+  "setupRefreshError": true,
+  "confinementVerified": false
+}
