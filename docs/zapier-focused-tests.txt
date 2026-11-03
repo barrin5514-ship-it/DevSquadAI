@@ -1,0 +1,31 @@
+✔ dashboard sends rotation and selected roles only to the exact saved job/version (4.5992ms)
+✔ mock success cannot display VERIFIED, and hello requires included-usage confirmation (2.6981ms)
+✔ messenger Stop works while the ordinary view is busy and targets only that job (1.2418ms)
+✔ preparing a messenger uses bounded defaults and makes no start/pickup request (1.1016ms)
+✔ background pickup completes three mock rounds without manual polling (238.4932ms)
+✔ full mocked loop: build -> cleaned report -> matching GitHub prompt -> test -> review, no acceptance (132.5217ms)
+✔ stale, wrong-job and duplicate files cannot dispatch a role twice (122.599ms)
+✔ wrong next role and extra approval fields pause without changing authorization (184.119ms)
+✔ timeout and round limit pause/finish cleanly without additional dispatch (184.6014ms)
+✔ Stop during a worker fences late output and prevents report and next-role dispatch (79.0333ms)
+✔ restart preserves a sent round; resume does not resend or reset the deadline (105.9834ms)
+✔ unknown webhook result retains delivery reservation; no resend on start or reconstruction (109.7743ms)
+✔ mock limit failover preserves progress and excludes all partial builders from review (190.6273ms)
+✔ GitHub reader is GET-only on the fixed branch and rejects a tampered blob (0.723ms)
+✔ outbound cleaner strips labelled/known secrets, encodings, paths and both address families (0.2193ms)
+✔ environment-style secret labels and a missing token never expose values or fetch (0.1532ms)
+✔ empty webhook or missing read-only token cannot start, and another job cannot share the mailbox (93.2151ms)
+✔ console Stop requires dashboard capability and direct run cannot bypass waiting (510.5194ms)
+✔ Stop during GitHub pickup rejects a late matching prompt without starting another worker (90.1229ms)
+✔ a prompt arriving after the deadline cannot dispatch even if the read started in time (86.0592ms)
+✔ rotation remains per job and a received prompt cannot inject a known secret into saved state (87.8531ms)
+✔ setup sample is explicit, fake, session-deduplicated and blocked during a loop (83.3572ms)
+✔ prompt prose is task data and cannot grant paid access, execute tests or accept a task (93.3039ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2848.2317

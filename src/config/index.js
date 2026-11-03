@@ -10,5 +10,7 @@ export function loadConfig(env = process.env) {
   config.ai = aiConfig(env);
   config.teamLiveEnabled = env.TEAM_LIVE_ENABLED === 'true';
   config.teamFocus = env.TEAM_FOCUS === 'big_three' ? 'big_three' : 'legacy';
+  // This token is for one fixed read-only handoff endpoint, not code pushes.
+  config.handoff = {token:env.GITHUB_HANDOFF_TOKEN||'',readOnlyConfirmed:env.GITHUB_HANDOFF_READONLY_CONFIRMED==='true'};
   return Object.freeze(config);
 }

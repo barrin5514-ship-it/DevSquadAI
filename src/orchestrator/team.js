@@ -2,6 +2,7 @@ import {TaskEvaluationGrant} from '../services/task-evaluation-grant.js';
 import {BigThreeCoordinator} from '../services/big-three.js';
 import {HubConnections} from '../services/hub-connections.js';
 import {WebhookOut} from '../services/webhook-out.js';
+import {MessengerLoop} from '../services/messenger-loop.js';
 import {modelHealth} from '../services/provider-health.js';
 import {EvaluationGrant} from '../services/evaluation-grant.js';
 import {recordHealth} from '../services/provider-health.js';
@@ -28,6 +29,7 @@ export class TeamOrchestrator {
   this.coordinator=new BigThreeCoordinator(this,options.mockWorkers||{},90000,{mockOnly:Boolean(options.mockWorkers)});this.coordinator.recover();
   this.hubConnections=new HubConnections(this,options);
   this.webhook=new WebhookOut(this,{fetchImpl:options.webhookFetch||this.fetch});
+  this.messenger=new MessengerLoop(this,options);
   this.db.prepare("UPDATE team_operations SET status='interrupted',updated_at=? WHERE status='started'").run(now());
   this.db.prepare('DELETE FROM team_task_locks').run();
   for(const r of this.db.prepare("SELECT * FROM deepseek_review_requests WHERE status='running'").all())this.senior.fail(r.task_id,r.id,r.execution_id);
@@ -36,7 +38,7 @@ export class TeamOrchestrator {
   for(const j of this.db.prepare('SELECT task_id FROM team_jobs WHERE NOT EXISTS(SELECT 1 FROM team_checkpoints c WHERE c.task_id=team_jobs.task_id)').all())this.checkpoints.save(j.task_id,'Initial durable snapshot of existing task');
  }
  liveAllowed(id){return this.liveOptIn||this.taskGrant?.sessionEnabled===true&&this.taskGrant.allows(id);}
- safe(body){const raw=JSON.stringify(body);if(this.config.ai.providers.some(p=>p.key&&raw.includes(p.key)))throw new ApiError(400,'Credential values are not permitted in workflow records');}
+ safe(body){const raw=JSON.stringify(body);if([...this.config.ai.providers.map(p=>p.key),this.config.handoff?.token].some(key=>key&&raw.includes(key)))throw new ApiError(400,'Credential values are not permitted in workflow records');}
  fields(body,allowed,required=allowed){object(body,allowed,required);this.safe(body);}
  get(id){const j=this.db.prepare('SELECT j.*,t.project_id,t.description FROM team_jobs j JOIN tasks t ON t.id=j.task_id WHERE j.task_id=?').get(id);if(!j)throw new ApiError(404,'Team task not found');return {...j,plan:j.plan?JSON.parse(j.plan):null};}
  expect(id,states){const j=this.get(id);if(!states.includes(j.state))throw new ApiError(409,'Action is not permitted in this task state');return j;}

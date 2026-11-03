@@ -104,6 +104,30 @@ function facts(rows){const dl=el('dl','agent-facts');for(const [key,value]of row
 function usageFor(model){const rows=state.data.usage.filter(u=>u.model===model);if(!rows.length)return 'No task usage recorded here';const unknown=rows.filter(u=>u.total_tokens===null).length,total=rows.reduce((n,u)=>n+(u.total_tokens||0),0);return rows.length+' recorded calls · '+(unknown?(total?'at least '+total+' tokens · ':'')+unknown+' unknown token totals':total.toLocaleString()+' tokens');}
 function teamSection(root,title,description,count){const section=el('section','team-section');add(section,add(el('div','section-heading'),add(el('div'),p('YOUR TEAM','eyebrow'),el('h2','',title),p(description,'subtitle')),el('span','section-count',count)));root.append(section);return section;}
 // Role controls only save assignments; a hello check does not start a job.
+// Stop deliberately bypasses the ordinary busy guard so it remains usable
+// while a long worker request is in flight.
+function messengerView(root,info){
+ const box=panel('Zapier messenger loop'),status=info.messenger||{loops:[],github:{ready:false,configured:false}};
+ add(box,p('A worker report goes to Zapier; its next prompt returns through the separate handoffs branch. Default: 3 rounds, 5-minute wait.'),p(status.github.ready?'Read-only token confirmed locally. Repository access has not been assumed from that confirmation.':'Setup needed: save GITHUB_HANDOFF_TOKEN locally and confirm Contents read-only. Never paste the token into this dashboard.','hint'));
+ const link=el('a','quiet','Open click-by-click Zapier setup');link.href='/team/zapier-setup';link.target='_blank';link.rel='noopener';box.append(link);
+ box.append(callout('No live coding workers are enabled. Hello replies verify connections only. A first live loop needs separate worker setup and paid-task authorization.'));
+ for(const job of info.jobs){
+  const card=panel(job.state.goal),loop=status.loops.find(l=>l.job_id===job.id);
+  if(!loop){const rounds=field('Maximum rounds','3','number'),seconds=field('Seconds to wait for a prompt','300','number');add(card,rounds.wrap,seconds.wrap,button('Prepare messenger loop',async()=>{await api('/shared-jobs/'+job.id+'/messenger/prepare',{maxRounds:Number(rounds.input.value),timeoutSeconds:Number(seconds.input.value)});await refresh();notify('Loop prepared locally. No worker or external request started.');},'quiet'));}
+  else{
+   add(card,badge(loop.status.toUpperCase()),p('Round '+loop.round+' / '+loop.max_rounds+' · wait limit '+loop.wait_ms/1000+' seconds'),p(loop.reason||'Progress and handoff history are saved.'));
+   if(loop.status==='ready'){const consent=check('I approve this bounded loop using separately authorized workers. This does not grant paid usage.');const start=button('Start messenger loop',async()=>{if(!consent.input.checked)throw Error('Approve this bounded loop first.');await api('/shared-jobs/'+job.id+'/messenger/start',{approvedBy:'owner',confirmLoop:true});await refresh();},'primary');start.disabled=!status.github.ready||!info.webhook?.enabled||status.liveWorkersAvailable===false;add(card,consent.wrap,start);}
+   const stop=el('button','danger','Stop messenger');stop.type='button';stop.disabled=['stopped','finished'].includes(loop.status);stop.onclick=async()=>{stop.disabled=true;try{await api('/shared-jobs/'+job.id+'/messenger/stop',{});await refresh();notify('Stopped. No further step will start.');}catch(error){notify(error.message,true);}finally{stop.disabled=false;}};card.append(stop);
+   if(loop.status==='paused')card.append(button('Resume waiting only',async()=>{await api('/shared-jobs/'+job.id+'/messenger/resume',{});await refresh();notify('Waiting resumed with the original deadline; no report resent.');},'quiet'));
+   for(const round of loop.rounds){const row=panel('Round '+round.round+' · '+round.role+' · '+round.agent);add(row,p('Report: '+round.report_state+(round.sent_at?' · '+date(round.sent_at):'')),p('Prompt: '+(round.received_at?'received · '+date(round.received_at):loop.status==='finished'?'not requested after final round':'not received')),p(round.report));if(round.prompt_json)add(row,p('Next role: '+round.prompt_json.nextRole),p(round.prompt_json.prompt));card.append(row);}
+   for(const event of loop.events.slice(0,8))card.append(p(date(event.created_at)+' · '+event.kind+' · '+event.detail,'hint'));
+  }
+  box.append(card);
+ }
+ if(!info.jobs.length)box.append(p('Prepare an unfinished shared job below after approving its project plan. No real job is created by this page.'));
+ box.append(p('A report is a worker statement, not proof that tests ran or owner acceptance was granted.','hint'));root.append(box);
+}
+
 function bigThreeView(root){
  const info=state.data.bigThree,connections=info.connections||{},section=teamSection(root,'Big Three · rotating roles','Each agent can build, test or review. A builder can never review the same step.','Mock job failover; hello-only live connectors');
  const grid=el('div','roster development-roster'),results=connections.last?.result||[];
@@ -118,6 +142,9 @@ function bigThreeView(root){
  // A blank URL is intentionally off; the saved URL is never returned to this view.
  const hook=panel('Webhook out · optional Zapier report'),hookUrl=field('Zapier Catch Hook URL','','url',{required:false,placeholder:'Leave empty to keep it off'}),hookEnabled=check('Enable report delivery to the URL I entered for this backend session.');
  add(hook,hookUrl.wrap,hookEnabled.wrap,p(info.webhook?.enabled?'Enabled for this backend session.':'Off. Nothing is sent while the URL is empty.'),p('The URL is not shown after saving. Restarting clears it and disables delivery. Reports exclude source files; owner acceptance remains required.','hint'),button('Save webhook setting',async()=>{await api('/settings/webhook',{url:hookUrl.input.value,enabled:hookEnabled.input.checked});hookUrl.input.value='';await refresh();notify('Webhook setting updated. No test report was sent.');},'quiet'));section.append(hook);
+ messengerView(section,info);
+ const sampleConsent=check('I approve one fake setup report to Zapier. If my Zap is on, it may use paid tasks. No agent will run.');
+ const sample=button('Send one fake setup report',async()=>{if(!sampleConsent.input.checked)throw Error('Approve the setup report first.');const result=await api('/messenger/setup-sample',{approvedBy:'owner',confirmSample:true});notify(result.status==='delivered'?'Fake report accepted by Zapier. No agent was run.':'Setup report: '+result.status);},'quiet');sample.disabled=!info.webhook?.enabled;add(section,sampleConsent.wrap,sample);
  const jobs=panel('Shared jobs · assignments, progress and handoffs');
  if(!info.jobs.length)jobs.append(p('No shared jobs yet. Prepare an unfinished task from an owner-approved plan below. Existing tasks are unchanged.'));
  for(const job of info.jobs){
@@ -174,3 +201,6 @@ function recoveryControls(target,t){
  const capacity=state.data.capacity||[];for(const c of capacity.filter(c=>c.retry_at>Date.now()))target.append(p(c.model_key+' retry no earlier than '+date(c.retry_at)+' · '+c.last_code,'hint'));
  if(t.parent_id&&['PENDING','CHANGES_REQUESTED','FAILED','BLOCKED'].includes(t.state)){const category=field('Smart assignment category','coding','select',{choices:['coding','debugging','testing','planning'].map(x=>[x,x])});add(target,category.wrap,button('Select eligible free developer',()=>mutate('auto-assign',{category:category.input.value},'Free developer assigned. No request sent.'),'quiet'));}
 }
+
+// Refresh saved round history only while a loop is active and the owner is not typing.
+setTimeout(async function messengerTick(){try{if(!document.hidden&&!state.busy&&state.view==='team'&&state.data?.bigThree?.messenger?.loops.some(loop=>['running','waiting'].includes(loop.status))&&!document.activeElement?.matches?.('input,textarea,select'))await refresh();}catch{}finally{setTimeout(messengerTick,5000);}},5000);

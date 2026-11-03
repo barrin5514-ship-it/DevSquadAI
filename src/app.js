@@ -29,6 +29,7 @@ export function createApp(config, options = {}) {
     app.get('/team-dashboard.css',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/dashboard.css',import.meta.url))));
     app.get('/',(req,res)=>res.redirect('/team'));
     app.get('/team',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'").sendFile(fileURLToPath(new URL('./dashboard/index.html',import.meta.url))));
+    app.get('/team/zapier-setup',(req,res)=>res.type('text/plain').sendFile(fileURLToPath(new URL('../docs/zapier-setup.md',import.meta.url))));
     app.get('/team-dashboard.js',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/dashboard.js',import.meta.url))));
     app.get('/team/style-preview',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'none'; form-action 'none'").sendFile(fileURLToPath(new URL('./dashboard/style-preview.html',import.meta.url))));
     app.get('/team-style-preview.css',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/style-preview.css',import.meta.url))));
