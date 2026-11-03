@@ -1,1 +1,1 @@
-{"jobId":"setup-placeholder","round":0,"nextRole":"builder","prompt":"Inactive setup marker. No job is authorized."}
+{"jobId":"setup-example","round":1,"nextRole":"tester","prompt":"The report says a pretend utility was drafted, but no agent was run. No recorded or simulated test results are reported, so testing remains to be done. Inspect the saved job state, find the drafted utility, and run appropriate tests; report the actual results."}
