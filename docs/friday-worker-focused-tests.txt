@@ -1,0 +1,22 @@
+✔ demo preparation is offline, ID-bound, idempotent, on its own branch; no active grant or acceptance (18725.7427ms)
+✔ production isolation fails closed before any process, paid dispatch or generated test (28779.5523ms)
+✔ unrelated task and missing included-usage/spending approval cannot reach worker (13995.6742ms)
+✔ only the bound source file can be written; shell, tests, traversal and extra files rejected (6552.1844ms)
+✔ base revision, branch, test tampering and links are rejected (3436.4808ms)
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (5.7537ms)
+✔ native transport uses fixed argument arrays, stdin, no API credentials, bounded output and no retry (11.3617ms)
+✔ timeout, cancellation, quota and unknown results never retry and are classified conservatively (56.1135ms)
+✔ mock connectors finish full messenger loop and independently execute nine tests on exact fixture source (7662.9055ms)
+✔ pricing proposal binds the exact JSON and does not represent an active grant or guaranteed invoice (1.0074ms)
+✔ an expired approval cannot consume a model-check slot (1610.3133ms)
+✔ scoped builder makes one model GET, balance GET, POST; records tokens and full cap in existing spending ledger (1785.7852ms)
+✔ concurrent attempts and unknown POST outcomes retain reservation and cannot replenish request slots (2705.3487ms)
+✔ builder rejects expired, altered payload, different task/model/database and changed pricing before dispatch (11413.0653ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108220.2998

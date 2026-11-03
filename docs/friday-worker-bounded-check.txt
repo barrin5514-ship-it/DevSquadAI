@@ -1,0 +1,11 @@
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (3.7412ms)
+✔ pricing proposal binds the exact JSON and does not represent an active grant or guaranteed invoice (0.7782ms)
+✔ concurrent attempts and unknown POST outcomes retain reservation and cannot replenish request slots (1286.4781ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2182.9394

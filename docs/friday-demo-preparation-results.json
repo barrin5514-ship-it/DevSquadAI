@@ -1,0 +1,21 @@
+{
+  "projectId": "5b67bb7d-6d35-46c4-bb60-fb7257219631",
+  "taskId": "34076590-93a0-496d-9238-acd8ccb0502b",
+  "jobId": "b5e4176a-ad93-4614-8980-e07ab63bf320",
+  "demoFolder": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\5b67bb7d-6d35-46c4-bb60-fb7257219631",
+  "branch": "demo/friday-todo-20261106",
+  "baseRevision": "57e0ef22e96349861edf4da2f9ae3529e225ef3f",
+  "taskState": "PENDING",
+  "jobState": "ready",
+  "messengerState": "ready",
+  "rounds": 3,
+  "waitSeconds": 300,
+  "originalRecordsPreserved": true,
+  "changedTables": [],
+  "envUnchanged": true,
+  "integrity": "ok",
+  "activeBuilderScopes": 0,
+  "workerAttempts": 0,
+  "webhookEnabled": false,
+  "dashboardHttp": 200
+}

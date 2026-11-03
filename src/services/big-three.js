@@ -55,10 +55,11 @@ export class BigThreeCoordinator {
  }}
  eligible(worker,state){const connector=this.workers[worker];
   if(!connector)return 'Secure connector/profile setup required';
+  const restriction=connector.availability?.(state);if(restriction)return restriction;
   if(state.phase==='review'&&state.authors.some(a=>family(a)===family(worker)))return 'Builder family cannot review its own work';
   // A generic paid worker cannot be plugged into failover. An existing scoped paid
   // pipeline must explicitly authorize this exact state before any invocation.
-  if(worker==='deepseek'&&!(this.mockOnly&&connector.simulation===true))return 'Existing task-specific paid authorization and guarded review connector required';
+  if(worker==='deepseek'&&!(this.mockOnly&&connector.simulation===true)&&connector.paidAuthorization?.(state)!==true)return 'Existing task-specific paid authorization and guarded review connector required';
   return null;
  }
  cancel(id){const j=this.read(id);if(['running','ready'].includes(j.status)){this.save(id,j.version,j.lease,'paused',{...j.state,blocker:'Stopped by owner; confirm any running worker ended before restarting.'},'owner_stop',j.state.currentWorker);this.db.prepare('UPDATE shared_jobs SET lease=NULL WHERE id=?').run(id);}}
@@ -116,5 +117,5 @@ export class BigThreeCoordinator {
   }finally{this.db.prepare('UPDATE shared_jobs SET lease=NULL WHERE id=? AND lease=?').run(id,lease);}
  }
  configuredSecrets(){return [...this.team.config.ai.providers.map(p=>p.key),this.team.config.handoff?.token||''];}
- status(){return {focus:this.team.config.teamFocus==='big_three',defaultRoles,messenger:this.team.messenger?.status()||null,webhook:this.team.webhook?.status()||null,connections:this.team.hubConnections?.status()||null,liveExecutionEnabled:false,workers:workerOrder.map(id=>({id,family:family(id),status:id==='deepseek'?'Paid authorization required':'Secure connector/profile setup required'})),jobs:this.list()};}
+ status(){return {focus:this.team.config.teamFocus==='big_three',defaultRoles,demoWorkers:this.team.demoWorkers?.status()||null,messenger:this.team.messenger?.status()||null,webhook:this.team.webhook?.status()||null,connections:this.team.hubConnections?.status()||null,liveExecutionEnabled:false,workers:workerOrder.map(id=>({id,family:family(id),status:id==='deepseek'?'Paid authorization required':'Secure connector/profile setup required'})),jobs:this.list()};}
 }

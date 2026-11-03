@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node --use-system-ca src/server.js",
-    "test": "node --max-old-space-size=256 --test --test-concurrency=1",
+    "test": "node scripts/test-serial.js",
     "backup": "node scripts/backup.js",
     "verify:free": "node --use-system-ca scripts/verify-free-developers.js",
     "verify:deepseek": "node --use-system-ca scripts/verify-deepseek.js",

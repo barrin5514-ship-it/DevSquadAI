@@ -111,6 +111,7 @@ function messengerView(root,info){
  add(box,p('A worker report goes to Zapier; its next prompt returns through the separate handoffs branch. Default: 3 rounds, 5-minute wait.'),p(status.github.ready?'Read-only token confirmed locally. Repository access has not been assumed from that confirmation.':'Setup needed: save GITHUB_HANDOFF_TOKEN locally and confirm Contents read-only. Never paste the token into this dashboard.','hint'));
  const link=el('a','quiet','Open click-by-click Zapier setup');link.href='/team/zapier-setup';link.target='_blank';link.rel='noopener';box.append(link);
  box.append(callout('No live coding workers are enabled. Hello replies verify connections only. A first live loop needs separate worker setup and paid-task authorization.'));
+  if(info.demoWorkers){box.append(p('Friday demo: '+info.demoWorkers.isolation.reason,'hint'));box.append(p(info.demoWorkers.includedUsage,'hint'));box.append(p(info.demoWorkers.paid,'hint'));}
  for(const job of info.jobs){
   const card=panel(job.state.goal),loop=status.loops.find(l=>l.job_id===job.id);
   if(!loop){const rounds=field('Maximum rounds','3','number'),seconds=field('Seconds to wait for a prompt','300','number');add(card,rounds.wrap,seconds.wrap,button('Prepare messenger loop',async()=>{await api('/shared-jobs/'+job.id+'/messenger/prepare',{maxRounds:Number(rounds.input.value),timeoutSeconds:Number(seconds.input.value)});await refresh();notify('Loop prepared locally. No worker or external request started.');},'quiet'));}
