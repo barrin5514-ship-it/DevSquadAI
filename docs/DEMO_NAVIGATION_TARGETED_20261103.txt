@@ -1,0 +1,14 @@
+✔ bound demo task replaces the legacy picker with three roles and its direct messenger link (12.7021ms)
+✔ direct demo URL restores the exact saved job on refresh without preparing scopes or dispatching (2.1779ms)
+✔ unknown URL and matching names cannot redirect an unrelated task into the demo (5.8993ms)
+✔ ordinary task keeps its existing assignment workflow and has no demo controls (5.038ms)
+✔ role edits on the task use only the saved job/version and never authorize or start work (2.6692ms)
+✔ blocked demo exposes messenger controls instead of legacy free-provider resume (111.2483ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 316.2778
