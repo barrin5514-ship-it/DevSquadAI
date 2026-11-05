@@ -106,6 +106,14 @@ export class ProviderAdapter {
     if(data.model!==undefined&&data.model!==this.model)throw new ProviderError('invalid_response');
     return this.parseGeneration(data);
   }
+  // Regular project work has no app-specified output or spending cap. Retired
+  // immutable review grants keep their separate generateBound validation.
+  async generateStudio(body,expectedHash) {
+    if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||Object.hasOwn(body,'max_tokens')||body.stream!==true||body.stream_options?.include_usage!==true||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('invalid_response');
+    const data=await this.request(this.base+'/chat/completions',body);
+    if(data.model!==undefined&&data.model!==this.model)throw new ProviderError('invalid_response');
+    return this.parseGeneration(data);
+  }
   parseGeneration(data) {
     if(!data||typeof data!=='object'||Array.isArray(data))throw new ProviderError('invalid_response');
     const usage=this.id==='gemini'?{input:count(data.usageMetadata?.promptTokenCount),output:count(data.usageMetadata?.candidatesTokenCount)===null?null:count(data.usageMetadata.candidatesTokenCount)+(count(data.usageMetadata?.thoughtsTokenCount)||0),total:count(data.usageMetadata?.totalTokenCount)}:{input:count(data.usage?.prompt_tokens),output:count(data.usage?.completion_tokens),total:count(data.usage?.total_tokens)};

@@ -45,7 +45,6 @@ export function consoleRoutes(team,service){
  r.get('/studio',(req,res)=>send(res,team.studio.list()));
  r.get('/studio/chats/:id/events',(req,res)=>team.studio.live.stream(req,res,req.params.id));
  r.post('/studio/chats/:id/reconcile',(req,res)=>{team.fields(req.body,['executionId','version']);send(res,team.studio.executions.reconcile(req.params.id,req.body));});
- r.post('/studio/chats/:id/api-budget',(req,res)=>send(res,team.studio.budget.configure(req.params.id,req.body)));
  r.get('/studio/chats/:id/output',(req,res)=>send(res,developmentOutput(team.studio,req.params.id)));
  r.get('/studio/projects/:id/preview',(req,res)=>send(res,team.preview.status(req.params.id)));
  r.post('/studio/projects/:id/preview',async(req,res)=>{team.fields(req.body,['url','revoke'],[]);if(req.body.revoke===true){team.preview.revoke(req.params.id);return send(res,team.preview.status(req.params.id));}send(res,await team.preview.authorize(req.params.id,req.body.url,`http://${req.headers.host}`));});

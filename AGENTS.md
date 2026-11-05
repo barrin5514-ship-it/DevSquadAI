@@ -2,6 +2,9 @@
 
 Preserve unrelated work, project records, credentials, approvals and worker isolation.
 Never start a potentially billable worker without specific owner authorization.
+The owner explicitly removed project spending caps and money-approval steps.
+Their Send action starts that assigned workflow; maintenance tasks must not send.
+Keep token/cost tracking, Stop, stuck detection, folder locks and no-self-review.
 Never force-release an unresolved lock or count assignment as model execution.
 
 For every feature or fix:

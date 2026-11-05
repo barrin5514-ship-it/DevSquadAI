@@ -1,5 +1,8 @@
 # Worker recovery and live workspace — November 5, 2026
 
+> Current direction update — November 5: the owner subsequently removed active project spending caps, per-request output caps and expiry/approval setup. Usage tracking and all Stop/lock/review protections remain. See FRESH_DEMO_READINESS_20261105.md; budget descriptions below document the earlier implementation.
+
+
 Status: PARTIALLY VERIFIED. No AI requests are authorized or performed for this implementation. Local worker simulations are explicitly not DeepSeek/Codex/Claude model evidence.
 
 ## Preservation and scope
