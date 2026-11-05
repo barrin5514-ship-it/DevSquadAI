@@ -43,3 +43,6 @@ Actual local Chrome/Playwright checked the fresh main-app URL, selected roles, e
 Master remains 79749aa. An isolated git-archive snapshot using a separate temporary database returned HTTP 200 for /team and /api/console/studio, with all provider requests disabled. This verifies startup/API fallback only. It is not proof of live three-agent operation or compatibility with the production database. Switching to master alone must not be described as a fully verified live-demo recovery plan.
 
 The redesign snapshot was committed as cc5f2e3; follow-up commit and final push are recorded in the final handoff. No master changes, merge, deployment, credit purchase or live AI requests.
+
+
+November 5 recovery update: the original fresh demo later hit a native Codex login/exit failure before independent tests. That failed run is now stopped with history preserved. See docs/TODO_DEMO_RECOVERY_20261105.md for the new retry session, separate Personal/School login commands, 500-test regression result and verified local browser controls. A real AI rerun remains pending owner action; no maintenance Send occurred.

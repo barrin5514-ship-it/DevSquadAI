@@ -189,3 +189,8 @@ body.studio-app{--studio-base:#0c0e17;--studio-panel:#11141f;--studio-line:#2c30
 
 /* Live evidence stays compact and scrolls inside the existing output drawer. */
 .live-agent-workspace{padding:12px;border-bottom:1px solid #3b3e55;min-width:0}.live-agent-workspace h3{margin:0}.live-agent{font-weight:600;color:#c8beff}.live-workflow{display:flex;gap:16px;flex-wrap:wrap;padding-left:20px;font-size:12px}.live-terminal{max-height:240px;overflow:auto;background:#0b0d15;padding:8px;border-radius:8px}.live-terminal pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.live-usage{margin:10px 0}.live-files p{font-size:12px;overflow-wrap:anywhere}
+
+/* A small composer still accepts typing, Send and Stop. */
+.coding-workspace .composer-minimized textarea{min-height:30px;max-height:30px;height:30px;resize:none;line-height:20px}.chat-live-activity{flex:none;border-left:2px solid #8f72ff;padding:6px 10px;margin-top:8px}.chat-live-activity:empty{display:none}.chat-live-activity .activity-alert{color:#ffd88e}.composer-controls .danger{margin-left:auto}.composer-controls .danger:not([hidden])~.primary{margin-left:0}
+
+.workspace-role-card .field[hidden],.message-composer [hidden]{display:none!important}

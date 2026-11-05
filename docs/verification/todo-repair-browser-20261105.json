@@ -1,0 +1,56 @@
+{
+  "environment": "Local Windows, installed Chrome via Playwright",
+  "production": "Read-only inspection; no Send or role save",
+  "activeWorkflow": "Separate temporary mock database only",
+  "checks": [
+    {
+      "name": "Regular dashboard exposes Personal/School selection",
+      "passed": true
+    },
+    {
+      "name": "Minimized input remains visible and one line",
+      "passed": true
+    },
+    {
+      "name": "One-line preference survives reload",
+      "passed": true
+    },
+    {
+      "name": "No regular-dashboard JavaScript errors",
+      "passed": true
+    },
+    {
+      "name": "Running composer accepts typing",
+      "passed": true
+    },
+    {
+      "name": "Stop visible in composer",
+      "passed": true
+    },
+    {
+      "name": "SSE updates chat and preserves draft",
+      "passed": true
+    },
+    {
+      "name": "Queued message API accepted",
+      "passed": true
+    },
+    {
+      "name": "Queue saves without dispatching another worker",
+      "passed": true
+    },
+    {
+      "name": "Stop pauses further work cleanly",
+      "passed": true
+    },
+    {
+      "name": "Profile save accepted",
+      "passed": true
+    },
+    {
+      "name": "Selected School profile persists across reload",
+      "passed": true
+    }
+  ],
+  "providerRequests": 0
+}

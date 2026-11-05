@@ -17,13 +17,15 @@ class Element {
  removeAttribute(){}
  addEventListener(){}
  focus(){}
+ get isConnected(){return !!this.parent;}
+ querySelectorAll(selector){return all(this).filter(n=>selector==='[data-event-id]'&&n.dataset.eventId!==undefined);}
  querySelector(selector){return all(this).find(n=>selector==='nav'?n.tagName==='nav':selector[0]==='.'&&n.className?.split(' ').includes(selector.slice(1)))||null;}
 }
 const all=n=>[n,...n.children.flatMap(all)];
 function fixture({status='ready',empty=false,events=[],hasReview=false,readOnly=false,teamAvailable=false}={}){
  const body=new Element('body'),main=new Element('main'),sidebar=new Element('aside'),nav=new Element('nav'),bottom=new Element('div');bottom.className='sidebar-bottom';sidebar.append(nav,bottom);body.append(main,sidebar);const nodes=new Map();
  const document={body,createElement:t=>new Element(t),querySelectorAll:()=>[],getElementById:id=>all(body).find(n=>n.id===id)||nodes.get(id)||null};for(const id of ['refresh','guide-button','close-guide','notice'])nodes.set(id,new Element('div'));
- const calls=[],context=vm.createContext({document,window:{history:{replaceState(){}},location:{hash:''},addEventListener(){},scrollTo(){}},crypto:{randomUUID},setTimeout:()=>0,clearTimeout(){},fetch:()=>new Promise(()=>{})});
+ const calls=[],context=vm.createContext({document,window:{history:{replaceState(){}},location:{hash:''},addEventListener(){},scrollTo(){}},crypto:{randomUUID},localStorage:{getItem(){return null;},setItem(){}},queueMicrotask(){},setTimeout:()=>0,clearTimeout(){},fetch:()=>new Promise(()=>{})});
  vm.runInContext(fs.readFileSync(new URL('../src/dashboard/dashboard.js',import.meta.url),'utf8'),context);context.calls=calls;context.hasReview=hasReview;context.main=main;context.sidebar=sidebar;context.inputEvents=events;
  vm.runInContext(`state.busy=false;state.studioProject='p';state.studioChat=${empty?'null':"'c'"};state.data={studio:{projects:[{id:'p',name:'Project',agentChangesAllowed:${!readOnly}}],chats:${empty?'[]':"[{id:'c',project_id:'p',status:'"+status+"',title:'Saved chat',state:{goal:'Existing goal',roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'}}}]"},workers:{model:'Configured model'}}};state.studioDetail={id:'c',events:inputEvents};api=async(route,body)=>{calls.push({route,body});return {id:route.endsWith('/messages')?(hasReview?'followup-c':route.split('/')[3]):'new-chat',events:[]};};refresh=async()=>{};notify=()=>{};draw=()=>{};`,context);
  if(hasReview)vm.runInContext("state.data.studio.chats[0].state.review={artifactHash:'reviewed-hash'};state.studioDetail.events=[{id:1,kind:'independent_review',content:{artifactHash:'reviewed-hash',decision:'approved',summary:'Recorded review'}}];",context);
@@ -43,8 +45,8 @@ test('first local message creates its project-bound session before saving, witho
 test('Send with no new text resumes existing work without inventing another owner message',async()=>{
  const f=fixture();await f.submit('Send');assert.deepEqual(f.calls.map(c=>c.route),['/studio/projects/p/run']);
 });
-test('active/stopping sessions and reviewed states without a valid review cannot dispatch',async()=>{
- for(const status of ['running','stopping','awaiting_owner','accepted']){const f=fixture({status});assert.equal(f.button('Send').disabled,true);await f.submit('Send');assert.equal(f.calls.length,0);}
+test('reviewed states without a valid review cannot dispatch',async()=>{
+ for(const status of ['awaiting_owner','accepted']){const f=fixture({status});assert.equal(f.button('Send').disabled,true);await f.submit('Send');assert.equal(f.calls.length,0);}
 });
 test('messages retain chronological event order and render saved agent reports without fake streaming',()=>{
  const f=fixture({events:[{id:3,kind:'worker_report',agent:'deepseek',content:{report:'Actual saved report'}},{id:1,kind:'task',content:{text:'Original owner prompt'}},{id:2,kind:'worker_started',agent:'deepseek',content:{}}]});assert.deepEqual(all(f.main).filter(n=>n.className?.startsWith('chat-message ')).map(n=>n.dataset.eventId),[1,2,3]);assert.match(f.main.textContent,/Actual saved report/);assert.doesNotMatch(f.main.textContent,/The assigned agent is working/);assert.equal(f.calls.length,0);
@@ -60,5 +62,10 @@ test('mock command events never claim that the real isolated runner executed',()
 
 test('read-only connected projects can save messages but cannot dispatch workers from the composer',async()=>{const f=fixture({readOnly:true});assert.equal(f.button('Send').disabled,true);f.write('Save locally; do not run');await f.submit('Send');assert.equal(f.calls.length,0);await f.submit('Save message');assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/messages']);assert.match(f.main.textContent,/Read-only project/);});
 
-test('composer minimize preserves unsent text, Attach/Reference/Team and never dispatches',async()=>{const f=fixture();f.write('Keep this unsent draft');await f.button('Minimize composer').onclick();const input=all(f.main).find(n=>n.tagName==='textarea');assert.equal(input.hidden,true);assert.equal(input.value,'Keep this unsent draft');assert.ok(f.button('@ Reference'));assert.ok(f.button('Team'));assert.equal(f.calls.length,0);await f.button('Write a message').onclick();assert.equal(input.hidden,false);assert.equal(input.value,'Keep this unsent draft');assert.equal(f.calls.length,0);assert.match(f.button('Save message').title,/No agent runs/);});
+test('composer minimize preserves unsent text, Attach/Reference/Team and never dispatches',async()=>{const f=fixture();f.write('Keep this unsent draft');await f.button('Minimize composer').onclick();const input=all(f.main).find(n=>n.tagName==='textarea');assert.equal(input.hidden,false);assert.equal(input.rows,1);assert.equal(input.value,'Keep this unsent draft');assert.ok(f.button('@ Reference'));assert.ok(f.button('Team'));assert.equal(f.calls.length,0);await f.button('Expand composer').onclick();assert.equal(input.hidden,false);assert.equal(input.value,'Keep this unsent draft');assert.equal(f.calls.length,0);assert.match(f.button('Save message').title,/No agent runs/);});
 test('Team opens the supported role panel rather than an unsupported model selector',async()=>{const f=fixture({teamAvailable:true});const team=f.button('Team'),panel=all(f.main).find(n=>n.tagName==='details'&&n.open===false);assert.equal(team.disabled,undefined);await team.onclick();assert.equal(panel.open,true);assert.doesNotMatch(f.main.textContent,/Individual agent selection.*not.*supported/);assert.equal(f.calls.length,0);});
+
+test('active chat accepts a typed message without starting another worker and exposes Stop',async()=>{const f=fixture({status:'running'});const input=all(f.main).find(n=>n.tagName==='textarea');assert.equal(input.disabled,false);assert.equal(f.button('Stop').hidden,false);f.write('Save this for next time');await f.submit('Send');assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/messages']);});
+test('live activity updates chat without replacing the draft and surfaces idle alert',()=>{const f=fixture({status:'running'});f.write('My unsent draft');const input=all(f.main).find(n=>n.tagName==='textarea');f.context.value={id:'c',status:'paused',state:{phase:'tester',alert:'No worker output for three minutes. Work is paused.'},events:[],executions:[{agent:'codex-school',evidence:{lastActivityAt:new Date().toISOString()}}]};vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);assert.equal(input.value,'My unsent draft');assert.match(f.main.textContent,/three minutes/);assert.equal(f.button('Stop').hidden,true);});
+
+test('Stop remains usable even while another dashboard save is busy',async()=>{const f=fixture({status:'running'});vm.runInContext('state.busy=true;loadStudioChat=async()=>{}',f.context);await f.button('Stop').onclick();assert.equal(f.calls[0].route,'/studio/chats/c/stop');});

@@ -1,0 +1,36 @@
+import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import {createRequire} from 'node:module';
+import {createApp} from '../src/app.js';import {loadConfig} from '../src/config/index.js';
+const require=createRequire(import.meta.url),{chromium}=require(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
+const screenshots=process.argv[2];if(!screenshots||!path.isAbsolute(screenshots))throw Error('Supply an absolute screenshot directory');fs.mkdirSync(screenshots,{recursive:true});
+const checks=[],root=fs.mkdtempSync(path.join(os.tmpdir(),'studio-ui-repair-'));let browser,server,r;
+const check=(name,ok)=>{checks.push({name,passed:!!ok});console.log(JSON.stringify({name,passed:!!ok}));if(!ok)throw Error(name);};
+try{
+ browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+ const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ // Production inspection is read-only. Blocking POST also prevents accidental Send.
+ await page.route('**/api/console/**',route=>route.request().method()==='GET'?route.continue():route.abort());
+ const fresh='http://127.0.0.1:3000/team#project/a277f977-2ccd-40df-adfa-f02757f0ec3b/chat/b6b2893d-987e-448b-ac67-16b66042e179';
+ await page.goto(fresh);await page.locator('#conversation-message').waitFor();await page.locator('.workspace-role-card').first().waitFor({state:'attached'});await page.getByRole('button',{name:'Team',exact:true}).click();
+ const profile=page.locator('[data-role="tester"] select').nth(1);await profile.waitFor();check('Regular dashboard exposes Personal/School selection',await profile.inputValue()==='codex-personal');
+ await page.screenshot({path:path.join(screenshots,'fresh-demo-and-profiles.png'),fullPage:true});
+ await page.locator('#conversation-message').fill('UNSENT browser inspection draft');await page.getByRole('button',{name:'Minimize composer',exact:true}).click();
+ check('Minimized input remains visible and one line',await page.locator('#conversation-message').isVisible()&&await page.locator('#conversation-message').evaluate(e=>e.rows===1));
+ await page.reload();await page.locator('#conversation-message').waitFor();check('One-line preference survives reload',await page.locator('#conversation-message').evaluate(e=>e.rows===1));
+ await page.screenshot({path:path.join(screenshots,'composer-one-line.png'),fullPage:true});check('No regular-dashboard JavaScript errors',errors.length===0);
+ await context.close();
+ // The active run below is a deterministic simulation in a separate temporary
+ // database. It cannot call any provider, and no production Send is pressed.
+ let release;const workers={call:async(_agent,_packet,_cwd,_signal,execution)=>{execution.onEvent({status:'running',lastActivityAt:new Date().toISOString(),progress:'LOCAL SIMULATION: waiting for fixture release'});return new Promise((resolve,reject)=>{release=resolve;_signal.addEventListener('abort',()=>reject({code:'owner_stop',stopped:true}),{once:true});});},tests:async()=>({executed:false,passed:false,summary:'Fixture only'})};
+ r=createApp(loadConfig({DATABASE_PATH:path.join(root,'main.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backups')}),{fetchImpl:async()=>{throw Error('Providers forbidden');},studioOptions:{workers}});
+ server=r.app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));const base='http://127.0.0.1:'+server.address().port,project=r.team.studio.project({name:'LOCAL UI SIMULATION — no AI'}),job=r.team.studio.start(project.id,{task:'LOCAL MOCK — hold for UI check',requestId:crypto.randomUUID()});await new Promise(setImmediate);
+ const mock=await browser.newPage({viewport:{width:1440,height:1000}});await mock.goto(base+'/team#project/'+project.id+'/chat/'+job.id);await mock.locator('#conversation-message').waitFor();
+ check('Running composer accepts typing',await mock.locator('#conversation-message').isEnabled());await mock.locator('#conversation-message').fill('LOCAL queued instruction');
+ check('Stop visible in composer',await mock.locator('.message-composer').getByRole('button',{name:'Stop',exact:true}).isVisible());
+ const execution=r.team.studio.executions.list(job.id).at(-1);r.team.studio.executions.record(execution.id,{lastActivityAt:new Date().toISOString(),progress:'LOCAL SIMULATION: a new actual fixture event'});
+ await mock.getByLabel('Current agent activity').getByText(/a new actual fixture event/).waitFor();check('SSE updates chat and preserves draft',await mock.locator('#conversation-message').inputValue()==='LOCAL queued instruction');
+ const queued=mock.waitForResponse(r=>r.url().endsWith('/messages')&&r.request().method()==='POST');await mock.getByRole('button',{name:'Queue message',exact:true}).click();check('Queued message API accepted',(await queued).status()===201);check('Queue saves without dispatching another worker',r.team.studio.detail(job.id).events.filter(e=>e.kind==='message_queued').length===1&&r.team.studio.executions.list(job.id).length===1);
+ const stopped=mock.waitForResponse(r=>r.url().endsWith('/stop')&&r.request().method()==='POST');await mock.locator('.message-composer').getByRole('button',{name:'Stop',exact:true}).click();await stopped;release({report:'LOCAL fixture stopped',files:[]});await r.team.studio.wait(job.id);check('Stop pauses further work cleanly',r.team.studio.get(job.id).status==='stopped');
+ await mock.getByLabel('Current agent activity').getByText('Status: stopped').waitFor();
+ await mock.locator('.workspace-role-card').first().waitFor({state:'attached'});await mock.getByRole('button',{name:'Team',exact:true}).click();await mock.getByLabel('Tester Codex profile',{exact:true}).selectOption('codex-school');const roleSaved=mock.waitForResponse(r=>/\/roles$/.test(r.url())&&r.request().method()==='POST');await mock.getByRole('button',{name:'Save roles',exact:true}).click();const roleResponse=await roleSaved;if(roleResponse.status()!==200)console.log(JSON.stringify({mockRoleError:await roleResponse.json(),submitted:JSON.parse(roleResponse.request().postData()),currentVersion:r.team.studio.get(job.id).version}));check('Profile save accepted',roleResponse.status()===200);await mock.reload();await mock.locator('.workspace-role-card').first().waitFor({state:'attached'});await mock.getByRole('button',{name:'Team',exact:true}).click();check('Selected School profile persists across reload',await mock.getByLabel('Tester Codex profile',{exact:true}).inputValue()==='codex-school');await mock.screenshot({path:path.join(screenshots,'local-simulation-stopped.png'),fullPage:true});
+ console.log(JSON.stringify({checks,providerRequests:0,screenshots},null,2));
+}finally{await browser?.close();await r?.team.studio.close();r?.team.messenger.close();if(server)await new Promise(resolve=>server.close(resolve));r?.db.close();}

@@ -1,3 +1,5 @@
+import {workerIdle} from './worker-idle.js';
+import {CodexProfiles,codexProfileIds} from './codex-profiles.js';
 import {fileURLToPath} from 'node:url';
 import fs from 'node:fs';import path from 'node:path';import {randomUUID} from 'node:crypto';import {spawn,spawnSync} from 'node:child_process';
 import {ProjectFiles,hashText} from './project-files.js';import {NativeDemoBoundary,isolationArgs} from './demo-isolation.js';import {DemoCliTransport} from './demo-cli-transport.js';import {cliEnvironment} from './cli-hello.js';
@@ -5,17 +7,19 @@ const instructions='Read the JSON packet. Its phase and actualRoles are authorit
 // The native login broker is trusted, but model tools are off. All model file
 // access is mediated by ProjectFiles. Generated tests run separately in MXC.
 export class StudioWorkers {
- constructor(team,{transport=new DemoCliTransport()}={}){this.team=team;this.transport=transport;}
- async call(agent,packet,root,signal,execution={}){this.team.safe(packet);if(!['deepseek','codex-personal','claude-code'].includes(agent))throw Error('Selected worker has no configured project transport');
-  if(agent!=='deepseek')return this.transport.run(agent==='codex-personal'?'codex':'claude',packet,root,{signal,timeoutMs:this.team.config?.studioTimeouts?.[agent]||300000,onEvent:execution.onEvent,streamProgress:true,codexIsolation:agent==='codex-personal'?isolationArgs(root):null,instruction:instructions,outputSchema:agent==='codex-personal'?fileURLToPath(new URL('./studio-worker.schema.json',import.meta.url)):null});
+ constructor(team,{transport=new DemoCliTransport(),profiles=new CodexProfiles(),idleMs=180000}={}){this.team=team;this.transport=transport;this.profiles=profiles;this.idleMs=idleMs;}
+ async preflight(job,root,signal){for(const [phase,agent]of Object.entries(job.state.roles)){if(agent==='deepseek')continue;if(signal.aborted)throw {ownerStop:true};const ok=agent.startsWith('codex-')?await this.profileAvailable(agent,root):await Promise.resolve().then(()=>this.transport.authCheck('claude',this.transport.executables.claude,root,cliEnvironment(),null)).catch(()=>false);if(!ok)return {agent,code:'auth_expired',message:'Before starting the team, the '+phase+' login ('+(agent==='claude-code'?'Claude Code':agent==='codex-school'?'Codex School':'Codex Personal')+') could not be verified. No Builder request was sent. Sign in, then Send again.'};}return null;}
+ async profileAvailable(id,root){return (await this.profiles.check(id,this.transport.executables.codex,root)).ok;}
+ async call(agent,packet,root,signal,execution={}){this.team.safe(packet);if(!['deepseek',...codexProfileIds,'claude-code'].includes(agent))throw Error('Selected worker has no configured project transport');
+  if(agent!=='deepseek')return this.transport.run(agent.startsWith('codex-')?'codex':'claude',packet,root,{signal,profile:agent.startsWith('codex-')?this.profiles.selection(agent):null,timeoutMs:this.team.config?.studioTimeouts?.[agent]||300000,onEvent:execution.onEvent,streamProgress:true,codexIsolation:agent.startsWith('codex-')?isolationArgs(root):null,instruction:instructions,outputSchema:agent.startsWith('codex-')?fileURLToPath(new URL('./studio-worker.schema.json',import.meta.url)):null});
   const settings=this.team.paid.settings;if(!settings?.key||settings.base!=='https://api.deepseek.com'||!settings.model)throw Error('DeepSeek key or official model configuration is missing');
   // Send is the owner's dispatch action. The model uses its normal output
   // default; no financial cap, quote, reservation or run-expiry check is applied.
-  const adapter=this.team.paid.adapter();adapter.timeout=this.team.config?.studioTimeouts?.deepseek||90000;adapter.onStreamProgress=execution.onEvent;const original=adapter.fetch;adapter.fetch=(url,o)=>original(url,{...o,signal:AbortSignal.any([o.signal,signal])});
+  const adapter=this.team.paid.adapter(),idleAbort=new AbortController();let idle,lastActivity=0;adapter.onResponseActivity=()=>{idle?.touch();if(Date.now()-lastActivity>=1000){lastActivity=Date.now();execution.onEvent?.({lastActivityAt:new Date(lastActivity).toISOString(),progress:'Provider response bytes received; waiting for the complete result.'});}};adapter.timeout=this.team.config?.studioTimeouts?.deepseek||90000;adapter.onStreamProgress=update=>execution.onEvent?.({...update,lastActivityAt:new Date().toISOString()});const original=adapter.fetch;adapter.fetch=(url,o)=>original(url,{...o,signal:AbortSignal.any([o.signal,signal,idleAbort.signal])});
   const body={model:settings.model,messages:[{role:'system',content:instructions},{role:'user',content:JSON.stringify(packet)}],thinking:{type:'disabled'},response_format:{type:'json_object'},stream:true,stream_options:{include_usage:true}};
   execution.usage?.start(execution.chatId,execution.executionId,settings.model);
   execution.onEvent?.({status:'waiting',startedAt:new Date().toISOString(),timeoutMs:adapter.timeout,progress:'Sending one DeepSeek request; no automatic transport retry. Visible-answer progress will stream.'});
-  let r;try{r=await adapter.generateStudio(body,hashText(JSON.stringify(body)));}catch(e){execution.usage?.record(execution.chatId,execution.executionId,settings.model,e.usage||null,e.usage?'incomplete':'unknown');e.unknownOutcome=!e.usage;e.stopped=true;throw e;}
+  let r;try{idle=workerIdle(()=>idleAbort.abort(),this.idleMs);r=await adapter.generateStudio(body,hashText(JSON.stringify(body)));}catch(e){execution.usage?.record(execution.chatId,execution.executionId,settings.model,e.usage||null,e.usage?'incomplete':'unknown');if(idleAbort.signal.aborted)e.code='inactivity_timeout';e.unknownOutcome=!e.usage;e.stopped=true;throw e;}finally{idle?.close();}
   execution.usage?.record(execution.chatId,execution.executionId,settings.model,r.usage,'response_received');
   const value=JSON.parse(r.text);return {...value,usage:r.usage,model:settings.model,httpStatus:r.diagnostics?.httpStatus};
  }
