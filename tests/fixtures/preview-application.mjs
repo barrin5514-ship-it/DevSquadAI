@@ -1,0 +1,12 @@
+// A small real HTTP application used only for local browser verification.
+// It never reads project files, credentials, databases or the network.
+import http from 'node:http';
+const script=`let count=0;document.querySelector('#increment').onclick=()=>document.querySelector('#count').textContent=String(++count);document.querySelector('form').onsubmit=async event=>{event.preventDefault();const value=document.querySelector('input').value;const response=await fetch('/echo',{method:'POST',headers:{'content-type':'text/plain'},body:value});document.querySelector('#result').textContent=await response.text();};document.querySelector('#boundary').onclick=async()=>{try{await fetch('http://127.0.0.1:3000/api/console/session');document.querySelector('#boundary-result').textContent='Unexpected access';}catch{document.querySelector('#boundary-result').textContent='Other local service blocked';}};`;
+const server=http.createServer(async(req,res)=>{
+ if(req.url==='/app.js'){res.setHeader('content-type','text/javascript');return res.end(script);}
+ if(req.url==='/echo'){let text='';for await(const part of req){text+=part;if(text.length>200){res.writeHead(413);return res.end();}}res.setHeader('content-type','text/plain');return res.end('Saved locally: '+text);}
+ if(req.url==='/blocked')res.setHeader('X-Frame-Options','DENY');
+ res.setHeader('content-type','text/html');res.end(`<!doctype html><html><head><meta charset="utf-8"><title>Stage 4 local application</title><style>body{font:16px system-ui;background:#f5f3ff;color:#27203b;padding:22px}button,input{padding:10px;border:1px solid #bdb3db;border-radius:7px;margin:5px 0}button{background:#6d42e7;color:white}a{display:block;margin:14px 0}section{background:white;padding:18px;border-radius:12px}</style><script defer src="/app.js"></script></head><body><h1>${req.url==='/second'?'Second page':'Preview test application'}</h1><p>Real local HTTP application · no AI or business data</p><section><button id="increment">Add one</button><p>Count: <span id="count">0</span></p><form><label>Your note <input aria-label="Your note" maxlength="100"></label><button>Save note</button></form><p id="result"></p><a href="/second">Second page</a><a href="/">Home</a><a href="/blocked">Page that blocks embedding</a><button id="boundary">Check network boundary</button><p id="boundary-result"></p></section></body></html>`);
+});
+server.listen(0,'127.0.0.1',()=>console.log('Controlled preview application port: '+server.address().port));
+process.on('SIGTERM',()=>server.close());process.on('SIGINT',()=>server.close());

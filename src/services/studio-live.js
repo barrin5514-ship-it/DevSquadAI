@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import {hashText} from './project-files.js';
+import {cleanOutput} from './workspace-output.js';
+import {ApiError} from '../middleware/errors.js';
+
+export class StudioLive {
+ constructor(studio){this.studio=studio;this.monitors=new Map();this.clients=new Set();}
+ snapshot(repo){return new Map(repo.list().map(name=>{const f=repo.resolve(name),s=fs.statSync(f);return [name,{hash:s.size<=1000000?hashText(fs.readFileSync(f)):s.size+':'+s.mtimeMs,modifiedAt:s.mtime.toISOString()}];}));}
+ monitor(chat){let m=this.monitors.get(chat);if(m){m.users++;return ()=>this.release(chat);}const repo=this.studio.root(this.studio.get(chat).project_id);let before=this.snapshot(repo);m={users:1,timer:null,watch:null};this.monitors.set(chat,m);try{m.watch=fs.watch(repo.root,{recursive:true,persistent:false},()=>{clearTimeout(m.timer);m.timer=setTimeout(()=>{try{const after=this.snapshot(repo),changes=[];for(const [name,f]of after)if(before.get(name)?.hash!==f.hash)changes.push({path:name,kind:before.has(name)?'modified':'created',modifiedAt:f.modifiedAt});for(const name of before.keys())if(!after.has(name))changes.push({path:name,kind:'deleted',modifiedAt:new Date().toISOString()});before=after;if(changes.length)this.studio.event(chat,'filesystem_changed',{changes:changes.slice(0,100),truncated:changes.length>100,source:'actual filesystem observation'});}catch{this.studio.event(chat,'file_monitor_error',{message:'File monitoring paused: selected folder cannot be inspected safely.'});}},200);m.timer.unref?.();});m.watch.on('error',()=>this.studio.event(chat,'file_monitor_error',{message:'Native file monitoring is unavailable.'}));}catch{this.studio.event(chat,'file_monitor_error',{message:'Native file monitoring is unavailable.'});}return ()=>this.release(chat);}
+ release(chat){const m=this.monitors.get(chat);if(!m||--m.users>0)return;clearTimeout(m.timer);m.watch?.close();this.monitors.delete(chat);}
+ stream(req,res,chat){this.studio.get(chat);const raw=req.headers['last-event-id']||req.query.after||'0';if(!/^\d{1,15}$/.test(String(raw)))throw new ApiError(400,'Invalid event cursor.');if(this.clients.size>=16)throw new ApiError(429,'Too many live workspace connections.');let cursor=Number(raw),closed=false,release=()=>{};res.status(200).set({'Content-Type':'text/event-stream','Cache-Control':'no-store','Connection':'keep-alive','X-Accel-Buffering':'no'});res.flushHeaders();
+  const cleanup=()=>{if(closed)return;closed=true;clearInterval(heartbeat);this.studio.bus.off(chat,send);release();this.clients.delete(cleanup);if(!res.writableEnded&&!res.destroyed)res.end();};
+  const send=()=>{if(closed)return;let batch;do{batch=this.studio.db.prepare('SELECT * FROM studio_events WHERE chat_id=? AND id>? ORDER BY id LIMIT 100').all(chat,cursor);for(const row of batch){cursor=row.id;const content=cleanOutput(this.studio.team,JSON.parse(row.content));if(!res.write('id: '+row.id+'\ndata: '+JSON.stringify({...row,content})+'\n\n')){cleanup();res.end();return;}}}while(batch.length===100);};
+  const heartbeat=setInterval(()=>{if(!res.write(': connected\n\n')){cleanup();res.end();}},15000);heartbeat.unref?.();this.clients.add(cleanup);this.studio.bus.on(chat,send);req.on('close',cleanup);res.on('close',cleanup);send();if(!closed)release=this.monitor(chat);
+ }
+ close(){for(const cleanup of [...this.clients])cleanup();for(const [id,m]of this.monitors){m.users=1;this.release(id);}}
+}

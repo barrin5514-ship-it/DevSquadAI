@@ -1,0 +1,87 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "report": {
+      "type": "string",
+      "maxLength": 6000
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ]
+      }
+    },
+    "review": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "draftId": {
+              "type": "string"
+            },
+            "artifactHash": {
+              "type": "string"
+            },
+            "testEvidenceHash": {
+              "type": "string"
+            },
+            "reviewerExecutedTests": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "approved",
+                "changes_requested"
+              ]
+            },
+            "summary": {
+              "type": "string"
+            },
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "draftId",
+            "artifactHash",
+            "testEvidenceHash",
+            "reviewerExecutedTests",
+            "decision",
+            "summary",
+            "findings"
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "report",
+    "files",
+    "review"
+  ]
+}

@@ -1,3 +1,4 @@
+import {deepseekStream} from './deepseek-stream.js';
 import { ProviderError } from './config.js';
 import { classifyProviderFailure } from './diagnostics.js';
 import {createHash} from 'node:crypto';
@@ -48,10 +49,10 @@ export class ProviderAdapter {
       }
       // Bound the decoded body, including streamed/chunked responses.
       const maxBodyBytes=!body&&this.id==='openrouter'&&[this.base+'/models',this.base+'/models/user'].includes(url)?8000000:512000;
-      const reader=response.body.getReader(); let length=0; const chunks=[];
+      const reader=response.body.getReader(); let length=0; const chunks=[];const stream=response.ok&&this.id==='deepseek'&&body?.stream===true?deepseekStream(this.onStreamProgress):null;
       while(true) { const {done,value}=await reader.read(); if(done)break; length+=value.length;
-        if(length>maxBodyBytes){await reader.cancel();throw new ProviderError('invalid_response');}chunks.push(value); }
-      let data;try{data=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(error){if(response.ok)throw error;data={};}
+        if(length>maxBodyBytes){await reader.cancel();throw new ProviderError('invalid_response');}if(stream)stream.write(value);else chunks.push(value); }
+      let data;try{data=stream?stream.end():JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(error){if(response.ok)throw error;data={};}
       if(!response.ok){diagnostic.errorKind=classifyProviderFailure(response.status,data);const error=new ProviderError('provider_error');error.httpStatus=response.status;const retry=response.headers.get('retry-after');if(response.status===503&&retry){const n=Number(retry),date=Date.parse(retry);const wait=Number.isFinite(n)&&n>0?n*1000:Number.isFinite(date)?Math.max(1000,date-Date.now()):0;if(wait)error.retryAt=Date.now()+Math.min(wait,3600000);}throw error;}
       diagnostic.phase='complete';return data;
     } catch(error) {
@@ -100,7 +101,7 @@ export class ProviderAdapter {
   // Only the owner-scoped paid review path supplies an immutable complete body.
   // Hash the same JSON serialization that request() sends; never rebuild messages.
   async generateBound(body,expectedHash) {
-    if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||body.max_tokens!==this.tokenLimit||body.stream!==false||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('paid_blocked');
+    if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||body.max_tokens!==this.tokenLimit||!(body.stream===false||body.stream===true&&body.stream_options?.include_usage===true)||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('paid_blocked');
     const data=await this.request(this.base+'/chat/completions',body);
     if(data.model!==undefined&&data.model!==this.model)throw new ProviderError('invalid_response');
     return this.parseGeneration(data);

@@ -1,0 +1,2 @@
+UI CHECK ONLY: first-party attachment for Stage 5 browser verification.
+Save this message locally. Do not run an agent or change the project.

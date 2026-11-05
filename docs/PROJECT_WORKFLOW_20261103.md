@@ -52,3 +52,5 @@ Browser: refreshed and visually inspected the actual Friday project/chat. Projec
 ## Delivery status
 
 The pre-push visibility check reports barrin5514-ship-it/DevSquadAI is PUBLIC, contrary to the earlier private-repository requirement. New changes are committed locally, but push is held pending the owner choosing to restore private visibility or explicitly approve public publication. No GitHub visibility change was made. The private-key/URL staged scan passed; .env, database files, node_modules and project workspaces are excluded.
+
+Owner resolution — 2026-11-03: the owner explicitly authorized keeping the repository PUBLIC and pushing commit 79749aa. That exact commit was pushed to origin/master and the remote hash verified. No visibility change or task Run occurred. This delivery note is local; the approved commit was not amended.

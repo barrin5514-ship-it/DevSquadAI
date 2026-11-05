@@ -26,11 +26,11 @@ test('initializes all nine domain tables with foreign keys and migrations',t=>{
  const {runtime:{db}}=fixture(t); const names=db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(x=>x.name);
  for(const name of ['projects','tasks','agents','agent_executions','ai_providers','token_usage','project_context','project_files','error_logs']) assert.ok(names.includes(name));
  assert.equal(db.prepare('PRAGMA foreign_keys').get().foreign_keys,1);
- assert.equal(db.prepare('SELECT count(*) n FROM schema_migrations').get().n,13);
- for(const table of ['paid_review_scopes','paid_review_http'])assert.ok(names.includes(table));
+ assert.equal(db.prepare('SELECT count(*) n FROM schema_migrations').get().n,17);
+ for(const table of ['paid_review_scopes','paid_review_http','studio_project_connections','studio_workspace_preferences','studio_file_operations','studio_role_preferences'])assert.ok(names.includes(table));
  assert.throws(()=>db.prepare("INSERT INTO tasks VALUES ('x','missing','task',NULL,'pending','now','now',NULL)").run());
 });
-test('migrations and agent seeding are idempotent',t=>{const f=fixture(t);f.restart(); assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM schema_migrations').get().n,13);assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM agents').get().n,8);});
+test('migrations and agent seeding are idempotent',t=>{const f=fixture(t);f.restart(); assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM schema_migrations').get().n,17);assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM agents').get().n,8);});
 test('project creation, retrieval, listing and update API',async t=>{const {request}=await api(t);const p=await request('/projects','POST',{name:'Example',description:'Test'});assert.equal(p.status,201);assert.equal(path.isAbsolute(p.data.workspace_path),false);assert.equal((await request(`/projects/${p.data.id}`)).data.name,'Example');assert.equal((await request('/projects')).data.length,1);assert.equal((await request(`/projects/${p.data.id}`,'PATCH',{name:'Updated',status:'paused'})).data.status,'paused');});
 test('tasks persist after restart and pending tasks are not rerun',t=>{const f=fixture(t);const p=f.runtime.service.create({name:'P'});const task=f.runtime.store.createTask(p.id,{description:'Implement'});f.restart();assert.equal(f.runtime.store.task(task.id).status,'pending');assert.equal(f.runtime.store.tasks(p.id).length,1);});
 test('context and decisions persist after restart',t=>{const f=fixture(t);const p=f.runtime.service.create({name:'P'});f.runtime.store.saveContext(p.id,'Summary',['SQLite']);f.runtime.store.saveContext(p.id,'Updated',['No AI yet']);f.restart();assert.equal(f.runtime.store.context(p.id).context_summary,'Updated');assert.deepEqual(JSON.parse(f.runtime.store.context(p.id).important_decisions),['No AI yet']);});
