@@ -194,3 +194,6 @@ body.studio-app{--studio-base:#0c0e17;--studio-panel:#11141f;--studio-line:#2c30
 .coding-workspace .composer-minimized textarea{min-height:30px;max-height:30px;height:30px;resize:none;line-height:20px}.chat-live-activity{flex:none;border-left:2px solid #8f72ff;padding:6px 10px;margin-top:8px}.chat-live-activity:empty{display:none}.chat-live-activity .activity-alert{color:#ffd88e}.composer-controls .danger{margin-left:auto}.composer-controls .danger:not([hidden])~.primary{margin-left:0}
 
 .workspace-role-card .field[hidden],.message-composer [hidden]{display:none!important}
+
+/* A collapsed message area is one slim bar, including when Team is open. */
+.coding-workspace .message-composer.composer-minimized{height:44px;min-height:44px;max-height:44px;padding:6px 10px;overflow:hidden}.composer-collapse-bar{display:flex;align-items:center;gap:8px;min-height:30px}.composer-collapsed-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#aeb5cb;font-size:12px}.composer-collapse-bar button{font-size:11px;padding:4px 8px;min-height:28px;flex:none}.conversation-team-settings[hidden]{display:none!important}

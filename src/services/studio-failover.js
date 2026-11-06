@@ -1,0 +1,64 @@
+import {helloHeld} from './paid-hello.js';
+import {workerOrder} from './big-three.js';
+import {ApiError} from '../middleware/errors.js';
+import {transaction} from '../middleware/ai-validation.js';
+import {hashText} from './project-files.js';
+const recoverable=new Set(['usage_limit','rate_limit','quota_exhausted','auth_expired','auth_missing','auth_timeout','connection_error','provider_outage','timeout','inactivity_timeout','repeated_timeout','review_conflict','provider_unavailable']);
+const names={'codex-personal':'Codex Personal','codex-school':'Codex School','claude-code':'Claude Code',deepseek:'DeepSeek'};
+
+// Extend the existing runner, without starting workers or contacting Zapier here.
+// Unknown outcomes cannot hand off: a second writer could corrupt saved work.
+export class StudioFailover {
+ constructor(studio){this.studio=studio;this.db=studio.db;}
+ policy(job){return job.state.fallbackPolicy||{enabled:true,legacy:true,allowedWorkers:['codex-personal','codex-school']};}
+ scoped(job,p){return p.legacy||p.chatId===job.id&&p.projectId===job.project_id&&p.rootHash===hashText(this.studio.root(job.project_id).root);}
+ async prepare(id,controller){for(let i=0;i<12;i++){const j=this.studio.current(id,controller),missing=await this.studio.workers.preflight?.(j,this.studio.root(j.project_id).root,controller.signal);this.studio.current(id,controller);if(!missing)return null;const phase=missing.phase||Object.keys(j.state.roles).find(r=>j.state.roles[r]===missing.agent)||j.state.phase;if(!await this.tryNext(j,missing.agent,phase,{code:missing.code,stopped:true},new Set(),{signal:controller.signal,preflight:true}))return missing;}return {agent:null,code:'auth_expired',message:'Fallback health checks exhausted; work paused without dispatch.'};}
+ status(id){const job=this.studio.get(id);return {policy:this.policy(job),budget:this.budget(id),lastCheck:job.state.fallbackCheck||null,notice:'Login checks do not prove remaining quota. Paid fallback needs task approval, current pricing and a recent recorded prepaid balance. No external messenger is contacted.'};}
+ configure(id,body){return transaction(this.db,()=>{
+  const s=this.studio,j=s.get(id);s.team.fields(body,['version','approvedBy','enabled','allowedWorkers','budget'],['version','approvedBy','enabled','allowedWorkers']);
+  if(body.approvedBy!=='owner'||body.version!==j.version||['running','stopping','awaiting_owner','accepted'].includes(j.status)||this.db.prepare('SELECT 1 FROM studio_locks WHERE chat_id=?').get(id))throw new ApiError(409,'Configure this unfinished, idle task using its current version.');
+  if(typeof body.enabled!=='boolean'||!Array.isArray(body.allowedWorkers)||new Set(body.allowedWorkers).size!==body.allowedWorkers.length||body.allowedWorkers.some(x=>!workerOrder.includes(x)))throw new ApiError(400,'Choose registered fallback workers.');
+  const p={enabled:body.enabled,allowedWorkers:workerOrder.filter(x=>body.allowedWorkers.includes(x)),chatId:id,projectId:j.project_id,rootHash:hashText(s.root(j.project_id).root),approvedAt:new Date().toISOString(),approvedBy:'owner'};
+  if(body.budget){const b=body.budget,model=s.team.paid.settings?.model;s.team.fields(b,['model','capUSD','maxOutput','expiresAt','confirmPaid'],['model','capUSD','maxOutput','expiresAt','confirmPaid']);if(!body.enabled||!p.allowedWorkers.includes('deepseek')||b.confirmPaid!==true||b.model!==model||!Number.isFinite(b.capUSD)||b.capUSD<=0||b.capUSD>10||!Number.isInteger(b.maxOutput)||b.maxOutput<32||b.maxOutput>8192||!Number.isFinite(Date.parse(b.expiresAt))||Date.parse(b.expiresAt)<=Date.now()||Date.parse(b.expiresAt)>Date.now()+86400000)throw new ApiError(400,'Approve a matching model, positive task budget, output bound and expiry within 24 hours.');
+   if(b.capUSD<this.budget(id).heldUSD)throw new ApiError(409,'Previously reserved or unknown spending cannot be removed.');
+   this.db.prepare('INSERT INTO studio_api_policy VALUES (?,?,?,?,?,?) ON CONFLICT(chat_id) DO UPDATE SET model=excluded.model,cap_usd=excluded.cap_usd,max_output=excluded.max_output,expires_at=excluded.expires_at,approved_at=excluded.approved_at').run(id,model,b.capUSD,b.maxOutput,b.expiresAt,p.approvedAt);
+  }
+  s.change(id,j.status,{fallbackPolicy:p},'fallback_policy_saved','owner');return this.status(id);
+ });}
+ budget(id){const policy=this.db.prepare('SELECT * FROM studio_api_policy WHERE chat_id=?').get(id)||null,heldUSD=this.db.prepare('SELECT coalesce(sum(reserved_usd),0) n FROM studio_api_reservations WHERE chat_id=?').get(id).n;return {policy,heldUSD,remainingUSD:policy?Math.max(0,policy.cap_usd-heldUSD):0,notice:'Application reservations, not a guaranteed provider-side dollar ceiling. Unknown outcomes retain reservations.'};}
+ paidReady(id){const s=this.studio,j=s.get(id),p=this.policy(j),b=this.budget(id),paid=s.team.paid,settings=paid.settings;
+  if(!p.enabled||p.legacy||!this.scoped(j,p)||!p.allowedWorkers.includes('deepseek'))return {ok:false,code:'paid_not_authorized',reason:'DeepSeek is not preapproved for this exact task and folder.'};
+  if(!b.policy||b.policy.model!==settings?.model||!Number.isFinite(Date.parse(b.policy.expires_at))||Date.parse(b.policy.expires_at)<=Date.now()||!Number.isInteger(b.policy.max_output)||b.policy.max_output<32||b.policy.max_output>8192||!Number.isFinite(b.remainingUSD)||b.remainingUSD<=0)return {ok:false,code:'budget_missing',reason:'DeepSeek task budget is missing, expired, exhausted or for another model.'};
+  if(!settings?.key||settings.base!=='https://api.deepseek.com'||!paid.ratesValid())return {ok:false,code:'pricing_unverified',reason:'DeepSeek configuration or its current price lease is unavailable.'};
+  const balance=this.db.prepare('SELECT available_usd,checked_at FROM deepseek_balance_observation WHERE id=1').get();
+  if(!balance||!Number.isFinite(Date.parse(balance.checked_at))||Date.parse(balance.checked_at)<Date.now()-300000||Date.parse(balance.checked_at)>Date.now()+1000||!Number.isFinite(balance.available_usd))return {ok:false,code:'balance_unverified',reason:'A recent recorded prepaid balance is required. No balance request is made automatically.'};
+  const held=helloHeld(this.db)+this.db.prepare('SELECT coalesce(sum(reserved_usd),0) n FROM studio_api_reservations').get().n+this.db.prepare("SELECT coalesce(sum(reserved_usd),0) n FROM paid_request_quotes WHERE status IN ('reserved','completed','unknown')").get().n;
+  if(balance.available_usd<=held)return {ok:false,code:'insufficient_balance',reason:'Recorded prepaid balance cannot cover held reservations.'};return {ok:true,balance:balance.available_usd-held};
+ }
+ reserve(id,executionId,body){return transaction(this.db,()=>{const ready=this.paidReady(id),b=this.budget(id),s=this.studio,e=s.executions.get(executionId);if(!ready.ok)throw new ApiError(403,ready.reason);if(s.get(id).status!=='running'||!this.db.prepare('SELECT 1 FROM studio_locks WHERE chat_id=?').get(id)||e.phase!==s.get(id).state.phase||e.checkpoint_hash!==s.root(s.get(id).project_id).fingerprint()||e.chat_id!==id||e.agent!=='deepseek'||e.request_id!==s.get(id).request_id||body.model!==b.policy.model||body.max_tokens!==b.policy.max_output)throw new ApiError(403,'Paid fallback execution does not match its task budget.');
+  const paid=s.team.paid,inputBound=Buffer.byteLength(JSON.stringify(body))+4096,reserved=Math.ceil(inputBound*paid.settings.inputPrice+body.max_tokens*paid.settings.outputPrice)/1e6;
+  if(!Number.isFinite(reserved)||reserved<=0||reserved>b.remainingUSD||reserved>ready.balance)throw new ApiError(403,'Conservative reservation exceeds the task budget or recorded prepaid balance.');
+  const limits=paid.policy||{},heldTotal=this.db.prepare('SELECT coalesce(sum(reserved_usd),0) n FROM studio_api_reservations').get().n+this.db.prepare("SELECT coalesce(sum(reserved_usd),0) n FROM paid_request_quotes WHERE status IN ('reserved','completed','unknown')").get().n+helloHeld(this.db),day=new Date().toISOString().slice(0,10),heldDay=this.db.prepare('SELECT coalesce(sum(reserved_usd),0) n FROM studio_api_reservations WHERE created_at>=?').get(day).n+this.db.prepare("SELECT coalesce(sum(reserved_usd),0) n FROM paid_request_quotes WHERE status IN ('reserved','completed','unknown') AND created_at>=?").get(day).n+helloHeld(this.db,day);if(Number.isFinite(limits.requestLimit)&&limits.requestLimit>0&&reserved>limits.requestLimit||Number.isFinite(limits.totalLimit)&&limits.totalLimit>0&&heldTotal+reserved>limits.totalLimit||Number.isFinite(limits.dailyLimit)&&limits.dailyLimit>0&&heldDay+reserved>limits.dailyLimit)throw new ApiError(403,'Existing prepaid request/daily/total limits cannot cover this fallback.');
+  this.db.prepare("INSERT INTO studio_api_reservations VALUES (?,?,?,'reserved',NULL,?)").run(executionId,id,reserved,new Date().toISOString());s.event(id,'api_reserved',{executionId,reservedUSD:reserved,maxOutput:body.max_tokens,inputBound,summary:'Paid fallback reserved against this task budget; no automatic retry or release.'},'deepseek');return reserved;
+ });}
+ settle(executionId,usage){const p=this.studio.team.paid.settings,cost=Number.isSafeInteger(usage?.input)&&Number.isSafeInteger(usage?.output)?(usage.input*p.inputPrice+usage.output*p.outputPrice)/1e6:0;this.db.prepare('UPDATE studio_api_reservations SET status=?,usage=?,reserved_usd=max(reserved_usd,?) WHERE execution_id=?').run(usage?'completed':'unknown',usage?JSON.stringify(usage):null,cost,executionId);}
+ async tryNext(job,agent,phase,error,attempted=new Set(),{signal=null,checkpoint=null,preflight=false}={}){
+  const s=this.studio,p=this.policy(job);if(signal?.aborted||error?.stopped!==true||error?.unknownOutcome||!recoverable.has(error?.code)||!p.enabled||!this.scoped(job,p))return false;
+  if(p.legacy&&(!agent.startsWith('codex-')||error.code!=='usage_limit'))return false;
+  const repo=s.root(job.project_id),hash=checkpoint||repo.fingerprint();if(repo.fingerprint()!==hash)return false;
+  const old=job.state.fallbackAttempt,same=old?.requestId===job.request_id&&old.phase===phase&&old.checkpoint===hash;
+  const seen=new Set([...(same?old.workers:[]),...attempted,agent]),unavailable=new Set(job.state.fallbackUnavailable||[]);if(error.code!=='review_conflict')unavailable.add(agent);
+  const diagnostics=[];for(const next of workerOrder){if(seen.has(next)||unavailable.has(next)||!p.allowedWorkers.includes(next))continue;seen.add(next);attempted.add(next);
+   const roles={...job.state.roles,[phase]:next};try{s.roleManager.validate(roles,job.state.authors);}catch{diagnostics.push({agent:next,code:'review_conflict'});continue;}
+   let health;try{health=next==='deepseek'?this.paidReady(job.id):s.workers.availability?await s.workers.availability(next,repo.root,signal):next.startsWith('codex-')&&s.workers.profileAvailable?{ok:await s.workers.profileAvailable(next,repo.root)}:{ok:false,code:'availability_unknown'};}catch{health={ok:false,code:'availability_unknown'};}
+   diagnostics.push({agent:next,code:health.ok?'login_verified_quota_unverified':health.code||'unavailable'});
+   if(signal?.aborted||s.get(job.id).status!=='running'||repo.fingerprint()!==hash)return false;
+   if(!health.ok){unavailable.add(next);continue;}
+   const summary=names[agent]+' unavailable ('+error.code+'). '+names[next]+' takes over '+phase+' from the saved checkpoint.';
+   s.change(job.id,'running',{roles,currentAgent:preflight?null:next,paidFallbackActive:job.state.paidFallbackActive||next==='deepseek',fallbackAttempt:{requestId:job.request_id,phase,checkpoint:hash,workers:[...seen]},fallbackUnavailable:[...unavailable],fallbackCheck:{reason:error.code,candidates:diagnostics}},'worker_handoff',next);
+   s.event(job.id,next.startsWith('codex-')&&agent.startsWith('codex-')?'profile_switched':'provider_switched',{time:new Date().toISOString(),reason:error.code,from:agent,to:next,phase,checkpointHash:hash,preflight,summary},next);return true;
+  }
+  s.change(job.id,'running',{fallbackAttempt:{requestId:job.request_id,phase,checkpoint:hash,workers:[...seen]},fallbackUnavailable:[...unavailable],fallbackCheck:{reason:error.code,candidates:diagnostics}},'fallback_unavailable');
+  s.event(job.id,'fallback_paused',{summary:'No authorized, available and independent fallback remains for '+phase+'. Saved work is preserved. '+diagnostics.map(x=>names[x.agent]+': '+x.code).join('; '),reason:error.code,candidates:diagnostics});return false;
+ }
+}

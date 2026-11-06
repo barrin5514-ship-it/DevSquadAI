@@ -33,6 +33,8 @@ export function consoleRoutes(team,service){
  r.get('/studio/help/zapier',(req,res)=>send(res,{text:historyText(team,fs.readFileSync(new URL('../../docs/zapier-setup.md',import.meta.url),'utf8'))}));
  r.get('/studio/history',(req,res)=>{const result=promptHistory(team.studio,req.query);if(req.query.format==='markdown')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.md').type('text/markdown').send(historyMarkdown(result));if(req.query.format==='json')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.json').json(result);if(req.query.format)throw new ApiError(400,'Choose JSON or Markdown export.');send(res,result);});
  r.get('/studio/codex-profiles',async(req,res)=>{const workers=team.studio.workers,profiles=workers.profiles;if(!profiles)return send(res,{profiles:[]});if(req.query.check==='true')return send(res,{profiles:await Promise.all(profiles.list().map(p=>profiles.check(p.id,workers.transport.executables.codex,process.cwd())))});send(res,{profiles:profiles.list()});});
+ r.get('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.status(req.params.id)));
+ r.post('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.configure(req.params.id,req.body)));
  r.get('/studio/projects/:id/roles',(req,res)=>send(res,team.studio.roleManager.get(req.params.id)));
  r.post('/studio/projects/:id/roles',(req,res)=>send(res,team.studio.roleManager.update(req.params.id,req.body)));
  r.post('/studio/folder-dialog',async(req,res)=>{team.fields(req.body,[]);send(res,await team.fileActions.choose());});
