@@ -1,0 +1,19 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {EventEmitter} from 'node:events';
+import {observedDiagnostic} from '../src/services/diagnostic-lifecycle.js';
+function fixture({hang=false,orphan=false,reuse=false,unknown=false,killFails=false}={}){
+ let root=true,descendant=true,child;const killed=[],birth='2026-11-06T00:00:00Z',other='2026-11-07T00:00:00Z';
+ const inspect=pid=>reuse&&!root&&pid===10?{verified:true,processes:[{pid:10,parent:1,birth:other}]}:unknown?{verified:false,processes:[]}:{verified:true,processes:pid===10&&root?[{pid:10,parent:1,birth:reuse&&killed.length?other:birth},...(descendant?[{pid:11,parent:10,birth}]:[])]:pid===11&&descendant?[{pid:11,parent:10,birth}]:[]};
+ return {killed,options:{timeoutMs:20,settleMs:30,inspect,spawnImpl(){child=new EventEmitter();child.pid=10;child.stdin=new EventEmitter();child.stdout=new EventEmitter();child.stderr=new EventEmitter();child.stdin.end=()=>{if(!hang){root=false;if(!orphan)descendant=false;queueMicrotask(()=>child.emit('close',0));}};queueMicrotask(()=>child.emit('spawn'));return child;},onSpawn(c,end){if(reuse){c.stdout.emit('data',Buffer.from('ready'));root=false;descendant=false; // A different process can later reuse this PID; it is not ours.
+ child.stdin.end=()=>queueMicrotask(()=>child.emit('close',0));}end();},kill(pid){killed.push(pid);if(killFails)return {status:1};if(pid===10){root=false;descendant=false;queueMicrotask(()=>child.emit('close',1));}else descendant=false;return {status:0};}}};
+}
+test('diagnostic observes graceful root and descendant exit without force',async()=>{const f=fixture(),r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.cleanup,'graceful-verified');assert.equal(r.closeObserved,true);assert.equal(r.descendants.length,1);assert.equal(r.processChecks.length,2);assert.deepEqual(f.killed,[]);});
+test('diagnostic timeout records forced result and verifies every captured identity',async()=>{const f=fixture({hang:true}),r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.cleanup,'forced-verified');assert.equal(r.timedOut,true);assert.equal(r.forcedTermination,true);assert.equal(r.terminationResults[0].status,0);assert.ok(r.processChecks.every(x=>x.exited));assert.deepEqual(f.killed,[11,10]);});
+test('parent exit does not conceal an orphaned descendant',async()=>{const f=fixture({orphan:true}),r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.cleanup,'forced-verified');assert.deepEqual(f.killed,[11]);});
+test('failed termination and unknown observation never report clean exit',async()=>{for(const mode of [{hang:true,killFails:true},{unknown:true}]){const f=fixture(mode),r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.cleanup,'uncertain');assert.equal(r.terminationVerified,false);if(mode.unknown)assert.deepEqual(f.killed,[]);}});
+test('unrelated or reused processes are never signalled',async()=>{const f=fixture({reuse:true}),r=await observedDiagnostic('MOCK',[],f.options);assert.deepEqual(f.killed,[]);assert.ok(!r.terminationResults.some(p=>p.pid===99));});
+
+test('stale parent IDs never authorize killing an older unrelated child',async()=>{const f=fixture({hang:true}),inspect=f.options.inspect;f.options.inspect=pid=>{const t=inspect(pid);if(pid===10&&t.processes.length)t.processes.push({pid:99,parent:10,birth:'2000-01-01T00:00:00Z'});return t;};const r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.cleanup,'forced-verified');assert.ok(!f.killed.includes(99));assert.ok(!r.descendants.some(p=>p.pid===99));});
+
+test('a diagnostic protocol callback failure still closes its owned process safely',async()=>{const f=fixture();f.options.onSpawn=()=>{throw Error('MOCK protocol failure');};const r=await observedDiagnostic('MOCK',[],f.options);assert.equal(r.callbackError,true);assert.equal(r.cleanup,'graceful-verified');assert.deepEqual(f.killed,[]);});

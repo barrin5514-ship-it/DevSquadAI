@@ -2,6 +2,7 @@ import fs from 'node:fs';import path from 'node:path';import os from 'node:os';i
 // Git for Windows expects NUL; Node's device path is not a Git config filename.
 const nullFile=process.platform==='win32'?'NUL':os.devNull;
 const executable=process.platform==='win32'?'C:/Program Files/Git/cmd/git.exe':'/usr/bin/git';
+export const projectGitExecutable=executable;
 export function githubURL(value){let url;try{url=new URL(value);}catch{throw new ApiError(400,'Use https://github.com/OWNER/REPOSITORY.');}if(url.protocol!=='https:'||url.hostname!=='github.com'||url.port||url.username||url.password||url.search||url.hash||/[\s%]/.test(value)||!/^\/[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9][A-Za-z0-9_.-]{0,99}\/?$/.test(url.pathname))throw new ApiError(400,'Only a credential-free GitHub HTTPS repository URL is supported.');return url.origin+url.pathname.replace(/\/$/,'').replace(/\.git$/,'')+'.git';}
 // Only fixed application operations call this helper. There is no browser shell
 // API. Credentials, hooks, inherited Git config, prompts and redirects are off.

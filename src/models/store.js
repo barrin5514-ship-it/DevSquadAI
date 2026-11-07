@@ -5,7 +5,14 @@ export class Store {
   constructor(db) { this.db = db; }
   project(id) { const row = this.db.prepare('SELECT * FROM projects WHERE id=?').get(id); if (!row) throw new ApiError(404,'Project not found'); return row; }
   projects() { return this.db.prepare('SELECT * FROM projects ORDER BY created_at, id').all(); }
-  createProject(input, workspace) { const id = randomUUID(), time = now(); const relative = workspace.create(id); this.db.prepare('INSERT INTO projects VALUES (?,?,?,?,?,?,?)').run(id,input.name,input.description || '', 'active',relative,time,time); return this.project(id); }
+  createProject(input, workspace,{managed=true}={}) {
+    if(typeof input.name!=='string'||!input.name.trim()||input.name.trim().length>200)throw new ApiError(400,'Invalid project name');
+    const id=randomUUID(),time=now(),relative=workspace.create(id,{id,name:input.name,description:input.description||'',managed});
+    const proof=managed&&workspace.managed?workspace.verify(id):null;
+    // A project and its security proof become visible together, or neither does.
+    this.db.exec('SAVEPOINT managed_project_registration');try{this.db.prepare('INSERT INTO projects VALUES (?,?,?,?,?,?,?)').run(id,input.name,input.description||'','active',relative,time,time);if(proof)this.trackFile(id,'AGENTS.md',{managedRootVersion:2,id,phase:'ready',instructionsHash:proof.instructionsHash,contextHash:proof.contextHash});this.db.exec('RELEASE managed_project_registration');}catch(e){this.db.exec('ROLLBACK TO managed_project_registration');this.db.exec('RELEASE managed_project_registration');throw e;}return this.project(id);
+  }
+
   updateProject(id, input) { const p = this.project(id); this.db.prepare('UPDATE projects SET name=?,description=?,status=?,updated_at=? WHERE id=?').run(input.name ?? p.name,input.description ?? p.description,input.status ?? p.status,now(),id); return this.project(id); }
   tasks(id) { this.project(id); return this.db.prepare('SELECT * FROM tasks WHERE project_id=? ORDER BY created_at,id').all(id); }
   task(id) { const row = this.db.prepare('SELECT * FROM tasks WHERE id=?').get(id); if (!row) throw new ApiError(404,'Task not found'); return row; }

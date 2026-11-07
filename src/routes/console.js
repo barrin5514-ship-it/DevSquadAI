@@ -1,3 +1,5 @@
+import {NemotronWorker} from '../services/nemotron-worker.js';
+import {modelHealthSnapshot} from '../services/model-health.js';
 import {fileTree,projectFile,revision,gitChange,inspection} from '../services/workspace-inspection.js';
 import fs from 'node:fs';
 import {promptHistory,historyMarkdown,historyText} from '../services/prompt-history.js';
@@ -33,9 +35,12 @@ export function consoleRoutes(team,service){
  r.get('/studio/help/zapier',(req,res)=>send(res,{text:historyText(team,fs.readFileSync(new URL('../../docs/zapier-setup.md',import.meta.url),'utf8'))}));
  r.get('/studio/history',(req,res)=>{const result=promptHistory(team.studio,req.query);if(req.query.format==='markdown')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.md').type('text/markdown').send(historyMarkdown(result));if(req.query.format==='json')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.json').json(result);if(req.query.format)throw new ApiError(400,'Choose JSON or Markdown export.');send(res,result);});
  r.get('/studio/codex-profiles',async(req,res)=>{const workers=team.studio.workers,profiles=workers.profiles;if(!profiles)return send(res,{profiles:[]});if(req.query.check==='true')return send(res,{profiles:await Promise.all(profiles.list().map(p=>profiles.check(p.id,workers.transport.executables.codex,process.cwd())))});send(res,{profiles:profiles.list()});});
+ r.post('/studio/chats/:id/execution-mode',(req,res)=>send(res,team.studio.runScope.select(req.params.id,req.body)));
  r.post('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.arm(req.params.id,req.body)));
  r.get('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.status(req.params.id)));
  r.post('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.configure(req.params.id,req.body)));
+ r.get('/studio/workspace-initializations',(req,res)=>send(res,service.pending()));
+ r.post('/studio/workspace-initializations/:id/recover',(req,res)=>{team.fields(req.body,['approvedBy'],['approvedBy']);if(req.body.approvedBy!=='owner')throw new ApiError(403,'Owner confirmation is required');send(res,service.recover(req.params.id));});
  r.get('/studio/projects/:id/roles',(req,res)=>send(res,team.studio.roleManager.get(req.params.id)));
  r.post('/studio/projects/:id/roles',(req,res)=>send(res,team.studio.roleManager.update(req.params.id,req.body)));
  r.post('/studio/folder-dialog',async(req,res)=>{team.fields(req.body,[]);send(res,await team.fileActions.choose());});
@@ -46,6 +51,8 @@ export function consoleRoutes(team,service){
  r.post('/studio/projects/:id/workspace-membership',(req,res)=>send(res,team.fileActions.setHidden(req.params.id,req.body)));
  r.post('/studio/projects/:id/reveal',async(req,res)=>send(res,await team.fileActions.reveal(req.params.id,req.body)));
  r.post('/studio/chats/:id/title',(req,res)=>send(res,team.fileActions.renameSession(req.params.id,req.body)));
+ r.post('/studio/nemotron/check',async(req,res)=>{team.fields(req.body,[]);send(res,await new NemotronWorker(team).refresh(AbortSignal.timeout(45000)));});
+ r.get('/studio/model-health',(req,res)=>send(res,modelHealthSnapshot(team,Date.now(),req.query.chat||null)));
  r.get('/studio',(req,res)=>send(res,team.studio.list()));
  r.get('/studio/chats/:id/events',(req,res)=>team.studio.live.stream(req,res,req.params.id));
  r.post('/studio/chats/:id/reconcile',(req,res)=>{team.fields(req.body,['executionId','version']);send(res,team.studio.executions.reconcile(req.params.id,req.body));});

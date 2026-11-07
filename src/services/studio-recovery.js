@@ -4,6 +4,7 @@ export function failureMessage(agent,phase,code){const who=names[agent]||'The as
 // A resume never guesses that a model finished. It checks saved file hashes and
 // resumes the failed phase, rather than silently sending paid work back to Builder.
 export function resumePlan(studio,j){
+ if(j.state.executionMode==='builder-only'&&studio.executions.list(j.id).length)return {available:false,reason:'The one Builder attempt was consumed. Independent testing and review remain pending; no automatic resume is authorized.'};
  if(!['paused','stopped'].includes(j.status))return {available:false,reason:'No paused step needs resuming.'};
  if(studio.db.prepare('SELECT 1 FROM studio_locks WHERE chat_id=?').get(j.id))return {available:false,reason:'Previous worker outcome is unresolved; the folder remains locked.'};
  const events=studio.db.prepare('SELECT kind,agent,content FROM studio_events WHERE chat_id=? ORDER BY id').all(j.id).map(e=>({...e,content:JSON.parse(e.content)}));let phase=j.state.failure?.phase||j.state.phase,agent=j.state.failure?.agent||j.state.roles[phase],legacy=false;

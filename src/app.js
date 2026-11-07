@@ -21,7 +21,7 @@ import { TeamOrchestrator } from './orchestrator/team.js';
 import { teamRoutes } from './routes/team.js';
 import { fileURLToPath } from 'node:url';
 export function createApp(config, options = {}) {
-  const workspace = new Workspace(config.workspace), db = openDatabase(config.database);
+  const workspace = new Workspace(config.workspace,{managed:true,authorityRoot:fileURLToPath(new URL('../',import.meta.url)),database:config.database,initializer:options.managedRootInitializer}), db = openDatabase(config.database);
   try {
     claimRuntime(db,config.database);
     seedAgents(db); markInterrupted(db);

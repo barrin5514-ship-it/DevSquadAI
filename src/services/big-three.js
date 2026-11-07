@@ -18,8 +18,8 @@ export class BigThreeCoordinator {
  read(id){const row=this.db.prepare('SELECT * FROM shared_jobs WHERE id=?').get(id);if(!row)throw new ApiError(404,'Shared job not found');return {...row,state:JSON.parse(row.state)};}
  list(){return this.db.prepare('SELECT id FROM shared_jobs ORDER BY updated_at DESC LIMIT 100').all().map(r=>{const {lease,...job}=this.read(r.id);return job;});}
  history(id){this.read(id);return this.db.prepare('SELECT * FROM shared_job_history WHERE job_id=? ORDER BY version').all(id).map(r=>({...r,snapshot:JSON.parse(r.snapshot)}));}
- validateRoles(roles,authors=[]){
-  if(!roles||Object.keys(roles).sort().join(',')!=='builder,reviewer,tester'||Object.values(roles).some(w=>!workerOrder.includes(w)))throw new ApiError(400,'Choose a registered worker for each of the three roles');
+ validateRoles(roles,authors=[],registered=workerOrder){
+  if(!roles||Object.keys(roles).sort().join(',')!=='builder,reviewer,tester'||Object.values(roles).some(w=>!registered.includes(w)))throw new ApiError(400,'Choose a registered worker for each of the three roles');
   if(family(roles.builder)===family(roles.reviewer)||authors.some(w=>family(w)===family(roles.reviewer)))throw new ApiError(409,'A builder cannot review the same step, including through another Codex profile');
   return {...roles};
  }
