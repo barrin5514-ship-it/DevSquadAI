@@ -30,7 +30,10 @@ export class StudioFailover {
  paidReady(id){const s=this.studio,j=s.get(id),p=this.policy(j),b=this.budget(id),paid=s.team.paid,settings=paid.settings;
   if(!(j.state.runApproval?.paid&&Object.values(j.state.runApproval.roles).includes('deepseek'))&&(!p.enabled||p.legacy||!this.scoped(j,p)||!p.allowedWorkers.includes('deepseek')))return {ok:false,code:'paid_not_authorized',reason:'DeepSeek is not preapproved for this exact task and folder.'};
   if(!b.policy||b.policy.model!==settings?.model||!Number.isFinite(Date.parse(b.policy.expires_at))||Date.parse(b.policy.expires_at)<=Date.now()||!Number.isInteger(b.policy.max_output)||b.policy.max_output<32||b.policy.max_output>8192||!Number.isFinite(b.remainingUSD)||b.remainingUSD<=0)return {ok:false,code:'budget_missing',reason:'DeepSeek task budget is missing, expired, exhausted or for another model.'};
-  if(!settings?.key||settings.base!=='https://api.deepseek.com'||!paid.ratesValid())return {ok:false,code:'pricing_unverified',reason:'DeepSeek configuration or its current price lease is unavailable.'};
+  return this.fundingReady();
+ }
+ fundingReady(){const paid=this.studio.team.paid,settings=paid.settings;
+  if(!settings?.key||settings.base!=='https://api.deepseek.com'||!paid.teamRatesValid())return {ok:false,code:'pricing_unverified',reason:'DeepSeek configuration or its current price lease is unavailable.'};
   const balance=this.db.prepare('SELECT available_usd,checked_at FROM deepseek_balance_observation WHERE id=1').get();
   if(!balance||!Number.isFinite(Date.parse(balance.checked_at))||Date.parse(balance.checked_at)<Date.now()-300000||Date.parse(balance.checked_at)>Date.now()+1000||!Number.isFinite(balance.available_usd))return {ok:false,code:'balance_unverified',reason:'A recent recorded prepaid balance is required. No balance request is made automatically.'};
   const held=helloHeld(this.db)+this.db.prepare('SELECT coalesce(sum(reserved_usd),0) n FROM studio_api_reservations').get().n+this.db.prepare("SELECT coalesce(sum(reserved_usd),0) n FROM paid_request_quotes WHERE status IN ('reserved','completed','unknown')").get().n;

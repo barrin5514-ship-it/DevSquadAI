@@ -36,7 +36,13 @@ export function consoleRoutes(team,service){
  r.get('/studio/history',(req,res)=>{const result=promptHistory(team.studio,req.query);if(req.query.format==='markdown')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.md').type('text/markdown').send(historyMarkdown(result));if(req.query.format==='json')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.json').json(result);if(req.query.format)throw new ApiError(400,'Choose JSON or Markdown export.');send(res,result);});
  r.get('/studio/codex-profiles',async(req,res)=>{const workers=team.studio.workers,profiles=workers.profiles;if(!profiles)return send(res,{profiles:[]});if(req.query.check==='true')return send(res,{profiles:await Promise.all(profiles.list().map(p=>profiles.check(p.id,workers.transport.executables.codex,process.cwd())))});send(res,{profiles:profiles.list()});});
  r.post('/studio/chats/:id/execution-mode',(req,res)=>send(res,team.studio.runScope.select(req.params.id,req.body)));
- r.post('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.arm(req.params.id,req.body)));
+ r.post('/studio/chats/:id/run-approval/refresh-deepseek',async(req,res)=>{
+  const j=team.studio.get(req.params.id);
+  if(j.status!=='ready'||j.state.runApproval||j.state.executionMode==='builder-only'||!Object.values(j.state.roles).includes('deepseek'))throw new ApiError(409,'Choose an unused DeepSeek team session.');
+  send(res,await team.paid.refreshTeamFunding(req.body));
+ });
+ r.get('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.preview(req.params.id)));
+ r.post('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.arm(req.params.id,req.body,{requireProposal:true})));
  r.get('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.status(req.params.id)));
  r.post('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.configure(req.params.id,req.body)));
  r.get('/studio/workspace-initializations',(req,res)=>send(res,service.pending()));

@@ -17,3 +17,65 @@ test('Builder-only failed or unknown calls preserve evidence, forbid fallback an
 test('completed Builder-only state cannot dispatch after a database reopen',async t=>{const f=fixture(t);single(f);f.s.runScope.arm(f.j.id,f.b);await f.run();const {DatabaseSync}=await import('node:sqlite'),db=new DatabaseSync(f.r.team.config.database,{readOnly:true});try{const row=db.prepare('SELECT * FROM studio_chats WHERE id=?').get(f.j.id);assert.equal(row.status,'paused');assert.equal(JSON.parse(row.state).builderCompleted,true);assert.equal(db.prepare('SELECT count(*) n FROM studio_executions WHERE chat_id=?').get(f.j.id).n,1);}finally{db.close();}assert.throws(()=>f.s.start(f.p.id,{chatId:f.j.id,requestId:'post-restart-request'}));assert.equal(f.calls.length,1);});
 
 test('Builder-only rejects wrong session project database root and approval mutation',t=>{const f=fixture(t);single(f);f.s.runScope.arm(f.j.id,f.b);const j=f.s.get(f.j.id);for(const bad of [{...j,id:'another-session'},{...j,project_id:'another-project'},{...j,state:{...j.state,builderOnlyAgent:'codex-school'}},{...j,state:{...j.state,runApproval:{...j.state.runApproval,databaseHash:'another-database'}}}])assert.throws(()=>f.s.runScope.check(bad,f.b.requestId));const live=f.s.start(f.p.id,{chatId:j.id,requestId:f.b.requestId});assert.throws(()=>f.s.runScope.reserve(live,'codex-personal','builder','another-root','wrong'));assert.equal(f.s.executions.list(j.id).length,0);});
+test('new team approval binds current files without using timestamps',t=>{
+ const f=fixture(t),repo=f.s.root(f.p.id),file=path.join(repo.root,'seed.mjs');
+ fs.writeFileSync(file,'export const seed=1;');
+ f.s.runScope.arm(f.j.id,f.b);
+ assert.equal(f.s.get(f.j.id).state.runApproval.checkpointHash,repo.fingerprint());
+ fs.utimesSync(file,new Date(0),new Date(0));
+ assert.ok(f.s.runScope.check(f.s.get(f.j.id),f.b.requestId));
+ fs.writeFileSync(file,'export const seed=2;');
+ assert.throws(()=>f.s.start(f.p.id,{chatId:f.j.id,requestId:f.b.requestId}),/approved files, inputs or limits changed/);
+ assert.equal(f.calls.length,0);
+});
+test('approved inputs and limits cannot be changed after approval',t=>{
+ const f=fixture(t);f.s.runScope.arm(f.j.id,f.b);const j=f.s.get(f.j.id);
+ assert.throws(()=>f.s.runScope.check({...j,state:{...j.state,runApproval:{...j.state.runApproval,paid:{...j.state.runApproval.paid,capUSD:1}}}},f.b.requestId),/approved files, inputs or limits changed/);
+ f.s.event(j.id,'message',{attachments:[{name:'seed.mjs',content:'new input',hash:hashText('new input')}]});
+ assert.throws(()=>f.s.runScope.check(f.s.get(j.id),f.b.requestId),/approved files, inputs or limits changed/);
+ assert.equal(f.calls.length,0);
+});
+test('file changes after Send but before Builder reservation fail closed',t=>{
+ const f=fixture(t);f.s.runScope.arm(f.j.id,f.b);const j=f.s.start(f.p.id,{chatId:f.j.id,requestId:f.b.requestId}),repo=f.s.root(f.p.id);
+ fs.writeFileSync(path.join(repo.root,'changed.mjs'),'export const changed=true;');
+ assert.throws(()=>f.s.runScope.reserve(j,j.state.roles.builder,'builder',repo.root,repo.fingerprint()),/approved files, inputs or limits changed/);
+ assert.equal(f.s.executions.list(j.id).length,0);
+});
+test('owner team proposal requires allowance confirmation and rejects stale file review',t=>{
+ const f=fixture(t);f.s.change(f.j.id,'ready',{roles:{builder:'codex-personal',tester:'claude-code',reviewer:'nemotron'}},'fixture');
+ f.workers.nemotron={status:()=>({ok:true})};
+ const v=f.s.runScope.preview(f.j.id),body={...f.b,roles:v.roles,version:v.version,proposalHash:v.proposalHash,free:v.free};delete body.paid;
+ assert.deepEqual(v.issues,[]);
+ assert.match(v.allowance,/UNKNOWN/);
+ assert.throws(()=>f.s.runScope.arm(f.j.id,body),/included usage/);
+ fs.writeFileSync(path.join(f.s.root(f.p.id).root,'new.mjs'),'export const x=1;');
+ assert.throws(()=>f.s.runScope.arm(f.j.id,{...body,confirmIncluded:true}),/proposal changed/);
+ const current=f.s.runScope.preview(f.j.id);
+ const armed=f.s.runScope.arm(f.j.id,{...body,proposalHash:current.proposalHash,confirmIncluded:true});
+ assert.equal(armed.state.runApproval.includedConfirmed,true);
+ assert.equal(armed.state.runApproval.checkpointHash,current.checkpointHash);
+ assert.equal(f.calls.length,0);
+});
+test('explicit team funding refresh atomically records official price and balance metadata without authorizing work',async t=>{
+ const f=fixture(t),paid=f.r.team.paid;
+ Object.assign(paid.settings,{key:'MOCK_ONLY_TEAM_KEY',inputPrice:0.3,outputPrice:1.2});
+ const html='<table><tr><th>MODEL</th><th>deepseek-flash</th><th>deepseek-v4-pro</th></tr><tr><td>1M INPUT TOKENS (CACHE MISS)</td><td>PEAK $0.3 $1.32</td></tr><tr><td>1M OUTPUT TOKENS</td><td>PEAK $1.2 $3.96</td></tr></table>';
+ const requests=[];let balanceUsable=true;
+ f.r.team.fetch=async (url,opts)=>{
+  assert.equal(opts.method,'GET');requests.push(url);
+  if(url.endsWith('/pricing/'))return new Response(html);
+  if(url.endsWith('/models'))return Response.json({data:[{id:'deepseek-flash'}]});
+  if(url.endsWith('/user/balance'))return Response.json({is_available:balanceUsable,balance_infos:[{currency:'USD',total_balance:'5'}]});
+  throw Error('Unexpected mock call');
+ };
+ await assert.rejects(()=>paid.refreshTeamFunding({approvedBy:'owner',confirmReadOnly:false}),/Confirm/);
+ assert.deepEqual(requests,[]);
+ const result=await paid.refreshTeamFunding({approvedBy:'owner',confirmReadOnly:true});
+ assert.equal(requests.length,3);assert.equal(paid.teamRatesValid(),true);assert.equal(f.s.failover.fundingReady().ok,true);
+ assert.equal(f.s.get(f.j.id).state.runApproval,undefined);assert.equal(f.calls.length,0);
+ balanceUsable=false;
+ await assert.rejects(()=>paid.refreshTeamFunding({approvedBy:'owner',confirmReadOnly:true}),/could not be verified/);
+ assert.equal(f.r.db.prepare('SELECT checked_at FROM deepseek_balance_observation').get().checked_at,result.checkedAt);
+ f.r.db.prepare("UPDATE studio_deepseek_verification SET checked_at='2000-01-01'").run();
+ assert.equal(f.s.failover.fundingReady().ok,false);
+});

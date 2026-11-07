@@ -1,3 +1,5 @@
+import {verifyDemoPrices} from './demo-approval.js';
+import {keyFingerprint} from './provider-verification.js';
 import {helloHeld} from './paid-hello.js';
 import {checkDeepSeek} from './deepseek-connection.js';
 import {savedVerification,saveVerification} from './provider-verification.js';
@@ -14,6 +16,33 @@ export class DeepSeekService {
  constructor(team,scopeFile){this.team=team;this.db=team.db;this.settings=team.config.ai.providers.find(p=>p.id==='deepseek');this.policy=team.config.ai.paid;this.scope=scopeFile?new ScopedPaidReview(this,scopeFile):null;}
  async inspect(body){this.team.fields(body,['approvedBy','confirmReadOnly']);if(body.approvedBy!=='owner'||body.confirmReadOnly!==true)throw new ApiError(403,'Explicit owner authorization for read-only account checks is required');if(!this.settings.key)throw new ApiError(400,'Configure the DeepSeek key locally first');const result=await checkDeepSeek(this.settings,this.team.fetch,Math.min(this.team.config.timeout,15000));this.team.safe(result);saveVerification(this.team.config,this.settings,result);return this.status();}
  status(){const observed=savedVerification(this.team.config,this.settings);const last=this.db.prepare("SELECT created_at FROM usage_events WHERE provider_id='deepseek' AND outcome='validated' ORDER BY rowid DESC LIMIT 1").get();return {verification:observed?{checkedAt:observed.checkedAt,httpStatus:observed.httpStatus,balanceStatus:observed.balanceStatus}:null,accountVerified:observed?.httpStatus===200&&observed.modelIds?.includes(this.settings.model)===true,generationVerified:!!last,lastVerifiedActivity:last?.created_at||null,provider:'deepseek',enabled:this.policy.enabled===true,configured:!!this.settings?.key,model:this.settings?.model||null,classification:'paid',automaticRouting:false,perRequestOwnerApproval:true,pricingKnown:this.ratesValid(),pricing:{inputUSDPerMillion:this.settings.inputPrice,outputUSDPerMillion:this.settings.outputPrice,verifiedUntil:this.policy.pricesVerifiedUntil||null},budgetsConfigured:[this.policy.requestLimit,this.policy.dailyLimit,this.policy.totalLimit].every(n=>typeof n==='number'&&Number.isFinite(n)&&n>0),connection:!this.settings?.key?'awaiting_configuration':observed?.httpStatus===200&&observed.modelIds?.includes(this.settings.model)?'account_verified_generation_unverified':observed?'account_check_failed':last?'historical_provider_response_verified':'configured_not_live_verified',reviewAvailable:observed?.httpStatus===200&&observed.modelIds?.includes(this.settings.model)===true&&observed.balance?.usable===true&&observed.balance.available_usd>0&&this.policy.enabled===true&&!!this.settings?.key&&['deepseek-flash','deepseek-v4-pro'].includes(this.settings.model)&&this.pricesValid()&&this.team.liveOptIn,balance:observed?observed.balance||null:this.db.prepare('SELECT available_usd,checked_at FROM deepseek_balance_observation WHERE id=1').get()||null,budgets:{requestUSD:this.policy.requestLimit,dailyUSD:this.policy.dailyLimit,totalUSD:this.policy.totalLimit},localReservations:this.db.prepare("SELECT coalesce(sum(reserved_usd),0) usd FROM paid_request_quotes WHERE status IN ('reserved','completed','unknown')").get().usd+helloHeld(this.db),budgetEnforcement:'Local conservative reservations; provider charges are not independently capped or verified'};}
+ // Owner-triggered account metadata only. It creates no run authorization.
+ async refreshTeamFunding(body){
+  this.team.fields(body,['approvedBy','confirmReadOnly'],['approvedBy','confirmReadOnly']);
+  if(body.approvedBy!=='owner'||body.confirmReadOnly!==true)throw new ApiError(403,'Confirm the read-only DeepSeek metadata check.');
+  const settings=this.settings,source='https://api-docs.deepseek.com/quick_start/pricing/';
+  if(!settings.key||settings.base!=='https://api.deepseek.com'||settings.model!=='deepseek-flash')throw new ApiError(403,'Configure the exact official DeepSeek Flash model locally.');
+  const response=await this.team.fetch(source,{method:'GET',redirect:'error',signal:AbortSignal.timeout(10000)});
+  if(!response.ok||!response.body)throw new ApiError(503,'Official DeepSeek pricing is unavailable.');
+  const chunks=[];let bytes=0;
+  for await(const chunk of response.body){bytes+=chunk.length;if(bytes>512000)throw new ApiError(413,'Pricing document exceeds the verification limit.');chunks.push(chunk);}
+  const rates=verifyDemoPrices(Buffer.concat(chunks).toString('utf8'));
+  if(rates.input!==settings.inputPrice||rates.output!==settings.outputPrice)throw new ApiError(409,'Published rates do not match configured rates.');
+  const account=await checkDeepSeek(settings,this.team.fetch,Math.min(this.team.config.timeout,15000));
+  if(account.httpStatus!==200||account.balanceStatus!==200||!account.modelIds.includes(settings.model)||!account.balance?.usable)throw new ApiError(403,'Official model access or usable USD prepaid balance could not be verified.');
+  const checkedAt=account.checkedAt;
+  return transaction(this.db,()=>{
+   this.db.prepare('INSERT INTO studio_deepseek_verification VALUES (1,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET model=excluded.model,key_fingerprint=excluded.key_fingerprint,input_price=excluded.input_price,output_price=excluded.output_price,source=excluded.source,checked_at=excluded.checked_at').run(settings.model,keyFingerprint(settings.key),rates.input,rates.output,source,checkedAt);
+   this.db.prepare('INSERT INTO deepseek_balance_observation VALUES (1,?,?) ON CONFLICT(id) DO UPDATE SET available_usd=excluded.available_usd,checked_at=excluded.checked_at').run(account.balance.available_usd,checkedAt);
+   return {model:settings.model,source,checkedAt,input:rates.input,output:rates.output};
+  });
+ }
+ teamRatesValid(){
+  const s=this.settings,e=this.db.prepare('SELECT * FROM studio_deepseek_verification WHERE id=1').get();
+  if(!e)return this.ratesValid();
+  const balance=this.db.prepare('SELECT checked_at FROM deepseek_balance_observation WHERE id=1').get(),age=Date.now()-Date.parse(e.checked_at);
+  return !!s.key&&s.base==='https://api.deepseek.com'&&e.model===s.model&&e.key_fingerprint===keyFingerprint(s.key)&&e.input_price===s.inputPrice&&e.output_price===s.outputPrice&&e.checked_at===balance?.checked_at&&age>=0&&age<300000;
+ }
  ratesValid(){return [this.settings.inputPrice,this.settings.outputPrice].every(n=>typeof n==='number'&&Number.isFinite(n)&&n>0)&&Date.parse(this.policy.pricesVerifiedUntil)>Date.now();}
  pricesValid(){const p=this.settings,c=this.policy;return !!p&&[p.inputPrice,p.outputPrice,c.requestLimit,c.dailyLimit,c.totalLimit].every(n=>typeof n==='number'&&Number.isFinite(n)&&n>0)&&Date.parse(c.pricesVerifiedUntil)>Date.now();}
  prompt(id,reviewId=null){if(reviewId)return this.team.senior.prompt(id,reviewId);const j=this.team.get(id);if(!j.parent_id||!this.team.get(j.parent_id).owner_plan_approval)throw new ApiError(403,'Owner-approved development plan required');return {system:'Return only JSON: {"files":[{"path":"src/example.js","content":"..."}]}. Produce a JavaScript draft for independent review. DeepSeek must not review its own work. Do not execute code or request credentials.',user:JSON.stringify({objective:j.description,handoff:this.team.checkpoints.packet(id),approvedPlan:this.team.get(j.parent_id).plan})};}
