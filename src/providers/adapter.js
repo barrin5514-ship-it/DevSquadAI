@@ -32,6 +32,7 @@ export class ProviderAdapter {
     this.lastDiagnostics=diagnostic;
     const controller = new AbortController();
     const timer = setTimeout(()=>controller.abort(), this.timeout);
+    let stream=null;
     try {
       const headers = { 'Content-Type':'application/json' };
       if (this.id==='gemini') headers['x-goog-api-key']=this.#key;
@@ -49,15 +50,22 @@ export class ProviderAdapter {
       }
       // Bound the decoded body, including streamed/chunked responses.
       const maxBodyBytes=!body&&this.id==='openrouter'&&[this.base+'/models',this.base+'/models/user'].includes(url)?8000000:512000;
-      const reader=response.body.getReader(); let length=0; const chunks=[];const stream=response.ok&&this.id==='deepseek'&&body?.stream===true?deepseekStream(this.onStreamProgress):null;
+      const reader=response.body.getReader(); let length=0; const chunks=[];stream=response.ok&&this.id==='deepseek'&&body?.stream===true?deepseekStream(this.onStreamProgress):null;
       while(true) { const {done,value}=await reader.read(); if(done)break; this.onResponseActivity?.();length+=value.length;
-        if(length>maxBodyBytes){await reader.cancel();throw new ProviderError('invalid_response');}if(stream)stream.write(value);else chunks.push(value); }
+        if(length>maxBodyBytes){if(stream)diagnostic.deepseekResponse={...stream.metadata(),failedCheck:'body_limit'};await reader.cancel();throw new ProviderError('invalid_response');}if(stream)stream.write(value);else chunks.push(value); }
       let data;try{data=stream?stream.end():JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(error){if(response.ok)throw error;data={};}
       if(!response.ok){diagnostic.errorKind=classifyProviderFailure(response.status,data);const error=new ProviderError('provider_error');error.httpStatus=response.status;const retry=response.headers.get('retry-after');if(response.status===503&&retry){const n=Number(retry),date=Date.parse(retry);const wait=Number.isFinite(n)&&n>0?n*1000:Number.isFinite(date)?Math.max(1000,date-Date.now()):0;if(wait)error.retryAt=Date.now()+Math.min(wait,3600000);}throw error;}
+      if(stream)diagnostic.deepseekResponse=stream.metadata();
       diagnostic.phase='complete';return data;
     } catch(error) {
       const failure=error instanceof ProviderError?error:new ProviderError(controller.signal.aborted?'timeout':error instanceof SyntaxError?'invalid_response':'provider_error');
       if(diagnostic.httpStatus&&!failure.httpStatus)failure.httpStatus=diagnostic.httpStatus;
+      if(stream){
+        const meta=stream.metadata();
+        diagnostic.deepseekResponse??={...meta,failedCheck:meta.failedCheck||'stream_read'};
+        // Accounting evidence from a failed stream cannot establish completion.
+        failure.observedUsage=stream.observedUsage(this.model);
+      }
       diagnostic.errorKind=diagnostic.errorKind||failure.code;failure.diagnostics=diagnostic;throw failure;
     } finally { diagnostic.elapsedMs=Date.now()-started;clearTimeout(timer); }
   }
@@ -103,15 +111,21 @@ export class ProviderAdapter {
   async generateBound(body,expectedHash) {
     if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||body.max_tokens!==this.tokenLimit||!(body.stream===false||body.stream===true&&body.stream_options?.include_usage===true)||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('paid_blocked');
     const data=await this.request(this.base+'/chat/completions',body);
-    if(data.model!==undefined&&data.model!==this.model)throw new ProviderError('invalid_response');
-    return this.parseGeneration(data);
+    return this.parseDeepSeek(data);
   }
   // Regular project work has no app-specified output or spending cap. Retired
   // immutable review grants keep their separate generateBound validation.
   async generateStudio(body,expectedHash) {
     if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||Object.hasOwn(body,'max_tokens')||body.stream!==true||body.stream_options?.include_usage!==true||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('invalid_response');
     const data=await this.request(this.base+'/chat/completions',body);
-    if(data.model!==undefined&&data.model!==this.model)throw new ProviderError('invalid_response');
+    return this.parseDeepSeek(data);
+  }
+  parseDeepSeek(data) {
+    if(data.model!==undefined&&data.model!==this.model){
+      const error=new ProviderError('invalid_response');error.diagnostics=this.lastDiagnostics;
+      if(error.diagnostics?.deepseekResponse)error.diagnostics.deepseekResponse.failedCheck='response_model';
+      throw error;
+    }
     return this.parseGeneration(data);
   }
   parseGeneration(data) {
@@ -135,6 +149,7 @@ export class ProviderAdapter {
       error.httpStatus=this.lastDiagnostics?.httpStatus??null;
       error.complete=false;
       if(error.diagnostics)error.diagnostics.errorKind='invalid_response';
+      if(error.diagnostics?.deepseekResponse)error.diagnostics.deepseekResponse.failedCheck=unsafe?'credential_in_output':typeof text!=='string'||!text.trim()?'empty_output':'finish_reason';
       // Explicitly diagnostic only: no `text` result, and no draft is returned.
       error.partialFinalText=!unsafe&&typeof text==='string'?text.slice(0,4096):null;
       error.partialFinalTextTruncated=!unsafe&&typeof text==='string'&&text.length>4096;

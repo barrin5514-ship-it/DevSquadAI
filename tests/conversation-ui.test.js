@@ -27,15 +27,15 @@ function fixture({status='ready',empty=false,events=[],hasReview=false,readOnly=
  const document={body,createElement:t=>new Element(t),createTextNode:text=>{const node=new Element("#text");node.text=text;return node;},querySelectorAll:()=>[],getElementById:id=>all(body).find(n=>n.id===id)||nodes.get(id)||null};for(const id of ['refresh','guide-button','close-guide','notice'])nodes.set(id,new Element('div'));
  const calls=[],context=vm.createContext({document,window:{history:{replaceState(){}},location:{hash:''},addEventListener(){},scrollTo(){}},crypto:{randomUUID},localStorage:{getItem(){return null;},setItem(){}},queueMicrotask(){},setTimeout:()=>0,clearTimeout(){},fetch:()=>new Promise(()=>{})});
  vm.runInContext(fs.readFileSync(new URL('../src/dashboard/dashboard.js',import.meta.url),'utf8'),context);context.calls=calls;context.hasReview=hasReview;context.main=main;context.sidebar=sidebar;context.inputEvents=events;
- vm.runInContext(`state.busy=false;state.studioProject='p';state.studioChat=${empty?'null':"'c'"};state.data={studio:{projects:[{id:'p',name:'Project',agentChangesAllowed:${!readOnly}}],chats:${empty?'[]':"[{id:'c',project_id:'p',status:'"+status+"',title:'Saved chat',state:{goal:'Existing goal',roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'}}}]"},workers:{model:'Configured model'}}};state.studioDetail={id:'c',events:inputEvents};api=async(route,body)=>{calls.push({route,body});return {id:route.endsWith('/messages')?(hasReview?'followup-c':route.split('/')[3]):'new-chat',events:[]};};refresh=async()=>{};notify=()=>{};draw=()=>{};`,context);
+ vm.runInContext(`state.busy=false;state.studioProject='p';state.studioChat=${empty?'null':"'c'"};state.data={studio:{projects:[{id:'p',name:'Project',agentChangesAllowed:${!readOnly}}],chats:${empty?'[]':"[{id:'c',project_id:'p',status:'"+status+"',title:'Saved chat',state:{goal:'Existing goal',roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'}}}]"},workers:{model:'Configured model'}}};state.studioDetail={id:'c',events:inputEvents};api=async(route,body)=>{if(route.endsWith('/send-proposal'))return {project:'Project',projectId:'p',sessionId:route.split('/')[3],version:4,hash:'displayed-team',roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'},policy:{enabled:false,allowedWorkers:[]},issues:[]};calls.push({route,body});return {id:route.endsWith('/messages')?(hasReview?'followup-c':route.split('/')[3]):'new-chat',events:[]};};refresh=async()=>{};notify=()=>{};draw=()=>{};`,context);
  context.detailPatch=detailPatch;context.statePatch=statePatch;vm.runInContext('if(state.data.studio.chats[0])Object.assign(state.data.studio.chats[0].state,statePatch);Object.assign(state.studioDetail,detailPatch)',context);
  if(hasReview)vm.runInContext("state.data.studio.chats[0].state.review={artifactHash:'reviewed-hash'};state.studioDetail.events=[{id:1,kind:'independent_review',content:{artifactHash:'reviewed-hash',decision:'approved',summary:'Recorded review'}}];",context);
  if(teamAvailable)context.window.workspaceRoles={mount(_s,area){const panel=new Element('details');panel.open=false;area.append(panel);return panel;}};vm.runInContext(fs.readFileSync(new URL('../src/dashboard/conversations.js',import.meta.url),'utf8'),context);vm.runInContext('window.workspaceConversation.mount(state,main,sidebar)',context);
  const find=t=>all(main).find(n=>n.tagName===t),button=name=>all(main).find(n=>n.tagName==='button'&&n.textContent===name);
- return {calls,main,context,button,write(text){find('textarea').value=text;find('textarea').oninput();},submit:async name=>find('form').onsubmit({preventDefault(){},submitter:button(name)})};
+ return {calls,main,context,button,write(text){find('textarea').value=text;find('textarea').oninput();},submit:async name=>{await new Promise(setImmediate);return find('form').onsubmit({preventDefault(){},submitter:button(name)});}};
 }
 test('Send saves one message then dispatches the existing project runner once',async()=>{
- const f=fixture();f.write('Build this utility');await f.submit('Send');assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/messages','/studio/projects/p/run']);assert.equal(f.calls[0].body.text,'Build this utility');assert.equal(f.calls[1].body.chatId,'c');assert.ok(f.calls[1].body.requestId);assert.match(f.main.textContent,/paid DeepSeek usage/);
+ const f=fixture();f.write('Build this utility');await f.submit('Send');assert.deepEqual(f.calls.map(c=>c.route),['/studio/projects/p/run']);assert.equal(f.calls[0].body.message.text,'Build this utility');assert.equal(f.calls[0].body.chatId,'c');assert.ok(f.calls[0].body.requestId);assert.equal(f.calls[0].body.proposalHash,'displayed-team');assert.match(f.main.textContent,/paid DeepSeek usage/);
 });
 test('Save message persists locally without a worker request',async()=>{
  const f=fixture();f.write('Keep this local');await f.submit('Save message');assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/messages']);assert.equal(f.calls[0].body.text,'Keep this local');
@@ -91,23 +91,9 @@ test('a stopped task with an unresolved folder lock still shows the non-dismissi
 test('a new project without a selected session or detail renders the composer safely',()=>{const f=fixture({empty:true});assert.doesNotThrow(()=>vm.runInContext('state.studioDetail=null;main.replaceChildren();window.workspaceConversation.mount(state,main,sidebar)',f.context));assert.ok(all(f.main).some(n=>n.tagName==='textarea'));assert.equal(f.calls.length,0);});
 
 test('bounded team Send uses its saved approval request identity rather than minting another',async()=>{const f=fixture({statePatch:{runApproval:{requestId:'approved-team-request',expiresAt:'2099-01-01'}}});await f.submit('Send');assert.equal(f.calls.at(-1).route,'/studio/projects/p/run');assert.equal(f.calls.at(-1).body.requestId,'approved-team-request');});
-test('team approval mounts in the regular composer and sends only the explicitly approved proposal',async()=>{
- const f=fixture(),panel=f.main.querySelector('.team-run-approval');
- assert.ok(panel);
- const proposal={project:'Project',session:'Saved chat',version:4,projectId:'p',rootHash:'root',checkpointHash:'checkpoint',proposalHash:'current-proposal',roles:{builder:'deepseek',tester:'codex-personal',reviewer:'nemotron'},paid:{model:'deepseek-flash',maxOutput:4096,capUSD:0.02,inputBytes:24000},free:{model:'nvidia/nemotron-3.5-super-vl:free',maxOutput:2048,timeoutMs:60000},maxCalls:3,timeoutMs:300000,maxOutputBytes:32768,deepseekTimeoutMs:90000,estimateUSD:0.013344,needsIncludedConfirmation:true,allowance:'UNKNOWN',issues:[]};
- f.context.proposal=proposal;
- vm.runInContext('api=async(route,body)=>{calls.push({route,body});return proposal;}',f.context);
- assert.deepEqual(f.calls,[]);
- panel.open=true;await panel.ontoggle();
- assert.deepEqual(f.calls.map(c=>[c.route,c.body]),[['/studio/chats/c/run-approval',undefined]]);
- assert.match(panel.textContent,/checkpoint/);
- const approve=f.button('Approve one three-agent run'),confirm=all(panel).find(x=>x.type==='checkbox');
- assert.equal(approve.disabled,true);
- confirm.checked=true;confirm.onchange();assert.equal(approve.disabled,false);
- await approve.onclick();
- assert.equal(f.calls.length,2);
- assert.equal(f.calls[1].route,'/studio/chats/c/run-approval');
- assert.equal(f.calls[1].body.proposalHash,proposal.proposalHash);
- assert.equal(f.calls[1].body.confirmIncluded,true);
- assert.ok(!f.calls.some(c=>c.route.endsWith('/run')));
+test('displayed team proposal requires no second consent control and binds an empty Send to the saved task',async()=>{
+ const f=fixture();await new Promise(setImmediate);
+ assert.equal(f.calls.length,0);assert.match(f.main.textContent,/fallback off/);
+ assert.equal(f.main.querySelector('.team-run-approval'),null);
+ await f.submit('Send');assert.equal(f.calls.length,1);assert.equal(f.calls[0].body.proposalHash,'displayed-team');assert.equal(f.calls[0].body.expectedVersion,4);assert.equal(f.calls[0].body.message,undefined);
 });

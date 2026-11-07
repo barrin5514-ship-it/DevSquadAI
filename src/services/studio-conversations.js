@@ -16,12 +16,12 @@ function attachment(studio,projectId,file){
 export function createSession(studio,projectId,body){
  studio.team.fields(body,[]);return studio.create(projectId,'',true);
 }
-export function saveMessage(studio,id,body){
+export function saveMessage(studio,id,body,{inTransaction=false}={}){
  studio.team.fields(body,['text','attachments','references','submissionId'],['text','submissionId']);
  if(typeof body.text!=='string'||!body.text.trim()||body.text.length>4000)throw new ApiError(400,'Write a message of at most 4,000 characters');
  if(typeof body.submissionId!=='string'||!/^[a-zA-Z0-9-]{1,100}$/.test(body.submissionId))throw new ApiError(400,'Invalid message submission');
  if(!Array.isArray(body.attachments||[])||(body.attachments||[]).length>2||!Array.isArray(body.references||[])||(body.references||[]).length>3)throw new ApiError(400,'Use at most two attachments and three project references');
- return transaction(studio.db,()=>{
+ const save=()=>{
   let chat=studio.get(id);const original=chat,prior=studio.db.prepare("SELECT chat_id,content FROM studio_events WHERE kind IN ('message','message_queued') AND json_extract(content,'$.submissionId')=?").get(body.submissionId);
   const requestHash=hashText(JSON.stringify([body.text,body.attachments||[],body.references||[]]));
   if(prior){if(prior.chat_id!==id&&JSON.parse(prior.content).sourceChatId!==id)throw new ApiError(409,'This message belongs to another session');if(JSON.parse(prior.content).requestHash!==requestHash)throw new ApiError(409,'Message submission already used for different content');return studio.detail(prior.chat_id);}
@@ -39,7 +39,8 @@ export function saveMessage(studio,id,body){
   const explicitlyNamed=studio.db.prepare("SELECT 1 FROM studio_file_operations WHERE action='session_renamed' AND status='complete' AND json_extract(detail,'$.chatId')=? LIMIT 1").get(chat.id);
   studio.db.prepare('UPDATE studio_chats SET title=?,state=?,version=version+1,updated_at=? WHERE id=? AND version=?').run(chat.state.goal||explicitlyNamed?chat.title:text.slice(0,100),JSON.stringify({...chat.state,goal,phase:'builder',tests:null,review:null}),new Date().toISOString(),chat.id,chat.version);
   studio.event(chat.id,'message',content);return studio.detail(chat.id);
- });
+ };
+ return inTransaction?save():transaction(studio.db,save);
 }
 export function conversationContext(studio,id,maxBytes=16000){
  const files=[],reviews=[];let bytes=0,truncated=false;

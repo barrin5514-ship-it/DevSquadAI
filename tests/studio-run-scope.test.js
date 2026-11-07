@@ -79,3 +79,56 @@ test('explicit team funding refresh atomically records official price and balanc
  f.r.db.prepare("UPDATE studio_deepseek_verification SET checked_at='2000-01-01'").run();
  assert.equal(f.s.failover.fundingReady().ok,false);
 });
+function sendOnce(f,options={}){
+ const v=f.s.runScope.sendProposal(f.j.id);
+ const body={chatId:f.j.id,requestId:randomUUID(),proposalHash:v.hash,expectedVersion:v.version,...options};
+ return {v,body,j:f.s.start(f.p.id,body,{requireTeamProposal:true})};
+}
+test('one Send stores the task and authorizes exact roles, files and limits without a micro-cap',async t=>{
+ const f=fixture(t),message={text:'Add a local chart',submissionId:randomUUID(),attachments:[{name:'notes.txt',content:'Keep it offline'}]};
+ const {v,body,j}=sendOnce(f,{message});
+ assert.equal(j.state.runApproval.mode,'team-send');
+ assert.equal(j.state.runApproval.checkpointHash,v.checkpointHash);
+ assert.equal(j.state.runApproval.paid.capUSD,undefined);
+ assert.match(j.state.goal,/Add a local chart/);
+ assert.equal(f.s.start(f.p.id,body).id,j.id);
+ await f.s.drive(j.id,f.s.active.get(j.id));
+ assert.deepEqual(f.calls,['builder','tester','reviewer']);
+ assert.equal(f.s.get(j.id).status,'awaiting_owner');
+ assert.equal(f.s.start(f.p.id,body).status,'awaiting_owner');
+ assert.equal(f.calls.length,3);
+});
+test('stale proposal and write-denied Send roll back the message and authorization',t=>{
+ const f=fixture(t),v=f.s.runScope.sendProposal(f.j.id),message={text:'Do not save this',submissionId:randomUUID()};
+ const body={chatId:f.j.id,requestId:randomUUID(),proposalHash:v.hash,expectedVersion:v.version,message};
+ fs.writeFileSync(path.join(f.s.root(f.p.id).root,'new.mjs'),'export const x=1;');
+ assert.throws(()=>f.s.start(f.p.id,body),/changed/);
+ const current=f.s.runScope.sendProposal(f.j.id);
+ f.s.projectsManager.assertWrite=()=>{throw Error('read-only fixture');};
+ assert.throws(()=>f.s.start(f.p.id,{...body,proposalHash:current.hash,expectedVersion:current.version}),/read-only/);
+ assert.equal(f.s.get(f.j.id).state.runApproval,undefined);
+ assert.equal(f.s.detail(f.j.id).events.filter(e=>e.kind==='message').length,0);
+});
+for(const scenario of ['recover','provider','ineligible','unavailable','unknown','unverified','stop'])test('authorized one-Send fallback: '+scenario,async t=>{
+ const f=fixture(t),roles={builder:'deepseek',tester:'codex-personal',reviewer:'nemotron'};
+ f.s.change(f.j.id,'ready',{roles},'fixture');
+ f.s.failover.configure(f.j.id,{version:f.s.get(f.j.id).version,approvedBy:'owner',enabled:true,allowedWorkers:scenario==='ineligible'?['deepseek']:['claude-code']});
+ const original=f.workers.call,attempts=[];
+ f.workers.availability=async()=>({ok:scenario!=='unavailable'});
+ f.workers.call=async(agent,packet,...rest)=>{
+  attempts.push([agent,packet.phase]);
+  if(agent==='codex-personal'){
+   if(scenario==='stop')f.s.stop(f.j.id);
+   throw Object.assign(Error('Fixture account exhausted'),{code:scenario==='provider'?'provider_outage':'usage_limit',stopped:scenario!=='unverified',unknownOutcome:scenario==='unknown'});
+  }
+  if(packet.phase==='tester')assert.ok(packet.files.some(p=>p.path==='app.mjs'));
+  return original(agent,packet,...rest);
+ };
+ const {j}=sendOnce(f);await f.s.drive(j.id,f.s.active.get(j.id));
+ const end=f.s.detail(j.id),last=end.events.findLast(e=>e.kind==='fallback_decision');
+ if(scenario==='stop'){assert.equal(last,undefined);assert.equal(attempts.length,2);assert.equal(end.status,'stopped');return;}
+ assert.equal(last.content.from,'codex-personal');
+ if(['recover','provider'].includes(scenario)){assert.equal(end.status,'awaiting_owner');assert.deepEqual(attempts,[['deepseek','builder'],['codex-personal','tester'],['claude-code','tester'],['nemotron','reviewer']]);assert.equal(last.content.to,'claude-code');}
+ else{assert.equal(attempts.length,2);assert.equal(last.content.allowed,false);assert.equal(end.status,'paused');}
+ if(['unknown','unverified'].includes(scenario))assert.ok(f.r.db.prepare('SELECT 1 FROM studio_locks WHERE chat_id=?').get(j.id));
+});

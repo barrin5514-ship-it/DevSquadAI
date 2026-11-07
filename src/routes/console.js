@@ -41,6 +41,7 @@ export function consoleRoutes(team,service){
   if(j.status!=='ready'||j.state.runApproval||j.state.executionMode==='builder-only'||!Object.values(j.state.roles).includes('deepseek'))throw new ApiError(409,'Choose an unused DeepSeek team session.');
   send(res,await team.paid.refreshTeamFunding(req.body));
  });
+ r.get('/studio/chats/:id/send-proposal',(req,res)=>send(res,team.studio.runScope.sendProposal(req.params.id)));
  r.get('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.preview(req.params.id)));
  r.post('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.arm(req.params.id,req.body,{requireProposal:true})));
  r.get('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.status(req.params.id)));
@@ -83,7 +84,7 @@ export function consoleRoutes(team,service){
  r.get('/studio/projects/:id/inspection',(req,res)=>send(res,inspection(team.studio,req.params.id,req.query.chat||null)));
  r.get('/studio/chats/:id/revisions/:revision',(req,res)=>send(res,revision(team.studio,req.params.id,req.params.revision)));
  r.get('/studio/chats/:id',(req,res)=>send(res,team.studio.detail(req.params.id)));
- r.post('/studio/projects/:id/run',(req,res)=>send(res,team.studio.start(req.params.id,req.body),202));
+ r.post('/studio/projects/:id/run',(req,res)=>send(res,team.studio.start(req.params.id,req.body,{requireTeamProposal:true}),202));
  r.post('/studio/chats/:id/stop',(req,res)=>{team.fields(req.body,[]);send(res,team.studio.stop(req.params.id));});
  r.post('/studio/chats/:id/accept',(req,res)=>{team.fields(req.body,[]);send(res,team.studio.accept(req.params.id));});
 
