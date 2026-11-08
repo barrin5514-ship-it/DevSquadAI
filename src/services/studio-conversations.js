@@ -3,6 +3,7 @@ import path from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 import {ApiError} from '../middleware/errors.js';
 import {transaction} from '../middleware/ai-validation.js';
+import {selectedMedia} from './studio-media.js';
 import {hashText} from './project-files.js';
 
 const editable=['ready','paused','stopped'];
@@ -38,7 +39,7 @@ export function saveMessage(studio,id,body,{inTransaction=false}={}){
   const rawAttachments=body.attachments||[];if(rawAttachments.filter(f=>f&&(f.kind==='image'||f.kind==='video')).length>1)throw new ApiError(400,'Attach at most one image or video per Send.');
   const attachments=rawAttachments.map(f=>attachment(studio,chat.project_id,f)),repo=studio.root(chat.project_id);
   const references=(body.references||[]).map(relative=>{const target=repo.resolve(relative);if(!fs.existsSync(target)||!fs.statSync(target).isFile()||fs.statSync(target).size>4096)throw new ApiError(400,'Choose an existing project text file of at most 4 KB');return {...attachment(studio,chat.project_id,{name:relative.split('/').at(-1),content:fs.readFileSync(target,'utf8')}),path:relative};});
-  const text=body.text.trim(),goal=!followup&&chat.state.goal?chat.state.goal+'\nOwner follow-up: '+text:text;
+  const text=body.text.trim(),mediaInput=selectedMedia(attachments,text),goal=!followup&&chat.state.goal?chat.state.goal+'\nOwner follow-up: '+text:text;
   if(goal.length>16000)throw new ApiError(400,'This conversation is full. Start a new session to keep worker context bounded.');
   const content={text,attachments,references,submissionId:body.submissionId,requestHash,...(followup?{sourceChatId:id,reviewContext:{sourceChatId:id,reviewer:original.state.roles.reviewer,goal:original.state.goal,review:original.state.review,tests:original.state.tests}}:{})};studio.team.safe(content);
   for(const secret of studio.team.coordinator.configuredSecrets())if(secret&&JSON.stringify(content).includes(secret))throw new ApiError(400,'Credential values cannot be attached to a conversation');
@@ -52,7 +53,7 @@ export function saveMessage(studio,id,body,{inTransaction=false}={}){
    studio.event(chat.id,'followup_origin',{sourceChatId:id,sourceRequestId:original.request_id,artifactHash:original.state.review.artifactHash,summary:'New Builder task in this conversation. Earlier reviews and owner decisions remain in history.'});
   }
   const explicitlyNamed=studio.db.prepare("SELECT 1 FROM studio_file_operations WHERE action='session_renamed' AND status='complete' AND json_extract(detail,'$.chatId')=? LIMIT 1").get(chat.id);
-  studio.db.prepare('UPDATE studio_chats SET title=?,state=?,version=version+1,updated_at=? WHERE id=? AND version=?').run(chat.state.goal||explicitlyNamed?chat.title:text.slice(0,100),JSON.stringify({...chat.state,goal,phase:'builder',tests:null,review:null}),new Date().toISOString(),chat.id,chat.version);
+  studio.db.prepare('UPDATE studio_chats SET title=?,state=?,version=version+1,updated_at=? WHERE id=? AND version=?').run(chat.state.goal||explicitlyNamed?chat.title:text.slice(0,100),JSON.stringify({...chat.state,goal,phase:'builder',tests:null,review:null,...(mediaInput||chat.state.mediaInput?{mediaInput}:{})}),new Date().toISOString(),chat.id,chat.version);
   studio.event(chat.id,'message',content);return studio.detail(chat.id);
  };
  return inTransaction?save():transaction(studio.db,save);

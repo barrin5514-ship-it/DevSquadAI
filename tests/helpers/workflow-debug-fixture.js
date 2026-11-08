@@ -9,7 +9,7 @@ import {StudioWorkers,tapTests} from '../../src/services/studio-workers.js';
 import {ProjectFiles,hashText} from '../../src/services/project-files.js';
 import {cliEnvironment} from '../../src/services/cli-hello.js';
 
-export async function workflowFixture(t,{mode='normal',fallback=true}={}){
+export async function workflowFixture(t,{mode='normal',fallback=true,mediaOptions}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'workflow-http-')),calls=[],packets=[],providerBodies=[];
  let real,entered,release,testerTurns=0;const blocked=new Promise(r=>release=r),started=new Promise(r=>entered=r);
  const implementation='export function add(a,b){return a+b;}';
@@ -35,7 +35,7 @@ export async function workflowFixture(t,{mode='normal',fallback=true}={}){
   return {executed:true,passed:exit===0&&count>0&&failed===0,count,failed,summary:'Actual local fixture Node tests',backend:'node-permission-fixture',revisionHash:new ProjectFiles(folder).fingerprint(),outputHash:hashText(stdout),names:tapTests(stdout)};
  }};
  const config=loadConfig({DATABASE_PATH:path.join(root,'db.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backup'),DEEPSEEK_API_KEY:'LOCAL_FIXTURE',DEEPSEEK_MODEL:'deepseek-flash',DEEPSEEK_INPUT_USD_PER_MILLION:'0.3',DEEPSEEK_OUTPUT_USD_PER_MILLION:'1.2'});
- const app=createApp(config,{studioOptions:{workers},fetchImpl:async(url,o)=>{
+ const app=createApp(config,{studioOptions:{workers,mediaOptions},fetchImpl:async(url,o)=>{
   if(url!=='https://api.deepseek.com/chat/completions'||o.method!=='POST')throw Error('Unexpected simulated provider request');
   providerBodies.push(JSON.parse(o.body));
   if(mode==='rate')return Response.json({error:{message:'LOCAL rate limit'}},{status:429});

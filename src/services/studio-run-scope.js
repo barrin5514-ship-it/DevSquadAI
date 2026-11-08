@@ -9,7 +9,7 @@ export class StudioRunScope {
  constructor(studio){this.s=studio;this.db=studio.db;}
  databaseHash(){return hashText(fs.realpathSync(this.s.team.config.database));}
  fail(message,code='run_scope_limit'){throw Object.assign(new ApiError(409,message),{code,stopped:true});}
- inputHash(j){return hashText(JSON.stringify({goal:j.state.goal,context:conversationContext(this.s,j.id),problems:j.state.problems}));}
+ inputHash(j){return hashText(JSON.stringify({goal:j.state.goal,context:conversationContext(this.s,j.id),problems:j.state.problems,...(j.state.mediaInput?{mediaInput:j.state.mediaInput}:{})}));}
  termsHash(terms){
   const {settings,policy}=this.s.team.paid,c=this.s.team.config;
   return hashText(JSON.stringify({paid:terms.paid,free:terms.free,maxCalls:terms.maxCalls,perRole:terms.perRole,timeoutMs:terms.timeoutMs,maxOutputBytes:terms.maxOutputBytes,limits:c.studioTimeouts,...(terms.reviewOnly?{reviewOnly:true}:{}),...(terms.free?{freeKey:keyFingerprint(c.ai.providers.find(p=>p.id==='openrouter')?.key)}:{}),...(terms.paid?{model:settings.model,base:settings.base,key:keyFingerprint(settings.key),prices:[settings.inputPrice,settings.outputPrice],budgets:[policy.requestLimit,policy.dailyLimit,policy.totalLimit]}:{})}));
@@ -35,7 +35,7 @@ export class StudioRunScope {
   return {...proposal,proposalHash:hashText(JSON.stringify([proposal.projectId,id,proposal.rootHash,proposal.checkpointHash,proposal.inputHash,proposal.termsHash,roles]))};
  }
  // A normal Send binds the displayed configuration before any message or worker is saved.
- sendProposal(id){
+ sendProposal(id,omitPath){
   const s=this.s,j=s.get(id),repo=s.root(j.project_id),project=s.team.store.project(j.project_id);
   const policy=s.failover.policy(j),agents=new Set([...Object.values(j.state.roles),...(policy.enabled?policy.allowedWorkers:[])]);
   const settings=s.team.paid.settings;
@@ -47,7 +47,7 @@ export class StudioRunScope {
   if(!s.failover.scoped(j,policy)&&policy.enabled)issues.push('The saved fallback permission no longer matches this project.');
   try{s.roleManager.validate(j.state.roles,j.state.authors);s.service.verify(project.id,repo.root);s.projectsManager?.assertWrite(project.id);}catch(e){issues.push(e.message);}
   if(repo.snapshot(24000).truncated||conversationContext(s,id).truncated)issues.push('The saved project context exceeds the worker input limit.');
-  const proposal={projectId:project.id,sessionId:id,project:project.name,task:j.state.goal,version:j.version,roles:j.state.roles,policy,limits,issues,rootHash:hashText(repo.root),checkpointHash:repo.fingerprint()};
+  const proposal={projectId:project.id,sessionId:id,project:project.name,task:j.state.goal,version:j.version,roles:j.state.roles,policy,limits,issues,rootHash:hashText(repo.root),checkpointHash:repo.fingerprint(omitPath)};
   return {...proposal,hash:hashText(JSON.stringify([proposal,this.inputHash(j),this.termsHash(limits)]))};
  }
  authorizeSend(j,proposal,requestId){

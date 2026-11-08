@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 78
+- Number of handoffs: 81
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -142,3 +142,6 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-08 | | Owner | Codex | Prove Dev Squad media vision before building the image/video spec step. | Ten offline boundary captures confirmed the existing workers receive text only. Synthetic PNG and MP4 stored with verified hashes. FFmpeg extracted six frames from the 12-second clip. Zero live vision passes or provider calls. Stopped at Phase 0. Details in docs/MEDIA_CAPABILITY_SPIKE_20261108.md. | |
 
 | 2026-11-08 | | Owner | Codex | Run the bounded live image spike through Nemotron free, then Codex Personal if needed. | One request per route, zero retries. Both identified the purple mug and exact control text, but neither identified a yellow table, so both failed the strict rule. OpenRouter reported $0.00. Codex Personal used native Plus and reported token usage. Verbatim replies and request formats in docs/MEDIA_LIVE_VISION_SPIKE_20261108.md. | |
+| 2026-11-08 | | Owner | Codex | Build the media spec stage with Nemotron and Codex Personal fallback. | Chrome verified live image and sampled-video specs, fallback and cache reuse. Development roles were simulated. Focused 57/57. Full Windows host 769/770 due to the existing timeout and Stop fixture. Restart, commit and push held. See MEDIA_SPEC_BUILD_20261108.md. | |
+| 2026-11-08 | | Owner | Codex | Recheck the Windows recovery test, release media-spec, then run one live VisionTest build if green. | Recovery 12/12; full Windows serial 769/770; pre-media Studio comparison 134/134. Termination verification failed only in the full candidate run. Release and live build held. | |
+| 2026-11-08 | | Owner | Codex | Run one owner-authorized full release check, then release and run a single live media build if green. | Windows serial suite 770/770, exit 0. Verified backup and backend PID 4392, HTTP 200, application data preserved. Live proof recorded separately after the push. | |
