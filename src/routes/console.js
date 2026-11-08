@@ -2,14 +2,15 @@ import {NemotronWorker} from '../services/nemotron-worker.js';
 import {modelHealthSnapshot} from '../services/model-health.js';
 import {fileTree,projectFile,revision,gitChange,inspection} from '../services/workspace-inspection.js';
 import fs from 'node:fs';
+import path from 'node:path';
 import {promptHistory,historyMarkdown,historyText} from '../services/prompt-history.js';
 import {developmentOutput} from '../services/workspace-output.js';
 import {inspectExpansion} from '../services/expansion-verification.js';
 import {recordAccountTerms,setProviderEnabled} from '../services/expansion-policy.js';
 import {teamConnectionStatus} from '../services/team-status.js';
 import {artifactSummaries} from '../services/artifact-summaries.js';
-import {Router} from 'express';
-import {randomBytes, timingSafeEqual} from 'node:crypto';
+import {Router, raw} from 'express';
+import {randomBytes, randomUUID, timingSafeEqual, createHash} from 'node:crypto';
 import {ApiError} from '../middleware/errors.js';
 import {text,transaction} from '../middleware/ai-validation.js';
 
@@ -33,7 +34,7 @@ export function consoleRoutes(team,service){
   if(!/^(127\.0\.0\.1|localhost|\[::1\]):\d+$/.test(host)||origin&&origin!==`http://${host}`||['cross-site','same-site'].includes(req.headers['sec-fetch-site']))return next(new ApiError(403,'Open this dashboard directly on localhost'));
   if(req.method!=='GET'){
    const supplied=Buffer.from(req.headers['x-dashboard-token']||'');
-   if(!req.is('application/json')||supplied.length!==token.length||!timingSafeEqual(supplied,Buffer.from(token)))return next(new ApiError(403,'Dashboard session expired. Refresh and try again.'));
+   const attachment=req.method==='POST'&&/^\/studio\/projects\/[^/]+\/attachments$/.test(req.path)&&req.is('application/octet-stream');if(!(attachment||req.is('application/json'))||supplied.length!==token.length||!timingSafeEqual(supplied,Buffer.from(token)))return next(new ApiError(403,'Dashboard session expired. Refresh and try again.'));
   }
   next();
  });
@@ -91,6 +92,8 @@ export function consoleRoutes(team,service){
  r.post('/studio/projects/:id/sessions',(req,res)=>send(res,team.studio.session(req.params.id,req.body),201));
  r.post('/studio/chats/:id/messages',(req,res)=>send(res,team.studio.message(req.params.id,req.body),201));
  r.get('/studio/projects/:id/references',(req,res)=>send(res,{files:team.studio.root(req.params.id).list().filter(p=>/\.(?:[cm]?js|jsx|tsx?|json|md|txt|html|css|py|go|rs|ya?ml)$/i.test(p)).slice(0,500)}));
+ r.post('/studio/projects/:id/attachments',raw({type:'application/octet-stream',limit:'200mb'}),async(req,res)=>{team.store.project(req.params.id);const name=decodeURIComponent(String(req.get('x-file-name')||'')).trim();if(!name||name.length>240||/[\u0000-\u001f]/.test(name)||name.includes('/')||name.includes('\\'))throw new ApiError(400,'Choose a single image or video file with a safe name.');const ext=path.extname(name).toLowerCase(),image=/^\.(?:png|jpe?g|webp|gif)$/.test(ext),video=/^\.(?:mp4|webm|mov)$/.test(ext);if(!image&&!video)throw new ApiError(415,'Attach a PNG, JPEG, WebP, GIF, MP4, WebM or MOV file.');const body=req.body;if(!Buffer.isBuffer(body)||!body.length)throw new ApiError(400,'The selected file was empty or could not be read.');const limit=image?25*1024*1024:200*1024*1024;if(body.length>limit)throw new ApiError(413,image?'Images must be 25 MiB or smaller.':'Videos must be 200 MiB or smaller.');const magic=image?(ext==='.png'?body.subarray(0,8).equals(Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a])):ext==='.jpg'||ext==='.jpeg'?body[0]===0xff&&body[1]===0xd8&&body[2]===0xff:ext==='.gif'?body.subarray(0,3).toString('ascii')==='GIF':body.subarray(0,4).toString('ascii')==='RIFF'&&body.subarray(8,12).toString('ascii')==='WEBP'):ext==='.webm'?body.subarray(0,4).equals(Buffer.from([0x1a,0x45,0xdf,0xa3])):body.subarray(4,8).toString('ascii')==='ftyp';if(!magic)throw new ApiError(415,'That file does not look like a valid '+ext.slice(1).toUpperCase()+' file.');const root=team.studio.root(req.params.id).root,dir=path.join(root,'references');if(fs.existsSync(dir)&&(!fs.lstatSync(dir).isDirectory()||fs.lstatSync(dir).isSymbolicLink()))throw new ApiError(409,'The project references folder is not a safe local directory.');fs.mkdirSync(dir,{recursive:true,mode:0o700});const stored=randomUUID()+ext,relative='references/'+stored,target=path.join(dir,stored);if(!target.startsWith(dir+path.sep))throw new ApiError(403,'The attachment path is invalid.');fs.writeFileSync(target,body,{flag:'wx',mode:0o600});const mime=image?({'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.gif':'image/gif'}[ext]):({'.mp4':'video/mp4','.webm':'video/webm','.mov':'video/quicktime'}[ext]);send(res,{attachment:{name,path:relative,bytes:body.length,mime,kind:image?'image':'video',hash:createHash('sha256').update(body).digest('hex')}},201);});
+ r.get('/studio/projects/:id/references/:name',(req,res)=>{team.store.project(req.params.id);const name=req.params.name;if(!/^[a-f0-9-]{36}\.(?:png|jpe?g|webp|gif|mp4|webm|mov)$/i.test(name))throw new ApiError(404,'Attachment not found.');const root=team.studio.root(req.params.id).root,file=path.join(root,'references',name);if(!file.startsWith(path.join(root,'references')+path.sep)||!fs.existsSync(file)||!fs.lstatSync(file).isFile())throw new ApiError(404,'Attachment not found.');res.set('cache-control','private, max-age=3600').type(path.extname(name).slice(1)).sendFile(file);});
  r.get('/studio/projects/:id/files',(req,res)=>send(res,fileTree(team.studio,req.params.id)));
  r.get('/studio/projects/:id/file',(req,res)=>send(res,projectFile(team.studio,req.params.id,req.query.path)));
  r.get('/studio/projects/:id/git-change',(req,res)=>send(res,gitChange(team.studio,req.params.id,req.query.path)));

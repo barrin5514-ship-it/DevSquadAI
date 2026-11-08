@@ -1,5 +1,6 @@
 import fs from 'node:fs';
-import {randomUUID} from 'node:crypto';
+import path from 'node:path';
+import {randomUUID,createHash} from 'node:crypto';
 import {ApiError} from '../middleware/errors.js';
 import {transaction} from '../middleware/ai-validation.js';
 import {hashText} from './project-files.js';
@@ -7,10 +8,16 @@ import {hashText} from './project-files.js';
 const editable=['ready','paused','stopped'];
 // Text attachments are stored with their message, never written into project source.
 function attachment(studio,projectId,file){
- studio.team.fields(file,['name','content']);
+ studio.team.fields(file,['name','content','kind','path','bytes','mime','hash'],['name']);
+ if(file.kind==='image'||file.kind==='video'){
+  const relative=String(file.path||'');if(!/^references\/[a-f0-9-]{36}\.(?:png|jpe?g|webp|gif|mp4|webm|mov)$/i.test(relative))throw new ApiError(400,'The saved image or video attachment is invalid');
+  const root=studio.root(projectId).root,target=path.join(root,relative);if(!target.startsWith(path.join(root,'references')+path.sep)||!fs.existsSync(target)||!fs.lstatSync(target).isFile())throw new ApiError(400,'The saved image or video attachment is missing');
+  const data=fs.readFileSync(target),hash=createHash('sha256').update(data).digest('hex'),limit=file.kind==='image'?25*1024*1024:200*1024*1024;if(!data.length||data.length>limit||hash!==file.hash)throw new ApiError(400,'The saved image or video attachment changed or exceeds its limit');
+  return {name:path.basename(String(file.name||relative)),path:relative,bytes:data.length,mime:String(file.mime||''),kind:file.kind,hash};
+ }
  if(typeof file.name!=='string'||file.name.includes('/')||!/^.+\.(?:[cm]?js|jsx|tsx?|json|md|txt|html|css|py|go|rs|ya?ml)$/i.test(file.name))throw new ApiError(400,'Attach a small text or code file with a supported extension');
  studio.root(projectId).resolve(file.name);
- if(typeof file.content!=='string'||file.content.includes('\0')||Buffer.byteLength(file.content)>4096)throw new ApiError(400,'Each attachment must be text and at most 4 KB');
+ if(typeof file.content!=='string'||file.content.includes('\0')||Buffer.byteLength(file.content)>4096)throw new ApiError(400,'Each text attachment must be text and at most 4 KB');
  return {name:file.name,content:file.content,bytes:Buffer.byteLength(file.content),hash:hashText(file.content)};
 }
 export function createSession(studio,projectId,body){
@@ -28,7 +35,8 @@ export function saveMessage(studio,id,body,{inTransaction=false}={}){
   const followup=['awaiting_owner','accepted'].includes(chat.status);
   if(followup&&(!chat.state.review||!studio.detail(id).events.some(e=>e.kind==='independent_review'&&e.content.artifactHash===chat.state.review.artifactHash)))throw new ApiError(409,'No completed review record is available for a follow-up task');
   const active=['running','stopping'].includes(chat.status);if(!followup&&!active&&!editable.includes(chat.status))throw new ApiError(409,'Stop active work before adding a message.');
-  const attachments=(body.attachments||[]).map(f=>attachment(studio,chat.project_id,f)),repo=studio.root(chat.project_id);
+  const rawAttachments=body.attachments||[];if(rawAttachments.filter(f=>f&&(f.kind==='image'||f.kind==='video')).length>1)throw new ApiError(400,'Attach at most one image or video per Send.');
+  const attachments=rawAttachments.map(f=>attachment(studio,chat.project_id,f)),repo=studio.root(chat.project_id);
   const references=(body.references||[]).map(relative=>{const target=repo.resolve(relative);if(!fs.existsSync(target)||!fs.statSync(target).isFile()||fs.statSync(target).size>4096)throw new ApiError(400,'Choose an existing project text file of at most 4 KB');return {...attachment(studio,chat.project_id,{name:relative.split('/').at(-1),content:fs.readFileSync(target,'utf8')}),path:relative};});
   const text=body.text.trim(),goal=!followup&&chat.state.goal?chat.state.goal+'\nOwner follow-up: '+text:text;
   if(goal.length>16000)throw new ApiError(400,'This conversation is full. Start a new session to keep worker context bounded.');
@@ -52,7 +60,7 @@ export function saveMessage(studio,id,body,{inTransaction=false}={}){
 export function conversationContext(studio,id,maxBytes=16000){
  const files=[],reviews=[];let bytes=0,truncated=false;
  const all=studio.detail(id).events,applied=new Set(all.filter(e=>e.kind==='queued_message_applied').map(e=>e.content.messageId));
- for(const event of all.filter(e=>e.kind!=='message_queued'||applied.has(e.id)))for(const file of [...(event.content.attachments||[]),...(event.content.references||[])]){const size=Buffer.byteLength(file.content);if(bytes+size>maxBytes){truncated=true;continue;}bytes+=size;files.push({name:file.path||file.name,content:file.content,hash:file.hash});}
+ for(const event of all.filter(e=>e.kind!=='message_queued'||applied.has(e.id)))for(const file of [...(event.content.attachments||[]),...(event.content.references||[])]){if(typeof file.content!=='string')continue;const size=Buffer.byteLength(file.content);if(bytes+size>maxBytes){truncated=true;continue;}bytes+=size;files.push({name:file.path||file.name,content:file.content,hash:file.hash});}
  for(const event of studio.detail(id).events){const review=event.content.reviewContext;if(!review)continue;const size=Buffer.byteLength(JSON.stringify(review));if(bytes+size>maxBytes){truncated=true;reviews.push({sourceChatId:review.sourceChatId,artifactHash:review.review?.artifactHash,contextOmitted:true});continue;}bytes+=size;reviews.push(review);}
  return {files,reviews,truncated};
 }

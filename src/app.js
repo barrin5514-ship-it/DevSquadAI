@@ -37,7 +37,7 @@ export function createApp(config, options = {}) {
     app.use('/api/team',teamRoutes(team));
     app.get('/team-dashboard.css',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/dashboard.css',import.meta.url))));
     app.get('/',(req,res)=>res.redirect('/team'));
-    app.get('/team',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'").sendFile(fileURLToPath(new URL('./dashboard/index.html',import.meta.url))));
+    app.get('/team',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-ancestors 'none'").sendFile(fileURLToPath(new URL('./dashboard/index.html',import.meta.url))));
     app.get('/team/zapier-setup',(req,res)=>res.redirect('/team#zapier'));
     app.get('/team-roles.js',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/roles.js',import.meta.url))));
     app.get('/team-conversations.js',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/conversations.js',import.meta.url))));
