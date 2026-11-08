@@ -11,11 +11,13 @@ function baseEnv(root,{zapier=true,callbackToken='fixture-callback-token'}={}){
  return {DATABASE_PATH:path.join(root,'data/main.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backup'),STUDIO_ZAPIER_HANDOFFS:zapier?'true':'false',STUDIO_ZAPIER_CALLBACK_TOKEN:callbackToken,STUDIO_HANDOFF_TIMEOUT_MS:'5000'};
 }
 
-async function fixture(t,{zapier=true,call,tests,configureWebhook=true,callbackToken='fixture-callback-token'}={}){
+async function fixture(t,{zapier=true,call,tests,configureWebhook=true,callbackToken='fixture-callback-token',zapierFailure=null}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'studio-handoff-test-')),calls=[],webhookCalls=[];let server,base;
  const workers={call:async(agent,packet)=>{calls.push({agent,phase:packet.phase});if(call)return call(agent,packet);if(packet.phase==='builder')return {report:'Fixture implementation',files:[{path:'src/add.mjs',content:'export const add=(a,b)=>a+b;'}]};if(packet.phase==='tester')return {report:'Fixture independent tests',files:[{path:'test/add.test.mjs',content:'// Fixture test source'}]};return {report:'Fixture review',files:[],review:{...packet.reviewBinding,decision:'approved',summary:'Reviewed supplied evidence',findings:[]}};},tests:tests||(async()=>({executed:true,passed:true,count:3,failed:0,summary:'Fixture runner evidence'}))};
  const webhookFetch=async (_url,options)=>{
   const payload=JSON.parse(options.body);webhookCalls.push(payload);
+  if(zapierFailure==='http')throw Error('simulated dead Zapier target');
+  if(zapierFailure==='no-callback')return new Response('',{status:200});
   if(zapier){
    const response=await fetch(base+'/api/console/studio/zapier/callback',{method:'POST',headers:{'content-type':'application/json','x-studio-callback-token':'fixture-callback-token'},body:JSON.stringify({...payload,action:'continue'})});
    if(!response.ok)throw Error('simulated Zapier callback HTTP '+response.status);
@@ -47,6 +49,37 @@ test('one Send uses two simulated Zapier checkpoint handoffs and ends at owner r
  assert.equal(d.events.filter(e=>e.kind==='handoff_accepted').length,2);
  assert.equal(d.events.filter(e=>e.kind==='independent_review').length,1);
  assert.equal(d.state.review.decision,'approved');
+});
+
+test('a dead Zapier target falls back to local handoffs for both builds and rejects replay',async t=>{
+ const f=await fixture(t,{zapierFailure:'http'}),j=await f.run(),d=f.studio.detail(j.id);
+ assert.equal(j.status,'awaiting_owner');
+ assert.deepEqual(f.calls.map(x=>[x.agent,x.phase]),[['deepseek','builder'],['codex-personal','tester'],['claude-code','reviewer']]);
+ assert.equal(f.webhookCalls.length,2);
+ assert.equal(d.handoffs.length,2);
+ assert.ok(d.handoffs.every(h=>h.status==='local'&&h.detail.fallback===true&&h.mode==='zapier'));
+ assert.equal(d.events.filter(e=>e.kind==='handoff_local_fallback').length,2);
+ const before=f.calls.length,payload=f.webhookCalls[0];
+ const replay=await fetch(f.base+'/api/console/studio/zapier/callback',{method:'POST',headers:{'content-type':'application/json','x-studio-callback-token':'fixture-callback-token'},body:JSON.stringify({...payload,action:'continue'})});
+ assert.equal(replay.status,409);
+ assert.equal(f.calls.length,before);
+});
+test('a Zapier callback timeout falls back to local for both builds',async t=>{
+ const f=await fixture(t,{zapierFailure:'no-callback'}),j=await f.run(),d=f.studio.detail(j.id);
+ assert.equal(j.status,'awaiting_owner');
+ assert.equal(f.calls.filter(x=>x.phase==='reviewer').length,1);
+ assert.equal(d.handoffs.length,2);
+ assert.ok(d.handoffs.every(h=>h.status==='local'&&h.detail.fallback===true));
+ assert.equal(d.events.filter(e=>e.kind==='handoff_local_fallback'&&e.content.delivery==='timed_out').length,2);
+});
+test('fully local mode completes the same two-build cycle without any Zapier delivery',async t=>{
+ const f=await fixture(t,{zapier:false}),j=await f.run(),d=f.studio.detail(j.id);
+ assert.equal(j.status,'awaiting_owner');
+ assert.equal(f.calls.filter(x=>x.phase==='builder').length,1);
+ assert.equal(f.calls.filter(x=>x.phase==='tester').length,1);
+ assert.equal(f.calls.filter(x=>x.phase==='reviewer').length,1);
+ assert.equal(f.webhookCalls.length,0);
+ assert.ok(d.handoffs.every(h=>h.status==='local'&&h.mode==='local'));
 });
 
 test('an active writer no longer holds a blocking folder lock',async t=>{

@@ -63,6 +63,14 @@ export class StudioHandoffs {
   const saved=this.set(id,delivered.status==='unknown'?'unknown':'failed',{reason,delivery:delivered.status,httpStatus:delivered.httpStatus??null});
   return {status:saved.status,handoffId:id,reason,handoff:saved};
  }
+ fallback(id,reason){
+  const row=this.get(id);
+  if(row.status==='local')return {status:'local',handoffId:id,handoff:row};
+  if(row.status==='accepted')return {status:'accepted',handoffId:id,handoff:row};
+  if(!['pending','sending','sent','failed','unknown','timed_out'].includes(row.status))throw new ApiError(409,'This handoff is not eligible for a local fallback.');
+  const saved=this.set(id,'local',{fallback:true,fallbackReason:reason,fallbackAt:now()});
+  return {status:'local',handoffId:id,handoff:saved};
+ }
  wait(id,{signal,timeoutMs=this.studio.team.config.studioZapier?.handoffTimeoutMs||120000}={}){
   const row=this.get(id);
   if(row.status==='accepted'||row.status==='local')return Promise.resolve({accepted:true,status:row.status});
