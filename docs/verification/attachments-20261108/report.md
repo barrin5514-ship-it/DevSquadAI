@@ -58,7 +58,7 @@ No existing worker adapter passes image content to the Builder. The packets are 
 - Focused attachment/composer tests: **35/35 passed**.
 - `tests/attachments.test.js`: **2/2 passed** (storage, limits, magic, traversal, preview block, snapshot exclusion, message metadata).
 - `tests/conversation-ui.test.js`: includes attach >4 KiB, 25 MiB rejection, paste, drop, text-paste regression.
-- Full serial run: **593 pass lines, 1 failure** (`imported independent review persists...`, 326 s timeout). That exact test passed alone (4.9 s) and the full `tests/demo-workers.test.js` file passed **27/27** (91.9 s). The full-run failure is recorded as an environmental timeout, not hidden.
+- Full serial run: **748 tests, 747 passed, 1 failed** — `imported independent review persists, freezes tests and preserves explicit owner acceptance` ended at `AWAITING_REVIEW` after 326 s instead of `VERIFIED`. The same test passed alone in 4.9 s, and the full `tests/demo-workers.test.js` file passed **27/27** (91.9 s). This is recorded as an environmental/full-suite failure, not hidden; the full suite is **not green** in this run.
 
 ## Backend
 
