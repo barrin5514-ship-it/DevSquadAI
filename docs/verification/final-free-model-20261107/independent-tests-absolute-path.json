@@ -1,0 +1,10 @@
+{
+  "exit": 1,
+  "timedOut": false,
+  "rawCodeSyntaxPassed": true,
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\.nvidia-evaluation-pWeLJs",
+  "sandbox": "Unchanged Codex MXC root-deny/no-network; additional Node permissions; no model invocation",
+  "stdout": "",
+  "stderr": "Could not find 'C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\.nvidia-evaluation-pWeLJs\\independent.test.cjs'\n",
+  "aiInvocations": 0
+}

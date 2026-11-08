@@ -1,0 +1,138 @@
+{
+  "checks": [
+    {
+      "name": "builder: complete three-phase simulation reaches owner-pending",
+      "pass": true
+    },
+    {
+      "name": "builder: actual Nemotron production transport called once",
+      "pass": true
+    },
+    {
+      "name": "builder: trusted isolated runner executes independent tests",
+      "pass": true
+    },
+    {
+      "name": "builder: reviewer sees exact hashes; owner acceptance preserved",
+      "pass": true
+    },
+    {
+      "name": "builder: accurate API usage saved without double counting",
+      "pass": true
+    },
+    {
+      "name": "builder: refresh preserves checkpoint without another worker",
+      "pass": true
+    },
+    {
+      "name": "tester: complete three-phase simulation reaches owner-pending",
+      "pass": true
+    },
+    {
+      "name": "tester: actual Nemotron production transport called once",
+      "pass": true
+    },
+    {
+      "name": "tester: trusted isolated runner executes independent tests",
+      "pass": true
+    },
+    {
+      "name": "tester: reviewer sees exact hashes; owner acceptance preserved",
+      "pass": true
+    },
+    {
+      "name": "tester: accurate API usage saved without double counting",
+      "pass": true
+    },
+    {
+      "name": "tester: refresh preserves checkpoint without another worker",
+      "pass": true
+    },
+    {
+      "name": "reviewer: complete three-phase simulation reaches owner-pending",
+      "pass": true
+    },
+    {
+      "name": "reviewer: actual Nemotron production transport called once",
+      "pass": true
+    },
+    {
+      "name": "reviewer: trusted isolated runner executes independent tests",
+      "pass": true
+    },
+    {
+      "name": "reviewer: reviewer sees exact hashes; owner acceptance preserved",
+      "pass": true
+    },
+    {
+      "name": "reviewer: accurate API usage saved without double counting",
+      "pass": true
+    },
+    {
+      "name": "reviewer: refresh preserves checkpoint without another worker",
+      "pass": true
+    },
+    {
+      "name": "Owner acceptance visible but never pressed",
+      "pass": true
+    },
+    {
+      "name": "No UI errors",
+      "pass": true
+    }
+  ],
+  "passed": 20,
+  "calls": [
+    {
+      "agent": "nemotron",
+      "phase": "builder",
+      "job": "0727227f-c733-4c57-a96a-046aa478fb20"
+    },
+    {
+      "agent": "codex",
+      "phase": "tester",
+      "job": "0727227f-c733-4c57-a96a-046aa478fb20"
+    },
+    {
+      "agent": "claude",
+      "phase": "reviewer",
+      "job": "0727227f-c733-4c57-a96a-046aa478fb20"
+    },
+    {
+      "agent": "codex",
+      "phase": "builder",
+      "job": "d1546239-6c87-40ac-8734-befdad1aa44b"
+    },
+    {
+      "agent": "nemotron",
+      "phase": "tester",
+      "job": "d1546239-6c87-40ac-8734-befdad1aa44b"
+    },
+    {
+      "agent": "claude",
+      "phase": "reviewer",
+      "job": "d1546239-6c87-40ac-8734-befdad1aa44b"
+    },
+    {
+      "agent": "codex",
+      "phase": "builder",
+      "job": "f1ff2901-67cf-48c9-9b43-8560307ab3b8"
+    },
+    {
+      "agent": "claude",
+      "phase": "tester",
+      "job": "f1ff2901-67cf-48c9-9b43-8560307ab3b8"
+    },
+    {
+      "agent": "nemotron",
+      "phase": "reviewer",
+      "job": "f1ff2901-67cf-48c9-9b43-8560307ab3b8"
+    }
+  ],
+  "errors": [],
+  "liveModelRequests": 0,
+  "provider": "FAKE responses only",
+  "nativeAgentResponses": "SIMULATED",
+  "realTestRunner": "Codex MXC node:test, 2/2 each role arrangement",
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\nemotron-workflow-VE7s7q"
+}

@@ -1,0 +1,10 @@
+{
+  "message": "page.waitForFunction: Timeout 90000ms exceeded.",
+  "checks": [
+    {
+      "name": "Opening dashboard dispatches nothing",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

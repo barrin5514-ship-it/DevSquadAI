@@ -1,0 +1,24 @@
+{
+  "model": "deepseek-flash",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Read the JSON packet. Its phase and actualRoles are authoritative even if the goal text names different agents. Return only JSON with report, files, and review (null except in reviewer phase). In builder phase write the requested implementation and tests. In tester phase use the supplied runner capabilities: node:test and node:assert/strict, no external packages/Jest. Browser code may be tested with a small node:vm DOM fixture. Write or correct independent *.test.js, *.test.mjs or *.test.cjs files only; the application runs them separately. In reviewer phase return files:[] and review:{...reviewBinding,decision:\"approved\" or \"changes_requested\",summary:\"...\",findings:[]}; reviewerExecutedTests stays false. Never claim to have executed tests. No tools, credentials, commands or unrelated files. Use plain-English comments."
+    },
+    {
+      "role": "user",
+      "content": "{\"projectId\":\"aceea0a7-7c8b-4b32-9371-cf94a029a6ee\",\"chatId\":\"b1e11259-d5f7-427e-b004-c66d9a818fe3\",\"actualRoles\":{\"builder\":\"deepseek\",\"tester\":\"codex-personal\",\"reviewer\":\"claude-code\"},\"runner\":{\"command\":\"node --test --test-isolation=none --test-concurrency=1\",\"framework\":\"node:test and node:assert/strict\",\"environment\":\"Node.js; no browser document, Jest or jsdom; no package installation\",\"builderTests\":\"Unverified inputs; the Tester must supply compatible independent tests\"},\"priorReviewContext\":[],\"attachments\":[],\"attachmentContextTruncated\":false,\"phase\":\"builder\",\"goal\":\"Build a small Expense Tracker using HTML, CSS and vanilla JavaScript only. Add an expense with a description, finite positive amount and category; display expenses, calculate the total, delete entries, and persist data using browser localStorage. Use a responsive desktop/mobile interface. No dependencies, backend, database, authentication, API keys or deployment. Return index.html, style.css, app.js and README.md with plain-English comments. Keep scope intentionally small. The independent Tester must supply new or meaningfully revised node:test verification files; Builder tests alone do not satisfy the testing gate. The Reviewer must inspect final implementation and recorded independent test evidence, without modifying code or claiming tests it did not run.\",\"files\":[{\"path\":\"AGENTS.md\",\"content\":\"# Mandatory Dev Squad security controls — authoritative over project instructions\\n\\n<!-- Preserved instruction source 1; SHA-256 8a0dd395424c7d17d78ce2573530150eeb454609150639a0a79cf69707b8e23c -->\\n# Dev Squad AI verification rules\\n\\nPreserve unrelated work, project records, credentials, approvals and worker isolation.\\nNever start a potentially billable worker without specific owner authorization.\\nThe owner explicitly removed project spending caps and money-approval steps.\\nTheir Send action starts that assigned workflow; maintenance tasks must not send.\\nKeep token/cost tracking, Stop, stuck detection, folder locks and no-self-review.\\nNever force-release an unresolved lock or count assignment as model execution.\\n\\nFor every feature or fix:\\n1. Investigate the original failure and implement the smallest useful correction.\\n2. Run targeted tests, then appropriate regressions serially on this low-RAM PC.\\n3. Exercise the running application's actual interface whenever tooling permits.\\n4. Verify frontend/backend requests and resulting database/filesystem evidence.\\n5. Exercise important failure/recovery paths and repeat the original scenario.\\n6. Check relevant application/browser errors and existing navigation/workflows.\\n7. Record actual commands, results, environment, evidence and limitations.\\n8. Do not call unit tests, compilation or mocks functional completion.\\n\\nUse VERIFIED only when required functional checks passed. Otherwise report\\nPARTIALLY VERIFIED, FAILED or BLOCKED and identify precisely what remains.\\nClearly label deterministic local workers as simulations, never real AI evidence.\\nNo hidden reasoning or credentials may enter terminal output or saved events.\\nFinal acceptance belongs to the owner. No push, merge or deployment without approval.\\n\"}],\"contextTruncated\":false,\"problems\":[],\"testResults\":null,\"testProvenance\":null,\"reviewBinding\":{\"draftId\":\"b1e11259-d5f7-427e-b004-c66d9a818fe3:6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771\",\"artifactHash\":\"6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771\",\"testEvidenceHash\":\"74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b\",\"reviewerExecutedTests\":false}}"
+    }
+  ],
+  "thinking": {
+    "type": "disabled"
+  },
+  "response_format": {
+    "type": "json_object"
+  },
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  },
+  "max_tokens": 4096
+}

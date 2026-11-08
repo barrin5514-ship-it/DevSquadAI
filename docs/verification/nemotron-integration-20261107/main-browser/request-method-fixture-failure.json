@@ -1,0 +1,37 @@
+{
+  "message": "page.waitForResponse: Timeout 30000ms exceeded while waiting for event \"response\"",
+  "checks": [
+    {
+      "name": "Actual regular dashboard and existing Expense session load",
+      "pass": true
+    },
+    {
+      "name": "No executions or approval were added",
+      "pass": true
+    },
+    {
+      "name": "Existing roles preserved",
+      "pass": true
+    },
+    {
+      "name": "Builder offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Tester offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Reviewer offers Nemotron without changing selection",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "blocked": [
+    {
+      "method": "POST",
+      "path": "/api/console/studio/nemotron/check"
+    }
+  ],
+  "access": null
+}

@@ -1,0 +1,191 @@
+{
+  "message": "page.waitForFunction: Timeout 30000ms exceeded.",
+  "checks": [
+    {
+      "name": "builder: complete three-phase simulation reaches owner-pending",
+      "pass": true
+    },
+    {
+      "name": "builder: actual Nemotron production transport called once",
+      "pass": true
+    },
+    {
+      "name": "builder: trusted isolated runner executes independent tests",
+      "pass": true
+    },
+    {
+      "name": "builder: reviewer sees exact hashes; owner acceptance preserved",
+      "pass": true
+    },
+    {
+      "name": "builder: accurate API usage saved without double counting",
+      "pass": true
+    },
+    {
+      "name": "builder: refresh preserves checkpoint without another worker",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "calls": [
+    {
+      "agent": "nemotron",
+      "phase": "builder",
+      "job": "1c2f65da-2041-4f08-9926-42f60449a99f"
+    },
+    {
+      "agent": "codex",
+      "phase": "tester",
+      "job": "1c2f65da-2041-4f08-9926-42f60449a99f"
+    },
+    {
+      "agent": "claude",
+      "phase": "reviewer",
+      "job": "1c2f65da-2041-4f08-9926-42f60449a99f"
+    }
+  ],
+  "job": {
+    "id": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+    "project_id": "0061cf9d-08da-4701-a35d-fe583d6e7e66",
+    "title": "SIMULATION ONLY: exercise tester",
+    "status": "ready",
+    "state": {
+      "goal": "SIMULATION ONLY: exercise tester",
+      "phase": "builder",
+      "roles": {
+        "builder": "codex-personal",
+        "tester": "nemotron",
+        "reviewer": "claude-code"
+      },
+      "authors": [],
+      "problems": [],
+      "repeat": {
+        "key": null,
+        "count": 0
+      },
+      "alert": null,
+      "currentAgent": null,
+      "tests": null,
+      "review": null,
+      "fallbackPolicy": {
+        "enabled": false,
+        "allowedWorkers": []
+      },
+      "runApproval": {
+        "projectId": "0061cf9d-08da-4701-a35d-fe583d6e7e66",
+        "chatId": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+        "rootHash": "6c049a179fde5e7b64a2cc815de51d1700ed4aed09575c13f8f4b295ee5b1a6e",
+        "databaseHash": "4e05086956a54bcad0ffb297bcf577fd07a5d6089d58d00295de50be1e25af7d",
+        "mode": "team",
+        "roles": {
+          "builder": "codex-personal",
+          "tester": "nemotron",
+          "reviewer": "claude-code"
+        },
+        "goalHash": "6dba527976232c83c1e5c6001bd0ea7d868da8f9b6abe4b8a6ac9f56606a82cc",
+        "approvedAt": "2026-11-07T16:13:01.695Z",
+        "expiresAt": "2026-11-07T16:43:01.695Z",
+        "requestId": "1994690a-52f3-46d0-b095-527d0407c3cd",
+        "maxCalls": 3,
+        "perRole": 1,
+        "timeoutMs": 300000,
+        "maxOutputBytes": 32768,
+        "free": {
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "maxOutput": 2048,
+          "timeoutMs": 60000
+        }
+      }
+    },
+    "version": 2,
+    "request_id": null,
+    "created_at": "2026-11-07T16:13:01.686Z",
+    "updated_at": "2026-11-07T16:13:01.705Z",
+    "executionPermission": {
+      "rootHash": "6c049a179fde5e7b64a2cc815de51d1700ed4aed09575c13f8f4b295ee5b1a6e"
+    },
+    "resume": {
+      "available": false,
+      "reason": "No paused step needs resuming."
+    },
+    "recovery": {
+      "needed": false,
+      "available": false,
+      "reason": "No unresolved folder lock."
+    },
+    "executions": [],
+    "usage": {
+      "calls": 0,
+      "input": 0,
+      "output": 0,
+      "knownEstimatedUSD": 0,
+      "unknownCalls": 0,
+      "notice": "Prepaid API charges are uncapped by this project workflow. Send starts work; Stop prevents further steps."
+    },
+    "events": [
+      {
+        "id": 43,
+        "chat_id": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+        "kind": "task",
+        "agent": null,
+        "content": {
+          "text": "SIMULATION ONLY: exercise tester"
+        },
+        "created_at": "2026-11-07T16:13:01.691Z"
+      },
+      {
+        "id": 44,
+        "chat_id": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+        "kind": "fixture",
+        "agent": null,
+        "content": {
+          "roles": {
+            "builder": "codex-personal",
+            "tester": "nemotron",
+            "reviewer": "claude-code"
+          },
+          "fallbackPolicy": {
+            "enabled": false,
+            "allowedWorkers": []
+          }
+        },
+        "created_at": "2026-11-07T16:13:01.694Z"
+      },
+      {
+        "id": 45,
+        "chat_id": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+        "kind": "run_approval_saved",
+        "agent": "owner",
+        "content": {
+          "runApproval": {
+            "projectId": "0061cf9d-08da-4701-a35d-fe583d6e7e66",
+            "chatId": "88d5dd9f-3c0c-43cd-82e3-5a569a854f80",
+            "rootHash": "6c049a179fde5e7b64a2cc815de51d1700ed4aed09575c13f8f4b295ee5b1a6e",
+            "databaseHash": "4e05086956a54bcad0ffb297bcf577fd07a5d6089d58d00295de50be1e25af7d",
+            "mode": "team",
+            "roles": {
+              "builder": "codex-personal",
+              "tester": "nemotron",
+              "reviewer": "claude-code"
+            },
+            "goalHash": "6dba527976232c83c1e5c6001bd0ea7d868da8f9b6abe4b8a6ac9f56606a82cc",
+            "approvedAt": "2026-11-07T16:13:01.695Z",
+            "expiresAt": "2026-11-07T16:43:01.695Z",
+            "requestId": "1994690a-52f3-46d0-b095-527d0407c3cd",
+            "maxCalls": 3,
+            "perRole": 1,
+            "timeoutMs": 300000,
+            "maxOutputBytes": 32768,
+            "free": {
+              "model": "nvidia/nemotron-3.5-super-vl:free",
+              "maxOutput": 2048,
+              "timeoutMs": 60000
+            }
+          }
+        },
+        "created_at": "2026-11-07T16:13:01.705Z"
+      }
+    ],
+    "revisions": []
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "job": "0727227f-c733-4c57-a96a-046aa478fb20",
+      "pass": true,
+      "review": "approved",
+      "tests": 2,
+      "role": {
+        "builder": "nemotron",
+        "tester": "codex-personal",
+        "reviewer": "claude-code"
+      }
+    },
+    {
+      "job": "d1546239-6c87-40ac-8734-befdad1aa44b",
+      "pass": true,
+      "review": "approved",
+      "tests": 2,
+      "role": {
+        "builder": "codex-personal",
+        "tester": "nemotron",
+        "reviewer": "claude-code"
+      }
+    },
+    {
+      "job": "f1ff2901-67cf-48c9-9b43-8560307ab3b8",
+      "pass": true,
+      "review": "approved",
+      "tests": 2,
+      "role": {
+        "builder": "codex-personal",
+        "tester": "claude-code",
+        "reviewer": "nemotron"
+      }
+    },
+    {
+      "name": "No provider calls or unresolved simulation locks on restart",
+      "pass": true
+    }
+  ],
+  "passed": 4,
+  "liveModelRequests": 0,
+  "separateProcess": true
+}

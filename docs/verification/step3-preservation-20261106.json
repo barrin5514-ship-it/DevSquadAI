@@ -1,0 +1,25 @@
+{
+  "productionTablesChangedSinceBackup": [],
+  "originalCounter": {
+    "projectId": "c25dcd14-322c-4004-9ef4-412584640600",
+    "sessionId": "fc00a59b-c31e-4b93-b448-35ebbc0de048",
+    "lockUnchanged": true,
+    "executions": 0,
+    "files": 4,
+    "fingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785"
+  },
+  "projects": 13,
+  "sessions": 14,
+  "eventHighWater": 93,
+  "active": 0,
+  "providerRequests": 0,
+  "webhookRequests": 0,
+  "afterRestart": {
+    "changedTables": [
+      "team_runtime_lease"
+    ],
+    "onlyRuntimeLeaseChanged": true,
+    "counterFingerprintUnchanged": true,
+    "active": 0
+  }
+}

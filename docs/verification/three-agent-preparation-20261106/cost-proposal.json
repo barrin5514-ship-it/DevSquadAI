@@ -1,0 +1,25 @@
+{
+  "model": "deepseek-flash",
+  "bodyBytes": 4807,
+  "estimatedInputTokens": 1202,
+  "estimatedOutputTokens": 3000,
+  "estimation": "UTF-8 bytes / 4 heuristic, not tokenizer proof; uncertain for code and non-English text",
+  "peakInputUSDPerMillion": 0.3,
+  "peakOutputUSDPerMillion": 1.2,
+  "expectedPeakUSD": 0.0039606,
+  "conservativeInputAllowance": 28096,
+  "maximumOutput": 4096,
+  "conservativeReservationUSD": 0.013344,
+  "proposedLocalCapUSD": 0.02,
+  "sources": [
+    "https://api-docs.deepseek.com/quick_start/pricing/",
+    "https://api-docs.deepseek.com/api/create-chat-completion/"
+  ],
+  "checkedAt": "2026-11-07T00:21:37.535Z",
+  "pricesValidNow": false,
+  "priceLeaseExpiry": "2026-10-22T21:49:00.747Z",
+  "configuredRatesMatchPeak": true,
+  "authorizedNowUSD": 0,
+  "modelCallsAuthorizedNow": 0,
+  "payloadHash": "8080d909c48a4e62b35726ee4b0e2129afa85801fe66b5ec96c2a1d5c44ed786"
+}

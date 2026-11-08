@@ -1,0 +1,63 @@
+{
+  "project": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+  "results": [
+    {
+      "cycle": 1,
+      "chat": "200931b8-e254-4717-b628-c655e86eec69",
+      "roles": {
+        "builder": "deepseek",
+        "tester": "codex-school",
+        "reviewer": "nemotron"
+      },
+      "builds": [
+        {
+          "build": 1,
+          "requestId": "e305c763-83ba-42ca-b09f-392c0897d4b5",
+          "durationMs": 16752,
+          "status": "paused",
+          "alert": "Codex (School) stopped while testing: the step failed; inspect the saved error details. Earlier saved files and history were preserved. CLI: Reading additional input from stdin...\n",
+          "failure": {
+            "agent": "codex-school",
+            "phase": "tester",
+            "code": "worker_error",
+            "checkpointHash": "ee4131be0aa1561e696f189633297bad68f0f6595b1c71fff91fa905cc3194e3",
+            "message": "Codex (School) stopped while testing: the step failed; inspect the saved error details. Earlier saved files and history were preserved. CLI: Reading additional input from stdin...\n",
+            "fallbackDecision": {
+              "allowed": false,
+              "reason": "failure_not_eligible",
+              "from": "codex-school",
+              "to": null,
+              "phase": "tester",
+              "requestId": "e305c763-83ba-42ca-b09f-392c0897d4b5",
+              "checkpointHash": "ee4131be0aa1561e696f189633297bad68f0f6595b1c71fff91fa905cc3194e3",
+              "policyEnabled": true,
+              "failureEligible": false,
+              "failureCode": "worker_error",
+              "terminationVerified": true,
+              "scopedRun": true,
+              "candidates": [],
+              "summary": "Automatic fallback denied: this failure category is not eligible for automatic fallback. Failure category is unclassified or ineligible. This run is limited to the saved team and fallback policy."
+            },
+            "diagnostics": {
+              "reason": "native_exit",
+              "exitCode": 1,
+              "stdoutBytes": 357,
+              "stderrBytes": 39,
+              "elapsedMs": 6642,
+              "stage": "execution",
+              "profile": "School",
+              "truncated": false,
+              "stderr": "Reading additional input from stdin...\n",
+              "stdout": "Your workspace is out of credits. Ask your workspace owner to refill in order to continue.\nYour workspace is out of credits. Ask your workspace owner to refill in order to continue.",
+              "responseHash": "a997c248494ea33000de3b2bbb58cc023f0751c64c084fd2fe327213e8d12989"
+            }
+          },
+          "review": null
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "passed": 0,
+  "attempted": 1
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "NON-GENERATING LOCAL STARTUP CHECK",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS",
+  "profile": "Personal",
+  "methods": [
+    "initialize",
+    "initialized",
+    "thread/start"
+  ],
+  "modelTurnsSent": 0,
+  "exit": 0,
+  "elapsedMs": 10293,
+  "timedOut": false,
+  "outputLimit": false,
+  "reply": {
+    "phase": "thread/start",
+    "error": "error creating thread: failed to load AGENTS.md instructions for environment `local`: Access is denied. (os error 5)",
+    "code": -32603
+  },
+  "stderr": "2026-11-06T14:50:09.183543Z ERROR codex_core::session: Failed to create session: failed to load AGENTS.md instructions for environment `local`: Access is denied. (os error 5)\n",
+  "terminationVerified": true
+}

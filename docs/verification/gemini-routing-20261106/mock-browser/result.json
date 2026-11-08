@@ -1,0 +1,61 @@
+{
+  "checks": [
+    {
+      "name": "Opening dashboard dispatches nothing",
+      "pass": true
+    },
+    {
+      "name": "Exactly three mocked roles, in required order",
+      "pass": true
+    },
+    {
+      "name": "Actual isolated Node runner passed two independent tests",
+      "pass": true
+    },
+    {
+      "name": "Runner selected Tester tests, not deliberately failing Builder tests",
+      "pass": true
+    },
+    {
+      "name": "Reviewer received hash-bound independent evidence",
+      "pass": true
+    },
+    {
+      "name": "Owner acceptance remains pending",
+      "pass": true
+    },
+    {
+      "name": "Final owner acceptance control is available but never pressed",
+      "pass": true
+    },
+    {
+      "name": "All three reports visible in actual conversation",
+      "pass": true
+    },
+    {
+      "name": "Reload preserves reports, independent evidence and checkpoint",
+      "pass": true
+    },
+    {
+      "name": "No-op Tester pauses without Reviewer, tests or acceptance",
+      "pass": true
+    },
+    {
+      "name": "Composer remains usable during work",
+      "pass": true
+    },
+    {
+      "name": "Stop starts no later role and leaves no fixture lock",
+      "pass": true
+    },
+    {
+      "name": "No page errors or real AI invocations",
+      "pass": true
+    }
+  ],
+  "passed": 13,
+  "errors": [],
+  "modelInvocations": 0,
+  "realNodeRunner": true,
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\three-agent-browser-uuPSA4"
+}

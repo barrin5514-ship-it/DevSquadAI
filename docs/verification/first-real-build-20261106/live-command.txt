@@ -1,0 +1,8 @@
+{
+  "status": "paused",
+  "executionCount": 1,
+  "builderCompleted": true,
+  "failure": null,
+  "alert": "Builder draft saved. Independent testing, review and owner acceptance are pending. No other worker was dispatched.",
+  "modelCallsAttempted": 1
+}

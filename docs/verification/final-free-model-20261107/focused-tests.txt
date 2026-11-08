@@ -1,0 +1,65 @@
+✔ builder fallback proposal changes only the unfinished role and never dispatches (4.7417ms)
+✔ tester fallback proposal changes only the unfinished role and never dispatches (0.2767ms)
+✔ reviewer fallback proposal changes only the unfinished role and never dispatches (0.2312ms)
+✔ unknown or exhausted allowance, auth failure and unverified capabilities exclude candidates (0.2155ms)
+✔ same-family profiles and prior authors cannot become independent reviewers (0.9243ms)
+✔ unknown outcome or unverified termination retains checkpoint and forbids replacement (1.4591ms)
+✔ context, schema or task errors are not mislabeled as quota exhaustion (1.1268ms)
+✔ verified role quality beats a cheaper alternative and roles are not permanently assigned (0.2362ms)
+✔ completed work and missing checkpoint never restart automatically (0.7545ms)
+✔ no-op Tester cannot use passing Builder tests or reach review/acceptance (859.2882ms)
+✔ returning unchanged Builder test content is not independent evidence (701.6895ms)
+✔ independent Tester files, identity, hashes and exact revision bind review and acceptance (1216.5511ms)
+✔ same worker/family cannot fill Builder and Tester, or Tester and Reviewer (561.8501ms)
+✔ failed independent tests pause bounded workflow without another Builder or Reviewer (1011.7457ms)
+✔ missing runner and zero tests never reach owner acceptance (2101.4959ms)
+✔ Reviewer cannot modify code, and changed Tester evidence cannot be accepted (2876.0733ms)
+✔ validated runner selects Tester paths only; declared command cannot omit them (875.3837ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (945.3468ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (804.3858ms)
+✔ requested review corrections pause without a fourth call (783.453ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (2358.5503ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (860.4422ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (1027.3607ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (941.3239ms)
+✔ Builder-only selection requires separate approval and no future role assignments (1259.5138ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.8593ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (752.6276ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (1866.3924ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (866.7482ms)
+✔ Builder-only rejects wrong session project database root and approval mutation (669.9408ms)
+✔ recovery rejects an older completed execution when a later test process owns the same request (636.3486ms)
+✔ new execution binds project/session/profile/checkpoint and sanitizes lifecycle errors (449.1216ms)
+✔ restart marks active executions interrupted and retains locks and latest checkpoint (439.5297ms)
+✔ remote unknown outcome cannot borrow native process evidence for recovery (419.6048ms)
+✔ unknown test-runner outcome retains its own execution and preserves Builder files (893.7811ms)
+✔ a historical locked project does not block another folder; independent review remains owner-pending (1705.802ms)
+✔ test command detection supports existing npm Node scripts and blocks unsupported frameworks, hooks and shell syntax (1227.3934ms)
+✔ missing tests and malformed package metadata are blocked rather than counted as passes (610.7111ms)
+✔ test evidence reports failures, skipped counts, framework and revision without claiming browser globals exist (658.4055ms)
+✔ all-skipped output is evidence of no exercised behavior, never a successful build (574.6175ms)
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (9170.0944ms)
+✔ owner cancellation is explained separately from a failed test (6.1639ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 41
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42790.1721
+
+✖ failing tests:
+
+test at tests\studio-worker-recovery.test.js:17:1
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (9170.0944ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-worker-recovery.test.js:17:412)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }

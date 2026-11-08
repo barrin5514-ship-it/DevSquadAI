@@ -1,0 +1,17 @@
+{
+  "hashes": {
+    "src/services/studio-independence.js": "8957cd34de099119e3d6315cfc044415eaadf265623f20f975c13da7bfbb1c76",
+    "src/services/studio-roles.js": "7e780302ebf2e6e8a623cd6eb391caa70e596a0845c79299b690b4079f0b91c0",
+    "src/services/project-studio.js": "db7e97150e7da54eb817b9b5a78e7b92deca99b24eb320f6c47cc1e9687ec9a4",
+    "src/services/studio-test-plan.js": "42ba3e421d9b2db87fa9300cd6d864ce8ec0bd177df29d07f0219a06bee34039",
+    "src/services/studio-workers.js": "ab4d407254cdb24f4e2fd88ff7033800b4ae427224c33c5be6f13b8df2d3bd12",
+    "src/services/studio-run-scope.js": "ec924401fc594404ab99905c0f9c871c5df48f5bd44e7f57daca465b92784ae4",
+    "src/services/studio-failover.js": "162655894c2ef5d2ed85da4c471aff0113b08bffa5a348441f2907e32311cff6",
+    "src/services/workspace-inspection.js": "3b0d879db3e5b510f66bd5cfb7e183e10b7466f921d9080df0980c1c047c776e",
+    "src/dashboard/conversations.js": "5c85b496c32b940cac2e8217271e4a977b6ee2efbc82cc42ebda81ab6f088884",
+    "src/dashboard/roles.js": "7347d0662b6f3541e2adc48e0b5fa067c949d7041bac8cd49b2d49b8730b5b80",
+    "src/dashboard/live-workspace.js": "8826a61b1de28c1fd5fafd7cf11979c46c6fd4dafe933142123dc67c1e1c2423"
+  },
+  "highConfidenceCredentialMatches": [],
+  "note": "Pattern check is not a guarantee of absence; no credential files printed."
+}

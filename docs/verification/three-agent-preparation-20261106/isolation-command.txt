@@ -1,0 +1,1 @@
+{"root":"C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\aceea0a7-7c8b-4b32-9371-cf94a029a6ee","exit":0,"checks":{"localInstructionsRead":true,"parentReadDenied":true,"parentWriteDenied":true,"hubInstructionsDenied":true,"childParentReadDenied":true,"networkDenied":true},"gitRootMatches":true,"modelTurns":0,"errorSummary":[]}

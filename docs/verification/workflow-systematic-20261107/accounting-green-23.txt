@@ -1,0 +1,31 @@
+✔ split UTF-8, split lines and keep-alive comments do not become final content (14.1643ms)
+✔ terminal stop / DONE true requires the proper completion state (2.7072ms)
+✔ terminal stop / DONE false requires the proper completion state (1.0736ms)
+✔ terminal length / DONE true requires the proper completion state (0.4301ms)
+✔ terminal length / DONE false requires the proper completion state (1.1487ms)
+✔ terminal content_filter / DONE true requires the proper completion state (0.8766ms)
+✔ terminal content_filter / DONE false requires the proper completion state (0.914ms)
+✔ terminal null / DONE true requires the proper completion state (0.7944ms)
+✔ terminal null / DONE false requires the proper completion state (0.6525ms)
+✔ a stalled DeepSeek stream hands the Builder stage to the saved fallback without applying files (1116.0474ms)
+✔ a streamed response with periodic activity beyond the total timeout still completes (235.9527ms)
+✔ paid team terms require matching model and bounded input/output, not a dollar cap (627.2449ms)
+✔ bounded paid team uses the existing atomic phase slot and no fallback (609.1574ms)
+✔ usage reservation remains idempotent and unknown outcomes are retained without a spending cap (765.9398ms)
+✔ no local cap, balance, price-staleness or request/day/total limit blocks provider dispatch; usage is recorded (894.3618ms)
+✔ a large worker packet is not rejected by the approved context byte count (614.1768ms)
+✔ Studio DeepSeek defaults to an explicit 8192-token output bound (513.4806ms)
+✔ stale pricing and zero balance are display-only status, not a dispatch rejection (634.1231ms)
+✔ a provider billing error remains the provider error, not a Dev Squad budget failure (899.3286ms)
+✔ normal DeepSeek adapter distinguishes confirmed provider limit from unknown completion and settles safely (1791.3288ms)
+✔ DeepSeek stream fixtures record the failed check without persisting provider text (5118.4861ms)
+✔ completed length response settles reported usage without accepting any partial artifact (786.6322ms)
+✔ interrupted stream keeps its unknown reservation even when partial usage was observed (622.8172ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17028.5253

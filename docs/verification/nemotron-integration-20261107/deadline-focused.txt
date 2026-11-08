@@ -1,0 +1,42 @@
+✔ actual builder API contract uses the guarded existing pipeline and records usage, with no model execution (764.6612ms)
+✔ actual tester API contract uses the guarded existing pipeline and records usage, with no model execution (467.7427ms)
+✔ actual reviewer API contract uses the guarded existing pipeline and records usage, with no model execution (456.0464ms)
+✔ missing approval and unverified/free-retired routes never dispatch (477.9739ms)
+✔ nonzero public/account pricing excludes the route without paid substitution (390.9309ms)
+✔ model discrepancy fails closed, records actual identity and usage, and cannot be retried (469.9309ms)
+✔ malformed, incomplete and unbound review results are rejected with known usage, not fabricated test execution (1397.8933ms)
+✔ concurrent use of one execution dispatches at most once (476.5956ms)
+✔ Stop aborts the request; unknown remote outcome and single-use record remain (430.5709ms)
+✔ expired/task-changed approvals fail before posting and wrong free terms cannot arm (445.0139ms)
+✔ Reviewer cannot return files or claim execution; unknown fields are invalid (0.5292ms)
+✔ no-op Tester cannot use passing Builder tests or reach review/acceptance (648.8201ms)
+✔ returning unchanged Builder test content is not independent evidence (518.7384ms)
+✔ independent Tester files, identity, hashes and exact revision bind review and acceptance (742.7235ms)
+✔ same worker/family cannot fill Builder and Tester, or Tester and Reviewer (404.2198ms)
+✔ failed independent tests pause bounded workflow without another Builder or Reviewer (606.0357ms)
+✔ missing runner and zero tests never reach owner acceptance (1284.532ms)
+✔ Reviewer cannot modify code, and changed Tester evidence cannot be accepted (1749.8742ms)
+✔ validated runner selects Tester paths only; declared command cannot omit them (408.8791ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (838.948ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (617.9493ms)
+✔ requested review corrections pause without a fourth call (666.3366ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (1819.1388ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (456.3111ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (582.4052ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (744.9052ms)
+✔ Builder-only selection requires separate approval and no future role assignments (650.0789ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.7692ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (460.3427ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (1108.8791ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (660.6086ms)
+✔ Builder-only rejects wrong session project database root and approval mutation (501.826ms)
+✔ late natural completion cannot evade the isolated-worker deadline (3.2126ms)
+✔ successful tree-kill return is not proof when a recorded child survives (2.2ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23137.446

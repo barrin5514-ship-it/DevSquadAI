@@ -1,0 +1,10 @@
+{
+  "httpStatus": 200,
+  "response": {
+    "data": {
+      "projectId": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+      "state": "authorization_required",
+      "message": "Start your application separately, then authorize its exact local URL. Dev Squad never launches it."
+    }
+  }
+}

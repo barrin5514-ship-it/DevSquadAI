@@ -1,0 +1,11 @@
+{
+  "authorizedBy": "Owner: ONE live OpenRouter calculateTotal test",
+  "startedAt": "2026-11-07T07:25:29.851Z",
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "requestHash": "233d2ce6f4de78808dd9cf69a427ffdc613f3b20c594ce9e6ed2eb8e7d2a6063",
+  "timeoutMs": 60000,
+  "maxOutputTokens": 2048,
+  "noRetries": true,
+  "noFallback": true,
+  "maxHTTPGenerationRequests": 1
+}

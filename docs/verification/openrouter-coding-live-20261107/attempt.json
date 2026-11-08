@@ -1,0 +1,11 @@
+{
+  "authorizedBy": "Owner: ONE live OpenRouter calculateTotal test",
+  "startedAt": "2026-11-07T06:38:34.440Z",
+  "model": "cohere/north-mini-code:free",
+  "requestHash": "f31b68b8e81acd1d3ddc28c52bf51ea1b15be11bbf21f19fd75dcbd85f1ed081",
+  "timeoutMs": 60000,
+  "maxOutputTokens": 500,
+  "noRetries": true,
+  "noFallback": true,
+  "maxHTTPGenerationRequests": 1
+}

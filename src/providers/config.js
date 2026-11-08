@@ -49,7 +49,7 @@ export function aiConfig(env) {
 }
 export class ProviderError extends ApiError {
   constructor(code) {
-    const messages = { unavailable:'Provider is unavailable. Configure its API key and model locally.', paid_blocked:'Paid or unconfirmed access is disabled. Configure a verified free model and account.', rate_limit:'Provider rate limit reached. Try again later.', timeout:'Provider request timed out.', invalid_response:'Provider returned an invalid or incomplete response.', provider_error:'Provider request failed. Check account access and model configuration.' };
+    const messages = { unavailable:'Provider is unavailable. Configure its API key and model locally.', paid_blocked:'Paid or unconfirmed access is disabled. Configure a verified free model and account.', rate_limit:'Provider rate limit reached. Try again later.', timeout:'Provider request timed out.', response_truncated:'DeepSeek reached the requested output-token limit before finishing. No complete artifact was saved. Shorten the task with Edit & Retry in this chat.', invalid_response:'Provider returned an invalid or incomplete response.', body_limit:'Provider stream exceeded the bounded raw safety limit. No complete response was accepted.', answer_limit:'Provider returned more visible answer than the bounded response limit. No complete response was accepted.', provider_error:'Provider request failed. Check account access and model configuration.' };
     super(code === 'paid_blocked' ? 403 : 503, messages[code] || messages.provider_error);
     this.code = code;
   }

@@ -1,0 +1,59 @@
+{
+  "message": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Refresh local readings', exact: true })\u001b[22m\n",
+  "checks": [
+    {
+      "name": "Actual regular dashboard and existing Expense session load",
+      "pass": true
+    },
+    {
+      "name": "No executions or approval were added",
+      "pass": true
+    },
+    {
+      "name": "Existing roles preserved",
+      "pass": true
+    },
+    {
+      "name": "Builder offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Tester offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Reviewer offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Explicit non-generating check returns through real backend",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "access": {
+    "httpStatus": 200,
+    "result": {
+      "data": {
+        "configured": true,
+        "ok": true,
+        "model": "nvidia/nemotron-3.5-super-vl:free",
+        "checkedAt": "2026-11-07T16:39:22.736Z",
+        "reason": "Free route/account verified; generation and role evidence are separate.",
+        "access": {
+          "checkedAt": "2026-11-07T16:39:22.736Z",
+          "available": true,
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "zeroPrice": true,
+          "quota": {
+            "used": 2,
+            "limit": 50,
+            "remaining": 48
+          },
+          "reason": "Free route/account verified; generation and role evidence are separate."
+        }
+      }
+    }
+  }
+}

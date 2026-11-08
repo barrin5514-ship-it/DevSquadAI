@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "name": "Interrupted setup reports failure without registering an active project",
+      "pass": true
+    },
+    {
+      "name": "After restart the real Projects page exposes the durable pending identity",
+      "pass": true
+    },
+    {
+      "name": "Owner recovery succeeds through the protected dashboard API",
+      "pass": true
+    },
+    {
+      "name": "Recovery keeps project identity, original Git metadata and read-only permissions",
+      "pass": true
+    },
+    {
+      "name": "Recovered project cannot dispatch until owner enables changes",
+      "pass": true
+    },
+    {
+      "name": "No pending entry, worker lock or browser error remains",
+      "pass": true
+    }
+  ],
+  "modelTurns": 0,
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\managed-recovery-browser-Sa2jIK",
+  "projectId": "303dfdf0-a443-4611-8949-a1f4bb35a7d3"
+}

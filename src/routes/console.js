@@ -16,6 +16,17 @@ import {text,transaction} from '../middleware/ai-validation.js';
 // A same-origin browser capability, not multi-user authentication. No CORS.
 export function consoleRoutes(team,service){
  const r=Router(),token=randomBytes(32).toString('hex'),send=(res,data,status=200)=>res.status(status).json({data});
+  // Zapier's callback is not a browser capability. It uses a separate, exact
+  // callback token and can only consume one already-sent Studio handoff.
+  r.post('/studio/zapier/callback',(req,res,next)=>{
+   try{
+    const expected=Buffer.from(team.config.studioZapier?.callbackToken||'');
+    if(!expected.length)throw new ApiError(503,'STUDIO_ZAPIER_CALLBACK_TOKEN is not configured');
+    const supplied=Buffer.from(String(req.headers['x-studio-callback-token']||''));
+    if(!req.is('application/json')||supplied.length!==expected.length||!timingSafeEqual(supplied,expected))throw new ApiError(403,'Invalid Studio Zapier callback token');
+    send(res,team.studio.handoffs.accept(req.body?.handoffId,req.body,{source:'zapier'}));
+   }catch(e){next(e);}
+  });
  r.use((req,res,next)=>{
   res.set('Cache-Control','no-store');
   const host=req.headers.host||'',origin=req.headers.origin;
@@ -36,6 +47,8 @@ export function consoleRoutes(team,service){
  r.get('/studio/history',(req,res)=>{const result=promptHistory(team.studio,req.query);if(req.query.format==='markdown')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.md').type('text/markdown').send(historyMarkdown(result));if(req.query.format==='json')return res.set('Content-Disposition','attachment; filename=devsquad-prompt-history.json').json(result);if(req.query.format)throw new ApiError(400,'Choose JSON or Markdown export.');send(res,result);});
  r.get('/studio/codex-profiles',async(req,res)=>{const workers=team.studio.workers,profiles=workers.profiles;if(!profiles)return send(res,{profiles:[]});if(req.query.check==='true')return send(res,{profiles:await Promise.all(profiles.list().map(p=>profiles.check(p.id,workers.transport.executables.codex,process.cwd())))});send(res,{profiles:profiles.list()});});
  r.post('/studio/chats/:id/execution-mode',(req,res)=>send(res,team.studio.runScope.select(req.params.id,req.body)));
+  r.post('/studio/chats/:id/retry',(req,res)=>send(res,team.studio.retry(req.params.id,req.body),202));
+  r.post('/studio/projects/:id/delete',(req,res)=>send(res,team.studio.deleteProject(req.params.id,req.body)));
  r.post('/studio/chats/:id/run-approval/refresh-deepseek',async(req,res)=>{
   const j=team.studio.get(req.params.id);
   if(j.status!=='ready'||j.state.runApproval||j.state.executionMode==='builder-only'||!Object.values(j.state.roles).includes('deepseek'))throw new ApiError(409,'Choose an unused DeepSeek team session.');
@@ -44,7 +57,7 @@ export function consoleRoutes(team,service){
  r.get('/studio/chats/:id/send-proposal',(req,res)=>send(res,team.studio.runScope.sendProposal(req.params.id)));
  r.get('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.preview(req.params.id)));
  r.post('/studio/chats/:id/run-approval',(req,res)=>send(res,team.studio.runScope.arm(req.params.id,req.body,{requireProposal:true})));
- r.get('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.status(req.params.id)));
+ r.get('/studio/chats/:id/fallback',async(req,res)=>send(res,await team.studio.failover.statusWithWorkers(req.params.id)));
  r.post('/studio/chats/:id/fallback',(req,res)=>send(res,team.studio.failover.configure(req.params.id,req.body)));
  r.get('/studio/workspace-initializations',(req,res)=>send(res,service.pending()));
  r.post('/studio/workspace-initializations/:id/recover',(req,res)=>{team.fields(req.body,['approvedBy'],['approvedBy']);if(req.body.approvedBy!=='owner')throw new ApiError(403,'Owner confirmation is required');send(res,service.recover(req.params.id));});
@@ -65,7 +78,7 @@ export function consoleRoutes(team,service){
  r.post('/studio/chats/:id/reconcile',(req,res)=>{team.fields(req.body,['executionId','version']);send(res,team.studio.executions.reconcile(req.params.id,req.body));});
  r.get('/studio/chats/:id/output',(req,res)=>send(res,developmentOutput(team.studio,req.params.id)));
  r.get('/studio/projects/:id/preview',(req,res)=>send(res,team.preview.status(req.params.id)));
- r.post('/studio/projects/:id/preview',async(req,res)=>{team.fields(req.body,['url','revoke'],[]);if(req.body.revoke===true){team.preview.revoke(req.params.id);return send(res,team.preview.status(req.params.id));}send(res,await team.preview.authorize(req.params.id,req.body.url,`http://${req.headers.host}`));});
+ r.post('/studio/projects/:id/preview',async(req,res)=>{team.fields(req.body,['url','revoke','static'],[]);if(req.body.revoke===true){team.preview.revoke(req.params.id);return send(res,team.preview.status(req.params.id));}const hub=`http://${req.headers.host}`;if(req.body.static===true)return send(res,await team.preview.authorizeStatic(req.params.id,hub));send(res,await team.preview.authorize(req.params.id,req.body.url,hub));});
  r.post('/studio/projects/:id/preview/refresh',async(req,res)=>{team.fields(req.body,['generation']);const s=team.preview.current(req.params.id,req.body.generation);await team.preview.probe(s);send(res,team.preview.status(req.params.id));});
  r.get('/studio/projects/:id/preview/frame',(req,res)=>team.preview.frame(req.params.id,req.query.generation,res));
  r.get('/studio/projects/:id/preview/external',(req,res)=>{const s=team.preview.current(req.params.id,req.query.generation);res.redirect(s.origin+(s.lastPath||'/'));});

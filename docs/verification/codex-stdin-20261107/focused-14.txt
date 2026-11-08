@@ -1,0 +1,22 @@
+✔ local Windows pipe: Personal delivers the complete Unicode packet and EOF with reader delay 0ms (203.9209ms)
+✔ local Windows pipe: Personal delivers the complete Unicode packet and EOF with reader delay 200ms (328.1252ms)
+✔ local Windows pipe: School delivers the complete Unicode packet and EOF with reader delay 0ms (132.5498ms)
+✔ local Windows pipe: School delivers the complete Unicode packet and EOF with reader delay 200ms (316.5797ms)
+✔ local Windows pipe: Claude delivers the complete Unicode packet and EOF with reader delay 0ms (115.2988ms)
+✔ local Windows pipe: Claude delivers the complete Unicode packet and EOF with reader delay 200ms (313.451ms)
+✔ local fixture: EOF was consumed and a turn started, but later silence still produces the recorded inactivity pattern (1627.7058ms)
+✔ A/D: successful auth followed by exit 1 retains useful sanitized execution error, not an invented login failure (12.3843ms)
+✔ B: exit 1 without stderr is an unknown native failure, never assumed quota or auth (4.8918ms)
+✔ C: malformed response has parsing diagnostics but no assistant text or hidden reasoning (4.4532ms)
+✔ E/G: explicit structured quota error is classified even on exit zero and preserves verified closure (8.047ms)
+✔ K: credentials, authentication responses, paths, addresses and reasoning never enter diagnostics (1.3187ms)
+✔ L: oversized chunks are capped before capture, text omitted, termination checked, and never retried (5.504ms)
+✔ real diagnostic regression: AGENTS instruction access denial is a startup sandbox failure, not auth/quota (7.0575ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3461.8601

@@ -1,0 +1,187 @@
+{
+  "checkedAt": "2026-11-07T06:33:57.648Z",
+  "calls": [
+    {
+      "route": "/models",
+      "httpStatus": 200,
+      "elapsedMs": 371,
+      "retryAfter": null
+    },
+    {
+      "route": "/models/user",
+      "httpStatus": 200,
+      "elapsedMs": 485,
+      "retryAfter": null
+    },
+    {
+      "route": "/key",
+      "httpStatus": 200,
+      "elapsedMs": 99,
+      "retryAfter": null
+    }
+  ],
+  "keyAuthenticated": true,
+  "accountFreeTier": true,
+  "freeDailyRequests": {
+    "used": 0,
+    "limit": 50,
+    "remaining": 50
+  },
+  "candidates": [
+    {
+      "id": "cohere/north-mini-code:free",
+      "public": {
+        "id": "cohere/north-mini-code:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 256000,
+        "maxOutput": 64000,
+        "supportedParameters": [
+          "frequency_penalty",
+          "include_reasoning",
+          "max_tokens",
+          "presence_penalty",
+          "reasoning",
+          "seed",
+          "stop",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_k",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "account": {
+        "id": "cohere/north-mini-code:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 256000,
+        "maxOutput": 64000,
+        "supportedParameters": [
+          "frequency_penalty",
+          "include_reasoning",
+          "max_tokens",
+          "presence_penalty",
+          "reasoning",
+          "seed",
+          "stop",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_k",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "eligible": true
+    },
+    {
+      "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "public": {
+        "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 1000000,
+        "maxOutput": 65536,
+        "supportedParameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "seed",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "account": {
+        "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 1000000,
+        "maxOutput": 65536,
+        "supportedParameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "seed",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "eligible": true
+    },
+    {
+      "id": "nvidia/nemotron-3.5-super-vl:free",
+      "public": {
+        "id": "nvidia/nemotron-3.5-super-vl:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 1000000,
+        "maxOutput": 131072,
+        "supportedParameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "account": {
+        "id": "nvidia/nemotron-3.5-super-vl:free",
+        "pricing": {
+          "prompt": "0",
+          "completion": "0"
+        },
+        "allReportedPricesZero": true,
+        "contextLength": 1000000,
+        "maxOutput": 131072,
+        "supportedParameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "expirationDate": null
+      },
+      "eligible": true
+    }
+  ],
+  "selectedModel": "cohere/north-mini-code:free",
+  "generationRequests": 0,
+  "configurationChanged": false
+}

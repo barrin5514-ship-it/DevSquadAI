@@ -1,0 +1,212 @@
+{
+  "chat": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03",
+  "roles": {
+    "builder": "deepseek",
+    "tester": "codex-school",
+    "reviewer": "nemotron"
+  },
+  "results": [
+    {
+      "build": 1,
+      "requestId": "22f4de27-f13c-40db-a52b-e39eec13dff1",
+      "durationMs": 57768,
+      "status": "awaiting_owner",
+      "alert": "Work and independent review are ready for your inspection.",
+      "failure": null,
+      "review": {
+        "draftId": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03:f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+        "artifactHash": "f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+        "testEvidenceHash": "597259a61a0fd64433ff51af3870892b98c785f6dde6b74350db2476f3b90c98",
+        "reviewerExecutedTests": false,
+        "decision": "approved",
+        "summary": "Approved: implementation meets the goal; independent tester suite passed 5/5; no further changes required.",
+        "findings": []
+      },
+      "executions": [
+        {
+          "agent": "deepseek",
+          "phase": "builder",
+          "status": "completed"
+        },
+        {
+          "agent": "codex-school",
+          "phase": "tester",
+          "status": "completed"
+        },
+        {
+          "agent": "application-tests",
+          "phase": "tests",
+          "status": "completed"
+        },
+        {
+          "agent": "nemotron",
+          "phase": "reviewer",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "build": 2,
+      "requestId": "d5f73fc9-0217-4fa5-bba1-28812e953c18",
+      "durationMs": 63472,
+      "status": "awaiting_owner",
+      "alert": "Work and independent review are ready for your inspection.",
+      "failure": null,
+      "review": {
+        "draftId": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03:ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+        "artifactHash": "ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+        "testEvidenceHash": "62b25787fc2def815356f46623edd418636555c3f6a7284053ba4b96acac2ef0",
+        "reviewerExecutedTests": false,
+        "decision": "approved",
+        "summary": "The button displays 'Try me', clicking paints the background blue (#3366ff), independent Node.js tests pass 5/5, and missing-DOM edge cases are handled.",
+        "findings": []
+      },
+      "executions": [
+        {
+          "agent": "deepseek",
+          "phase": "builder",
+          "status": "completed"
+        },
+        {
+          "agent": "codex-school",
+          "phase": "tester",
+          "status": "completed"
+        },
+        {
+          "agent": "application-tests",
+          "phase": "tests",
+          "status": "completed"
+        },
+        {
+          "agent": "nemotron",
+          "phase": "reviewer",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "status": "awaiting_owner",
+  "review": {
+    "draftId": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03:ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+    "artifactHash": "ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+    "testEvidenceHash": "62b25787fc2def815356f46623edd418636555c3f6a7284053ba4b96acac2ef0",
+    "reviewerExecutedTests": false,
+    "decision": "approved",
+    "summary": "The button displays 'Try me', clicking paints the background blue (#3366ff), independent Node.js tests pass 5/5, and missing-DOM edge cases are handled.",
+    "findings": []
+  },
+  "usage": {
+    "calls": 4,
+    "input": 15478,
+    "output": 6798,
+    "knownEstimatedUSD": 0.0093621,
+    "unknownCalls": 0,
+    "notice": "Automatic DeepSeek turns require approved task reservations. These are local controls, not provider-side billing ceilings. Unknown usage is not zero."
+  },
+  "handoffs": [
+    {
+      "id": "hof_3979f7e8a905d03153f4fad4fd2600a7c161ca2006f5dce2",
+      "chat_id": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03",
+      "project_id": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+      "request_id": "22f4de27-f13c-40db-a52b-e39eec13dff1",
+      "phase": "builder",
+      "next_phase": "tester",
+      "checkpoint_hash": "3c0910dcbac5169ec9b855ef0562417339dd44f052ef80ae37b93ebc619dbd91",
+      "test_evidence_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": "local",
+      "mode": "local",
+      "detail": {
+        "handoffId": "hof_3979f7e8a905d03153f4fad4fd2600a7c161ca2006f5dce2",
+        "phase": "builder",
+        "nextPhase": "tester",
+        "checkpointHash": "3c0910dcbac5169ec9b855ef0562417339dd44f052ef80ae37b93ebc619dbd91",
+        "testEvidenceHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "executionId": "2cfc791a-8c3b-43cb-bd2a-ba296c076545",
+        "mode": "local",
+        "reason": "Zapier Studio handoffs are not enabled; the existing local checkpoint transition was used."
+      },
+      "created_at": "2026-11-08T01:56:22.804Z",
+      "updated_at": "2026-11-08T01:56:22.806Z",
+      "delivered_at": null,
+      "accepted_at": null
+    },
+    {
+      "id": "hof_b254f31075f4420abd531afbb722cb2c065f31c99a397c6c",
+      "chat_id": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03",
+      "project_id": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+      "request_id": "22f4de27-f13c-40db-a52b-e39eec13dff1",
+      "phase": "tester",
+      "next_phase": "reviewer",
+      "checkpoint_hash": "f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+      "test_evidence_hash": "597259a61a0fd64433ff51af3870892b98c785f6dde6b74350db2476f3b90c98",
+      "status": "local",
+      "mode": "local",
+      "detail": {
+        "handoffId": "hof_b254f31075f4420abd531afbb722cb2c065f31c99a397c6c",
+        "phase": "tester",
+        "nextPhase": "reviewer",
+        "checkpointHash": "f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+        "testEvidenceHash": "597259a61a0fd64433ff51af3870892b98c785f6dde6b74350db2476f3b90c98",
+        "executionId": "9a29d124-9307-4258-996e-ff1d98b87105",
+        "mode": "local",
+        "reason": "Zapier Studio handoffs are not enabled; the existing local checkpoint transition was used."
+      },
+      "created_at": "2026-11-08T01:57:02.812Z",
+      "updated_at": "2026-11-08T01:57:02.814Z",
+      "delivered_at": null,
+      "accepted_at": null
+    },
+    {
+      "id": "hof_ec23433c7477ab9d43724132e4283cf768922344ccf49723",
+      "chat_id": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03",
+      "project_id": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+      "request_id": "d5f73fc9-0217-4fa5-bba1-28812e953c18",
+      "phase": "builder",
+      "next_phase": "tester",
+      "checkpoint_hash": "f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+      "test_evidence_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "status": "local",
+      "mode": "local",
+      "detail": {
+        "handoffId": "hof_ec23433c7477ab9d43724132e4283cf768922344ccf49723",
+        "phase": "builder",
+        "nextPhase": "tester",
+        "checkpointHash": "f8d9ff5ebc32818972f4a7eab82745b142d5fde5c0ed933075535f41e0eb70c8",
+        "testEvidenceHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "executionId": "6898410e-f96a-4505-83ec-6063540861f8",
+        "mode": "local",
+        "reason": "Zapier Studio handoffs are not enabled; the existing local checkpoint transition was used."
+      },
+      "created_at": "2026-11-08T01:57:20.396Z",
+      "updated_at": "2026-11-08T01:57:20.399Z",
+      "delivered_at": null,
+      "accepted_at": null
+    },
+    {
+      "id": "hof_60dd8a6a46150696682e7416b793eaf56fdacfc3c47ed364",
+      "chat_id": "e7702f50-1cff-4fc6-a69f-2eb15b71bc03",
+      "project_id": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+      "request_id": "d5f73fc9-0217-4fa5-bba1-28812e953c18",
+      "phase": "tester",
+      "next_phase": "reviewer",
+      "checkpoint_hash": "ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+      "test_evidence_hash": "62b25787fc2def815356f46623edd418636555c3f6a7284053ba4b96acac2ef0",
+      "status": "local",
+      "mode": "local",
+      "detail": {
+        "handoffId": "hof_60dd8a6a46150696682e7416b793eaf56fdacfc3c47ed364",
+        "phase": "tester",
+        "nextPhase": "reviewer",
+        "checkpointHash": "ff8da107063b1561f8c93734b40000d32818888c658dd59e31fa46a5b12d4f66",
+        "testEvidenceHash": "62b25787fc2def815356f46623edd418636555c3f6a7284053ba4b96acac2ef0",
+        "executionId": "6923531c-c048-4a35-a520-9d51e4b84ac6",
+        "mode": "local",
+        "reason": "Zapier Studio handoffs are not enabled; the existing local checkpoint transition was used."
+      },
+      "created_at": "2026-11-08T01:58:07.093Z",
+      "updated_at": "2026-11-08T01:58:07.095Z",
+      "delivered_at": null,
+      "accepted_at": null
+    }
+  ]
+}

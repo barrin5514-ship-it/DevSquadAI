@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "id": "codex-personal",
+      "label": "Personal",
+      "ok": true,
+      "method": "ChatGPT native login",
+      "configFilePresent": true,
+      "homeIsSymlink": false
+    },
+    {
+      "id": "codex-school",
+      "label": "School",
+      "ok": true,
+      "method": "ChatGPT native login",
+      "configFilePresent": false,
+      "homeIsSymlink": false
+    }
+  ],
+  "distinctHomes": true,
+  "modelRequests": 0
+}

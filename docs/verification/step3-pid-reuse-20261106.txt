@@ -1,0 +1,16 @@
+✔ a reused PID is never killed or treated as the original worker termination (25.2051ms)
+✔ Codex structured schema is passed explicitly; UTF-8 replies survive arbitrary chunk boundaries (10.3501ms)
+✔ rejected native responses preserve sanitized protocol evidence without response text or retries (6.0259ms)
+✔ an unsupported profile cannot silently dispatch Claude instead (0.7991ms)
+✔ native timeout distinguishes confirmed tree termination from unknown outcome without retries (48.3896ms)
+✔ OS launch failure is a known failure, never a phantom active worker (12.1399ms)
+✔ three-minute inactivity guard pauses once; real output renews the idle deadline (165.3036ms)
+✔ profile home is used for both login check and worker spawn; nonzero stderr is categorized and never saved raw (11.3025ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 501.6564

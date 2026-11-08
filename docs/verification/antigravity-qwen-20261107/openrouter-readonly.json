@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-11-07T05:29:53.713Z",
+  "keyConfigured": true,
+  "model": "qwen/qwen3-coder:free",
+  "calls": [
+    {
+      "route": "/models",
+      "httpStatus": 200,
+      "elapsedMs": 827,
+      "retryAfter": null,
+      "rateLimit": null,
+      "rateRemaining": null,
+      "rateReset": null
+    },
+    {
+      "route": "/models/user",
+      "httpStatus": 200,
+      "elapsedMs": 354,
+      "retryAfter": null,
+      "rateLimit": null,
+      "rateRemaining": null,
+      "rateReset": null
+    },
+    {
+      "route": "/key",
+      "httpStatus": 200,
+      "elapsedMs": 62,
+      "retryAfter": null,
+      "rateLimit": null,
+      "rateRemaining": null,
+      "rateReset": null
+    }
+  ],
+  "publicModel": null,
+  "accountModel": null,
+  "accountAuthenticated": true,
+  "accountFreeTier": true,
+  "freeDailyRequests": {
+    "used": 0,
+    "limit": 50,
+    "remaining": 50
+  },
+  "reportedRateLimit": {
+    "requests": -1,
+    "interval": "10s",
+    "note": "This field is deprecated and safe to ignore."
+  },
+  "access": "Catalog visibility only; inference and remaining free quota not proven",
+  "alternatives": [],
+  "generationRequests": 0,
+  "settingsChanged": false
+}

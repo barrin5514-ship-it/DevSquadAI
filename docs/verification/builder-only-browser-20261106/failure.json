@@ -1,0 +1,47 @@
+{
+  "message": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Approve one Builder invocation', exact: true })\u001b[22m\n",
+  "checks": [
+    {
+      "name": "Choosing Builder-only stays inactive and displays separate approval",
+      "pass": true
+    },
+    {
+      "name": "Tester and Reviewer are visibly disabled",
+      "pass": true
+    },
+    {
+      "name": "Send is disabled before approval",
+      "pass": true
+    },
+    {
+      "name": "Owner mock approval alone does not start execution",
+      "pass": true
+    },
+    {
+      "name": "Only the single Builder is authorized at preflight",
+      "pass": true
+    },
+    {
+      "name": "Simulated Send dispatches exactly one Builder and pauses",
+      "pass": true
+    },
+    {
+      "name": "Dashboard displays saved draft and pending review",
+      "pass": true
+    },
+    {
+      "name": "No owner acceptance or tests are fabricated",
+      "pass": true
+    },
+    {
+      "name": "Restart preserves pause, approval consumption and checkpoint",
+      "pass": true
+    },
+    {
+      "name": "Consumed scope cannot enable Send after restart",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\builder-only-browser-KxJvJt"
+}

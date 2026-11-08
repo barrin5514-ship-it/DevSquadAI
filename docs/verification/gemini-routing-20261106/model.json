@@ -1,0 +1,12 @@
+{
+  "name": "models/gemini-3.8-flash",
+  "methods": [
+    "generateContent",
+    "countTokens",
+    "createCachedContent",
+    "batchGenerateContent"
+  ],
+  "input": 1048576,
+  "output": 65536,
+  "checkedAt": "2026-11-07T03:45:27.315Z"
+}

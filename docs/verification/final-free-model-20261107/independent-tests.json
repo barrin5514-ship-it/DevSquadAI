@@ -1,0 +1,11 @@
+{
+  "exit": 0,
+  "timedOut": false,
+  "rawCodeSyntaxPassed": true,
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\.nvidia-evaluation-pWeLJs",
+  "sandbox": "Unchanged Codex MXC root-deny/no-network plus Node permissions",
+  "launcherCorrection": "Use the existing demo Node preserve-symlinks flags; do not grant read access to drive root",
+  "stdout": "✔ empty (0.8104ms)\n✔ suggested integer sum (0.1087ms)\n✔ negatives (0.1022ms)\n✔ zeros (0.0634ms)\n✔ single (0.0892ms)\n✔ decimal tolerance (0.0743ms)\n✔ mixed decimals (0.0832ms)\n✔ reject non-array undefined (0.334ms)\n✔ reject non-array null (0.1212ms)\n✔ reject non-array string (0.1289ms)\n✔ reject non-array number (0.0788ms)\n✔ reject non-array object (0.0976ms)\n✔ reject non-array set (0.0619ms)\n✔ reject element suggested numeric string (0.2788ms)\n✔ reject element null (0.065ms)\n✔ reject element undefined (0.0523ms)\n✔ reject element NaN (0.1177ms)\n✔ reject element Infinity (0.1335ms)\n✔ reject element negative Infinity (0.053ms)\n✔ reject element boolean (0.0584ms)\n✔ reject element object (0.0319ms)\n✔ reject element array (0.0346ms)\n✔ does not mutate input (0.6303ms)\n✔ no inherited API credentials (0.0837ms)\nℹ tests 24\nℹ suites 0\nℹ pass 24\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 19.0839\n",
+  "stderr": "",
+  "aiInvocations": 0
+}

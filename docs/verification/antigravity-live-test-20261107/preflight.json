@@ -1,0 +1,7 @@
+{
+  "schemaHTTP": 200,
+  "retryOrFallbackPropertyPaths": [],
+  "installedHelpHasRetryFlag": false,
+  "generationInvocations": 0,
+  "blocker": "Official changelog documents automatic in-process model retries; no supported disable switch established"
+}

@@ -1,0 +1,44 @@
+// Read-only Chrome checks: opening a page must never start work or call a provider.
+import fs from 'node:fs';
+import path from 'node:path';
+import {createRequire} from 'node:module';
+const out='docs/verification/antigravity-qwen-20261107',base='http://127.0.0.1:3000';
+const project='aceea0a7-7c8b-4b32-9371-cf94a029a6ee',session='b1e11259-d5f7-427e-b004-c66d9a818fe3';
+const require=createRequire(import.meta.url),{chromium}=require(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
+const checks=[],errors=[],blocked=[];let browser;
+const check=(name,pass)=>{checks.push({name,pass:!!pass});if(!pass)throw Error(name);};
+try {
+ browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+ const page=await browser.newPage({viewport:{width:1440,height:900}});
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',r=>{const q=r.request();if(new URL(q.url()).origin!==base||!['GET','HEAD'].includes(q.method())){blocked.push({method:q.method(),path:new URL(q.url()).pathname});return r.abort();}return r.continue();});
+ const response=await page.goto(base+'/team#project/'+project+'/chat/'+session);
+ await page.waitForFunction(id=>state.studioDetail?.id===id&&!state.busy,session);
+ check('Regular dashboard opens the existing Expense Tracker session',response.status()===200);
+ check('Existing session has no executions or active execution approval',await page.evaluate(()=>!state.studioDetail.executions.length&&!state.studioDetail.state.runApproval));
+ check('Three existing roles remain unchanged',await page.evaluate(()=>JSON.stringify(state.studioDetail.state.roles)===JSON.stringify({builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'})));
+ await page.screenshot({path:out+'/expense-tracker-dashboard.png',fullPage:true});
+ await page.evaluate(()=>go('team'));
+ await page.locator('#model-health-panel').waitFor();
+ await page.locator('#model-health-panel > summary').click();
+ await page.waitForFunction(()=>document.querySelectorAll('.model-health-row').length===6);
+ check('All six provider/profile health rows load from the actual backend',await page.locator('.model-health-row').count()===6);
+ const gemini=page.locator('.model-health-row').filter({has:page.getByText('Gemini',{exact:true})});
+ await gemini.locator('summary').click();
+ const text=await gemini.innerText();
+ check('Gemini reports the actual HTTP 400 as an inconclusive local diagnostic',text.includes('HTTP 400')&&text.includes('INCONCLUSIVE')&&text.includes('Remaining allowance: UNKNOWN'));
+ check('Gemini is not integrated or available for fallback',text.includes('Not integrated')&&text.includes('Fallback: UNKNOWN'));
+ await page.getByRole('button',{name:'Refresh local readings',exact:true}).click();
+ check('Refresh preserves local-only evidence and no writable requests',blocked.length===0);
+ await page.screenshot({path:out+'/model-health-dashboard.png',fullPage:true});
+ check('No JavaScript errors or horizontal page overflow',errors.length===0&&await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ await page.goto(base+'/team#project/'+project+'/chat/'+session);
+ await page.waitForFunction(id=>state.studioDetail?.id===id&&!state.busy,session);
+ const preview=page.locator('#chat-preview-tools');
+ if(!await preview.getAttribute('open'))await preview.locator(':scope > summary').click();
+ await page.getByText('Start your application separately, then authorize its exact local URL. Dev Squad never launches it.',{exact:true}).waitFor();
+ check('Actual Live Preview clearly requires a separately running and authorized app',await preview.isVisible());
+ await page.screenshot({path:out+'/expense-preview-dashboard.png',fullPage:true});
+ fs.writeFileSync(out+'/main-browser.json',JSON.stringify({checks,passed:checks.length,errors,blocked,modelRequests:0,project,session},null,2));
+ console.log(JSON.stringify({passed:checks.length,errors,blocked}));
+}catch(e){fs.writeFileSync(out+'/main-browser-failure.json',JSON.stringify({message:e.message,checks,errors,blocked},null,2));console.log(JSON.stringify({message:e.message,checks,errors,blocked}));process.exitCode=1;}finally{await browser?.close();}

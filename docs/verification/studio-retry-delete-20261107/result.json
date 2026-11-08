@@ -1,0 +1,60 @@
+{
+  "checks": [
+    {
+      "name": "New project writable by default",
+      "ok": true
+    },
+    {
+      "name": "First prompt Send 202",
+      "ok": true
+    },
+    {
+      "name": "Immediate warning from new attempt and no lock",
+      "ok": true
+    },
+    {
+      "name": "Warning says unknown/no checkpoint not folder locked",
+      "ok": true
+    },
+    {
+      "name": "Copy preserves multiline prompt or shows selectable fallback",
+      "ok": false
+    },
+    {
+      "name": "Retry starts attempt 2 same IDs/workspace; no lock",
+      "ok": true
+    },
+    {
+      "name": "Edit & Retry loads prompt in same input",
+      "ok": true
+    },
+    {
+      "name": "Edited Send starts attempt 3",
+      "ok": true
+    },
+    {
+      "name": "Same chat/project/workspace and fresh file",
+      "ok": true
+    },
+    {
+      "name": "Three builder attempts/two retry events",
+      "ok": true
+    },
+    {
+      "name": "Delete removes from dashboard after reload",
+      "ok": true
+    },
+    {
+      "name": "Delete leaves workspace and preserves records/reservation",
+      "ok": true
+    },
+    {
+      "name": "No page errors",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "calls": 3,
+  "liveModelCalls": 0,
+  "simulation": true
+}

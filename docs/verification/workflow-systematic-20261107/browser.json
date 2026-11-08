@@ -1,0 +1,27 @@
+{
+  "simulatedProviders": true,
+  "realLocalFixtureTests": true,
+  "source": "regular dashboard served by disposable app/database",
+  "chatId": "4a9cc2e3-4eda-4865-a469-f64fe6db4f6e",
+  "requestId": "87d85b49-7177-4883-afd9-57b8aa0e6e16",
+  "status": "awaiting_owner",
+  "tests": 2,
+  "roles": [
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "nemotron",
+      "phase": "tester"
+    },
+    {
+      "agent": "claude-code",
+      "phase": "reviewer"
+    }
+  ],
+  "modelFixturePosts": 1,
+  "runPosts": 1,
+  "approvalPosts": 0,
+  "pageErrors": 0
+}

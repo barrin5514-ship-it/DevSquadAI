@@ -1,0 +1,20 @@
+{
+  "pass": true,
+  "mockedRequests": 1,
+  "liveGenerations": 0,
+  "checks": [
+    "exact model",
+    "zero reported prices in both catalogs",
+    "account free quota",
+    "optional reasoning metadata",
+    "supported request parameters",
+    "2048 output supported",
+    "reasoning disabled request",
+    "strict JSON schema",
+    "require_parameters",
+    "no fallback",
+    "zero price filters",
+    "existing request/parser path"
+  ],
+  "productionCodeChanged": false
+}

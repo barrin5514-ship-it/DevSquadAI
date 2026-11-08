@@ -1,0 +1,9 @@
+{
+  "readOnly": true,
+  "counter2Visible": true,
+  "originalFailureVisible": true,
+  "paused": true,
+  "browserErrors": 0,
+  "blockedMutationsAndEventStreams": 1,
+  "providerRequests": 0
+}

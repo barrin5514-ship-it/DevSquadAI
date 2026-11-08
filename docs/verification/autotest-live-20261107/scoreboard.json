@@ -1,0 +1,36 @@
+﻿{
+  "date": "2026-11-07",
+  "status": "NOT READY — live pass gate not met",
+  "live": {
+    "cycles_attempted": 8,
+    "two_build_pairs_completed": 5,
+    "clean_cycles_total": 4,
+    "clean_streak_after_last_code_change": 0,
+    "required_cycles": 10,
+    "required_final_clean_streak": 5
+  },
+  "simulated": {"cycles_attempted": 100, "passed": 100, "failed": 0},
+  "bugs_fixed": [
+    "Correction Builder blocked by 9 KiB context cap (raised to 24 KiB)",
+    "Managed AGENTS.md included in worker snapshot and echoed into patch",
+    "Nemotron reviewer packet guard still compared against 9 KiB",
+    "Same-chat build #2 after Awaiting Owner was rejected as unused/unfinished",
+    "Full request-body byte check rejected packets larger than the approved context byte count"
+  ],
+  "full_suite": {"tests": 714, "pass": 714, "fail": 0},
+  "runtime": {"pid": 12900, "migrations": 22, "active": 0, "historical_locks": 1},
+  "provider_failures": [
+    "Claude reviewer CLI exited 1 with Structured CLI error",
+    "Codex Personal tester inactivity timeout; fallback to Codex School succeeded",
+    "Nemotron reviewer invalid_response once; stage retry succeeded",
+    "Codex School tester local CLI stdin failure in final batch"
+  ],
+  "unproven": [
+    "10 live cycles",
+    "5 clean live cycles after the last code change",
+    "Codex + Claude + DeepSeek full three-agent cycles",
+    "Claude availability before its reset",
+    "Zapier live callbacks",
+    "interactive browser walkthrough"
+  ]
+}

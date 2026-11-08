@@ -1,0 +1,1 @@
+Captured real Chrome BEFORE screenshot using disposable backend records.

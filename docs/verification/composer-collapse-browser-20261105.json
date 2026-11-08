@@ -1,0 +1,64 @@
+{
+  "scope": "Whole message area collapse only; chosen workspace layout preserved",
+  "production": "Read-only Chrome inspection",
+  "activeChecks": "Temporary mock database; no actual agent run",
+  "providerRequests": 0,
+  "checks": [
+    {
+      "name": "Regular dashboard exposes Personal/School selection",
+      "passed": true
+    },
+    {
+      "name": "Entire composer and Team collapse into a slim bar",
+      "passed": true
+    },
+    {
+      "name": "Conversation gains the freed vertical space",
+      "passed": true
+    },
+    {
+      "name": "Whole-panel collapse preference survives reload",
+      "passed": true
+    },
+    {
+      "name": "No regular-dashboard JavaScript errors",
+      "passed": true
+    },
+    {
+      "name": "Running composer accepts typing",
+      "passed": true
+    },
+    {
+      "name": "Stop visible in composer",
+      "passed": true
+    },
+    {
+      "name": "SSE updates chat and preserves draft",
+      "passed": true
+    },
+    {
+      "name": "Collapsed active bar keeps Stop and the draft",
+      "passed": true
+    },
+    {
+      "name": "Queued message API accepted",
+      "passed": true
+    },
+    {
+      "name": "Queue saves without dispatching another worker",
+      "passed": true
+    },
+    {
+      "name": "Stop pauses further work cleanly",
+      "passed": true
+    },
+    {
+      "name": "Profile save accepted",
+      "passed": true
+    },
+    {
+      "name": "Selected School profile persists across reload",
+      "passed": true
+    }
+  ]
+}

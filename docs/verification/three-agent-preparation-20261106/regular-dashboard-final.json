@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "name": "Regular dashboard loads the actual prepared session",
+      "pass": true
+    },
+    {
+      "name": "No execution approval, worker attempt or writable access",
+      "pass": true
+    },
+    {
+      "name": "Correct three roles shown in labelled controls",
+      "pass": true
+    },
+    {
+      "name": "Actual backend rejects Builder-as-Tester with the precise independence reason",
+      "pass": true
+    },
+    {
+      "name": "Rejected assignment leaves original roles intact after refresh",
+      "pass": true
+    },
+    {
+      "name": "Send remains disabled until owner authorization steps",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript errors or horizontal page overflow",
+      "pass": true
+    }
+  ],
+  "passed": 7,
+  "errors": [],
+  "writeAttempts": [
+    "/api/console/studio/projects/aceea0a7-7c8b-4b32-9371-cf94a029a6ee/roles"
+  ],
+  "expectedRejection": 409,
+  "modelRequests": 0,
+  "scopeActivated": false
+}

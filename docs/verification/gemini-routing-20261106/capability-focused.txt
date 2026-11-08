@@ -1,0 +1,32 @@
+✔ structured capability answer preserves code and two distinct suggested tests without claiming execution (2.8514ms)
+✔ invalid JSON, incomplete output, duplicate tests and unexpected fields are rejected (1.6603ms)
+✔ HTTP 200 catalog, free confirmation or failed generation cannot qualify a worker role (1.6588ms)
+✔ a successful disposable answer still does not prove production Builder/Reviewer integration or real Tester execution (0.5789ms)
+✔ each role requires its own contract and evidence; no model has a permanent role (0.6249ms)
+✔ builder fallback proposal changes only the unfinished role and never dispatches (5.5557ms)
+✔ tester fallback proposal changes only the unfinished role and never dispatches (0.5811ms)
+✔ reviewer fallback proposal changes only the unfinished role and never dispatches (0.5149ms)
+✔ unknown or exhausted allowance, auth failure and unverified capabilities exclude candidates (0.4705ms)
+✔ same-family profiles and prior authors cannot become independent reviewers (0.7471ms)
+✔ unknown outcome or unverified termination retains checkpoint and forbids replacement (0.5243ms)
+✔ context, schema or task errors are not mislabeled as quota exhaustion (0.292ms)
+✔ verified role quality beats a cheaper alternative and roles are not permanently assigned (0.3124ms)
+✔ completed work and missing checkpoint never restart automatically (0.275ms)
+✔ unknown, absent, invalid and mismatched allowance inputs never produce percentages (1.2659ms)
+✔ verified fresh consumption uses configurable 70/85/95/100 thresholds (0.6307ms)
+✔ old or future usage is STALE and never a current remaining-usage estimate (0.4332ms)
+✔ metrics distinguish verified, estimated, stale and unknown without inventing zero (0.4875ms)
+✔ catalog authentication and successful generation do not establish available quota (0.765ms)
+✔ temporary rate limit expires without permanently disabling a model or claiming quota (0.6268ms)
+✔ auth failure and exhausted allowance have distinct states (0.3548ms)
+✔ warning configuration validates order without changing provider authorization (5.7548ms)
+✔ cached endpoint exposes metrics without secrets, network calls, grants or Gemini activation (207.8971ms)
+✔ context-window consumption is not subscription or account allowance (0.5215ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2124.8291

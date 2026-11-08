@@ -29,7 +29,7 @@ export class NativeDemoBoundary {
   // Vendor CLI authentication stays with its trusted native broker. Codex gets
   // the verified MXC tool policy; Claude has no file, shell, MCP or network tools.
   // The model receives only the bounded packet, never authentication storage.
-  const transport=new DemoCliTransport();const receipt=await transport.run(agent,JSON.parse(stdin),cwd,{signal,timeoutMs:90000,maxOutputBytes:32768,codexIsolation:agent==='codex'?isolationArgs(cwd):null});return {exit:0,receipt};
+  const transport=new DemoCliTransport();const receipt=await transport.run(agent,JSON.parse(stdin),cwd,{signal,timeoutMs:90000,maxOutputBytes:65536,codexIsolation:agent==='codex'?isolationArgs(cwd):null});return {exit:0,receipt};
  }
  async test({cwd,revisionHash,signal}){
   const b=this.team.db.prepare('SELECT * FROM demo_worker_bindings WHERE root=?').get(fs.realpathSync(cwd));if(!b||!this.status(b.job_id).ready||sha(fs.readFileSync(path.join(cwd,'src/todo.js')))!==revisionHash)throw new ApiError(403,'Exact demo revision and isolation proof required');

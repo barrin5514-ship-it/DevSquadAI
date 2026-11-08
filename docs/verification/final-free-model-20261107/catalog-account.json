@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-11-07T07:17:52.138Z",
+  "calls": [
+    {
+      "route": "/models",
+      "httpStatus": 200,
+      "elapsedMs": 314
+    },
+    {
+      "route": "/models/user",
+      "httpStatus": 200,
+      "elapsedMs": 461
+    },
+    {
+      "route": "/key",
+      "httpStatus": 200,
+      "elapsedMs": 62
+    }
+  ],
+  "selectedModel": "nvidia/nemotron-3.5-super-vl:free",
+  "public": {
+    "id": "nvidia/nemotron-3.5-super-vl:free",
+    "pricing": {
+      "prompt": "0",
+      "completion": "0"
+    },
+    "contextLength": 1000000,
+    "maxOutput": 131072,
+    "parameters": [
+      "include_reasoning",
+      "max_tokens",
+      "reasoning",
+      "response_format",
+      "seed",
+      "structured_outputs",
+      "temperature",
+      "tool_choice",
+      "tools",
+      "top_p"
+    ],
+    "reasoning": {
+      "mandatory": false
+    },
+    "expirationDate": null
+  },
+  "account": {
+    "id": "nvidia/nemotron-3.5-super-vl:free",
+    "pricing": {
+      "prompt": "0",
+      "completion": "0"
+    },
+    "contextLength": 1000000,
+    "maxOutput": 131072,
+    "parameters": [
+      "include_reasoning",
+      "max_tokens",
+      "reasoning",
+      "response_format",
+      "seed",
+      "structured_outputs",
+      "temperature",
+      "tool_choice",
+      "tools",
+      "top_p"
+    ],
+    "reasoning": {
+      "mandatory": false
+    },
+    "expirationDate": null
+  },
+  "freeAccount": true,
+  "freeDailyRequests": {
+    "used": 1,
+    "limit": 50,
+    "remaining": 49
+  },
+  "generationRequests": 0
+}

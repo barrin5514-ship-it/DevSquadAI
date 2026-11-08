@@ -1,0 +1,37 @@
+{
+  "active": false,
+  "approvalReceived": false,
+  "approvedAt": null,
+  "expiresAt": null,
+  "validForSecondsAfterApproval": 1800,
+  "projectId": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+  "sessionId": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+  "databasePath": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\data\\dev-squad.sqlite",
+  "workspaceRoot": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+  "roles": {
+    "builder": "codex-personal",
+    "tester": "codex-school",
+    "reviewer": "claude-code"
+  },
+  "maxRuns": 1,
+  "maxAgentCalls": 3,
+  "perRoleCalls": {
+    "builder": 1,
+    "tester": 1,
+    "reviewer": 1
+  },
+  "allowAutomaticRepairs": false,
+  "allowFallback": false,
+  "allowDeepSeek": false,
+  "allowExternalWebhooks": false,
+  "workerTimeouts": {
+    "tests": 60000,
+    "deepseek": 90000,
+    "codex-personal": 300000,
+    "codex-school": 300000,
+    "claude-code": 300000
+  },
+  "maxNativeOutputBytes": 32768,
+  "ownerAcceptanceRequired": true,
+  "implementationStatus": "INACTIVE PROPOSAL — task-only dispatch guard requires implementation and mocked tests after owner approval"
+}

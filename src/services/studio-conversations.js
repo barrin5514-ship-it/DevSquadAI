@@ -35,7 +35,14 @@ export function saveMessage(studio,id,body,{inTransaction=false}={}){
   const content={text,attachments,references,submissionId:body.submissionId,requestHash,...(followup?{sourceChatId:id,reviewContext:{sourceChatId:id,reviewer:original.state.roles.reviewer,goal:original.state.goal,review:original.state.review,tests:original.state.tests}}:{})};studio.team.safe(content);
   for(const secret of studio.team.coordinator.configuredSecrets())if(secret&&JSON.stringify(content).includes(secret))throw new ApiError(400,'Credential values cannot be attached to a conversation');
   if(active){studio.event(chat.id,'message_queued',{...content,summary:'Saved while the worker is active. This message will be added when you explicitly resume this unfinished session.'});return studio.detail(chat.id);}
-  if(followup){chat=studio.create(original.project_id,'',true);chat.state.roles={...original.state.roles};studio.event(chat.id,'followup_origin',{sourceChatId:id,artifactHash:original.state.review.artifactHash,summary:'Builder follow-up linked to the previous reviewed task. Its original review and acceptance state are preserved.'});}
+  if(followup){
+   // Keep the conversation and its immutable review events, but start a new task attempt.
+   const roles=studio.roleManager.validate(original.state.pendingRoles||original.state.roles,[]);
+   chat={...original,state:{...original.state,roles,pendingRoles:null,goal:'',authors:[],tests:null,review:null,testProvenance:null,runApproval:null,failure:null,alert:null,currentAgent:null,activeExecutionId:null,writeAccess:null,requestId:null,builderCompleted:false,corrections:0,problems:[],repeat:{key:null,count:0,streaks:{}}}};
+   delete chat.state.acceptedAt;
+   studio.db.prepare('UPDATE studio_chats SET status=?,request_id=? WHERE id=? AND version=?').run('ready','followup-pending-'+randomUUID(),chat.id,original.version);
+   studio.event(chat.id,'followup_origin',{sourceChatId:id,sourceRequestId:original.request_id,artifactHash:original.state.review.artifactHash,summary:'New Builder task in this conversation. Earlier reviews and owner decisions remain in history.'});
+  }
   const explicitlyNamed=studio.db.prepare("SELECT 1 FROM studio_file_operations WHERE action='session_renamed' AND status='complete' AND json_extract(detail,'$.chatId')=? LIMIT 1").get(chat.id);
   studio.db.prepare('UPDATE studio_chats SET title=?,state=?,version=version+1,updated_at=? WHERE id=? AND version=?').run(chat.state.goal||explicitlyNamed?chat.title:text.slice(0,100),JSON.stringify({...chat.state,goal,phase:'builder',tests:null,review:null}),new Date().toISOString(),chat.id,chat.version);
   studio.event(chat.id,'message',content);return studio.detail(chat.id);

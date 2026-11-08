@@ -1,0 +1,5 @@
+{
+  "addedDiffLines": 248,
+  "highConfidenceSecretMatches": 0,
+  "limitations": "Pattern check is not a guarantee of no secrets; .env contents were not printed or included."
+}

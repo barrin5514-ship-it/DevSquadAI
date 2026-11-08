@@ -1,0 +1,183 @@
+ M docs/PROMPT_LOG.md
+ M src/app.js
+ M src/dashboard/conversations.js
+ M src/dashboard/dashboard.css
+ M src/dashboard/dashboard.js
+ M src/dashboard/development.js
+ M src/dashboard/index.html
+ M src/dashboard/live-workspace.js
+ M src/dashboard/preview.js
+ M src/dashboard/project-navigation.js
+ M src/dashboard/projects.js
+ M src/dashboard/roles.js
+ M src/dashboard/workspace-shell.js
+ M src/models/store.js
+ M src/routes/console.js
+ M src/services/demo-cli-transport.js
+ M src/services/demo-workers.js
+ M src/services/native-diagnostics.js
+ M src/services/project-connections.js
+ M src/services/project-files.js
+ M src/services/project-git.js
+ M src/services/project-studio.js
+ M src/services/projects.js
+ M src/services/studio-failover.js
+ M src/services/studio-recovery.js
+ M src/services/studio-run-scope.js
+ M src/services/studio-workers.js
+ M src/services/workspace-file-actions.js
+ M src/workspace/index.js
+ M tests/conversation-ui.test.js
+ M tests/foundation.test.js
+ M tests/projects-ui.test.js
+ M tests/studio-executions.test.js
+ M tests/studio-failover.test.js
+ M tests/studio-protocol.test.js
+ M tests/studio-run-scope.test.js
+ M tests/workspace-inspection.test.js
+?? docs/BUILDER_ONLY_EXECUTION_REPAIR_20261106.md
+?? docs/CHAT_FIRST_UI_HANDOFF_20261106.md
+?? docs/CHAT_FIRST_UI_REDESIGN_20261106.md
+?? docs/CLASS_HANDOFF_DEMO_20261106.md
+?? docs/CODEX_EXECUTION_FAILURE_REPAIR_20261106.md
+?? docs/CODEX_STARTUP_ACCESS_REPAIR_20261106.md
+?? docs/DEEPSEEK_CODEX_REPAIR_HANDOFF.md
+?? docs/DEEPSEEK_INDEPENDENT_REVIEW.md
+?? docs/FIRST_LIVE_CODEX_BUILD_20261106.md
+?? docs/WORKSPACE_ROOT_PRODUCTION_INTEGRATION_20261106.md
+?? docs/WORKSPACE_ROOT_REPAIR_20261106.md
+?? docs/verification/builder-only-backend-reload-20261106.json
+?? docs/verification/builder-only-browser-20261106.txt
+?? docs/verification/builder-only-browser-20261106/
+?? docs/verification/builder-only-class-browser-20261106.txt
+?? docs/verification/builder-only-class-browser-20261106/
+?? docs/verification/builder-only-first-focused-20261106.txt
+?? docs/verification/builder-only-focused-20261106.txt
+?? docs/verification/builder-only-focused-final-20261106.txt
+?? docs/verification/builder-only-full-20261106.txt
+?? docs/verification/builder-only-full-final-20261106.txt
+?? docs/verification/builder-only-host-focused-20261106.txt
+?? docs/verification/builder-only-main-browser-20261106.json
+?? docs/verification/builder-only-native-cleanup-20261106.json
+?? docs/verification/builder-only-native-final-20261106.txt
+?? docs/verification/builder-only-preservation-20261106.json
+?? docs/verification/chat-first-before-20261106.txt
+?? docs/verification/chat-first-browser-20261106.txt
+?? docs/verification/chat-first-browser-final-20261106.txt
+?? docs/verification/chat-first-browser-initial-20261106.txt
+?? docs/verification/chat-first-focused-20261106.txt
+?? docs/verification/chat-first-focused-final-20261106.txt
+?? docs/verification/chat-first-focused-initial-20261106.txt
+?? docs/verification/chat-first-full-20261106.txt
+?? docs/verification/chat-first-full-final-20261106.txt
+?? docs/verification/chat-first-preservation-20261106.json
+?? docs/verification/chat-first-ui-20261106/
+?? docs/verification/chat-first-working-tree-20261106.txt
+?? docs/verification/class-demo-owner-ready-20261106.json
+?? docs/verification/class-demo-owner-ready-20261106.png
+?? docs/verification/class-handoff-demo-browser-20261106.txt
+?? docs/verification/class-handoff-demo-browser-20261106/
+?? docs/verification/composer-collapse-browser-20261105.json
+?? docs/verification/composer-collapse-full-20261105.txt
+?? docs/verification/composer-collapse-targeted-20261105.txt
+?? docs/verification/dual-track-preservation-20261106.json
+?? docs/verification/dual-track-tests-20261106.txt
+?? docs/verification/first-live-preparation-tests-20261106.txt
+?? docs/verification/native-diagnostics-browser-20261106/
+?? docs/verification/p0-browser-20261106.txt
+?? docs/verification/p0-final-tests-20261106.txt
+?? docs/verification/p0-main-browser-20261106.json
+?? docs/verification/p0-native-diagnostic-20261106.json
+?? docs/verification/p0-native-diagnostic-dispatch-20261106.json
+?? docs/verification/p0-native-diagnostic-verdict-20261106.json
+?? docs/verification/p0-preservation-local-20261106.json
+?? docs/verification/p0-reconstructed-arguments-20261106.json
+?? docs/verification/production-root-acl-after-20261106.json
+?? docs/verification/production-root-acl-before-20261106.json
+?? docs/verification/production-root-acl-final-20261106.json
+?? docs/verification/production-root-auth-status-20261106.json
+?? docs/verification/production-root-browser-20261106/
+?? docs/verification/production-root-class-browser-20261106.txt
+?? docs/verification/production-root-codex-startup-20261106.json
+?? docs/verification/production-root-earlier-full-571-20261106.txt
+?? docs/verification/production-root-existing-data-audit-20261106.json
+?? docs/verification/production-root-failed-case-recheck-20261106.txt
+?? docs/verification/production-root-final-reload-20261106.json
+?? docs/verification/production-root-final-status-20261106.json
+?? docs/verification/production-root-final-test-blocker-20261106.json
+?? docs/verification/production-root-integration-status-20261106.json
+?? docs/verification/production-root-isolation-20261106.json
+?? docs/verification/production-root-isolation-final-20261106.json
+?? docs/verification/production-root-latest-full-570-20261106.txt
+?? docs/verification/production-root-persistence-restart-20261106.json
+?? docs/verification/production-root-preservation-after-20261106.json
+?? docs/verification/production-root-preservation-before-20261106.json
+?? docs/verification/production-root-recovery-browser-20261106.json
+?? docs/verification/production-root-recovery-browser-20261106.png
+?? docs/verification/production-root-restart-identity-20261106.json
+?? docs/verification/production-root-targeted-final-20261106.txt
+?? docs/verification/startup-instruction-read-access-20261106.json
+?? docs/verification/startup-main-browser-20261106.json
+?? docs/verification/startup-main-browser-20261106.png
+?? docs/verification/startup-preservation-20261106.json
+?? docs/verification/startup-profile-checks-20261106.json
+?? docs/verification/startup-regressions-20261106.txt
+?? docs/verification/startup-sandbox-reads-20261106.json
+?? docs/verification/startup-schema-folder-local-20261106.json
+?? docs/verification/startup-thread-check-20261106.json
+?? docs/verification/startup-thread-own-git-20261106.json
+?? docs/verification/step2-failover-browser-20261105.txt
+?? docs/verification/step2-failover-full-20261105.txt
+?? docs/verification/step2-failover-targeted-20261105.txt
+?? docs/verification/step2-main-browser-20261105.json
+?? docs/verification/step3-active-restart-20261106.json
+?? docs/verification/step3-active-restart-20261106.txt
+?? docs/verification/step3-baseline-20261106.txt
+?? docs/verification/step3-browser-20261106.txt
+?? docs/verification/step3-final-preservation-20261106.json
+?? docs/verification/step3-final-targeted-20261106.txt
+?? docs/verification/step3-full-20261106.txt
+?? docs/verification/step3-full-final-20261106.txt
+?? docs/verification/step3-main-browser-20261106.json
+?? docs/verification/step3-observer-os-20261106.txt
+?? docs/verification/step3-observer-targeted-20261106.txt
+?? docs/verification/step3-observer-timing-20261106.json
+?? docs/verification/step3-os-recheck-20261106.txt
+?? docs/verification/step3-pid-reuse-20261106.txt
+?? docs/verification/step3-preservation-20261106.json
+?? docs/verification/step3-recovery-targeted-20261106.txt
+?? docs/verification/step3-termination-regression-20261106.txt
+?? docs/verification/step4-active-approval-local-20261106.json
+?? docs/verification/step4-builder-failure-local-20261106.json
+?? docs/verification/step4-codex-config-check-20261106.json
+?? docs/verification/step4-final-local-20261106.json
+?? docs/verification/step4-final-tests-20261106.txt
+?? docs/verification/step4-inactive-run-proposal-20261106.json
+?? docs/verification/step4-paused-browser-20261106.json
+?? docs/verification/step4-preparation-local-20261106.json
+?? docs/verification/step4-prepared-browser-20261106.json
+?? docs/verification/step4-readiness-20261106.txt
+?? docs/verification/step4-scope-tests-20261106.txt
+?? scripts/diagnose-codex-once-20261106.js
+?? scripts/inspect-codex-startup-20261106.js
+?? scripts/run-class-handoff-demo.js
+?? scripts/verify-builder-only-repair.js
+?? scripts/verify-chat-first-ui.js
+?? scripts/verify-class-handoff-demo.js
+?? scripts/verify-diagnostic-lifecycle.js
+?? scripts/verify-managed-root-isolation.js
+?? scripts/verify-managed-root-recovery.js
+?? scripts/verify-native-diagnostics.js
+?? scripts/verify-production-workspace-root.js
+?? src/dashboard/class-demo-ui.js
+?? src/dashboard/class-demo.html
+?? src/services/class-handoff-demo.js
+?? src/services/diagnostic-lifecycle.js
+?? src/services/diagnostic-process-stop.cs
+?? src/services/diagnostic-process-stop.js
+?? src/services/managed-workspace-root.js
+?? tests/class-handoff-demo.test.js
+?? tests/diagnostic-lifecycle.test.js
+?? tests/managed-workspace-production.test.js
+?? tests/managed-workspace-root.test.js
+?? tests/native-diagnostics.test.js

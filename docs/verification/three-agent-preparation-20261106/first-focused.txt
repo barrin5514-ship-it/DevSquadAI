@@ -1,0 +1,271 @@
+✔ local mock project runs without consuming API budgets, call grants, round caps or messenger setup (7022.7624ms)
+✖ different problems allow more than three rounds and more than one call to each agent (2882.0283ms)
+✖ same failing test three consecutive times pauses and records a durable stuck alert (2446.3467ms)
+✔ worker patch cannot escape the selected project or read/write credentials (1379.2046ms)
+✔ a builder cannot review its own step and no owner acceptance is granted (2088.7304ms)
+✔ duplicate Run and simultaneous chats cannot dispatch twice or share a folder lock (1331.919ms)
+✔ file changes and earlier contents remain in history; changed reviewed files cannot be accepted (2786.1788ms)
+✔ unknown native outcome keeps folder locked instead of allowing overlapping work (1441.3415ms)
+✖ a recurring test pauses on its third consecutive failure even if other failures differ (3039.693ms)
+✔ hard-linked files cannot redirect a worker write outside its selected folder (1047.3335ms)
+✔ a prior Run request ID stays deduplicated after the same chat is resumed (1607.4382ms)
+✔ retired demo grant files cannot authorize or block the new project workflow (1212.1444ms)
+✔ same known worker problem on three owner-requested continuations shows the stuck alert (1468.5932ms)
+✔ a known Tester protocol failure preserves phase and saved Builder files; resume never reruns Builder (2333.0352ms)
+✔ legacy incomplete logs recover the actual failed Tester phase without rewriting their history (1458.8876ms)
+✔ resume rejects stale task versions, changed checkpoints and changed saved files before dispatch (1360.8782ms)
+✔ confirmed Codex quota hands the saved Tester step to School exactly once without rerunning Builder (2800.793ms)
+✔ both exhausted profiles pause without ping-pong or fallback; unknown outcome never switches (3424.4025ms)
+✔ a Codex profile cannot review work authored by the other Codex profile (930.8895ms)
+✔ closing a known failed run preserves evidence; unresolved folder locks cannot be closed away (1930.516ms)
+✔ native login preflight failure pauses before any Builder charge; resumption remains Builder (944.2501ms)
+✔ A: Personal usage limit hands the same Tester checkpoint to School, then independent review and owner gate (1657.5142ms)
+✖ B: both Codex accounts unavailable selects authorized Claude; later independent-review conflict pauses (1401.4917ms)
+✖ C: DeepSeek fallback requires the exact task prepaid approval and reserves usage before proceeding (2386.3515ms)
+✔ D: all remaining providers unavailable pauses safely with a durable reason and intact files (1477.0381ms)
+✔ E: partial response is diagnostic only; fallback receives the last saved Builder files (1715.7096ms)
+✔ F: unknown previous outcome retains the folder lock and prevents every alternative (1170.9556ms)
+✔ G: a recovered Personal account does not steal a successful School turn; duplicate Run stays deduplicated (1710.1634ms)
+✔ H: another Codex profile never establishes independent review; unapproved workers are not tried (1146.9781ms)
+✔ missing native login can hand off in preflight without skipping or repeating the Builder stage (1805.9383ms)
+✔ task settings reject stale versions, review-complete edits, foreign folders and expired paid approvals (1469.0315ms)
+✔ budget dispatch is bounded, duplicate-proof and retains unknown reservations; stale prices/balance stop before fetch (691.5558ms)
+✔ real DeepSeek adapter path selects generateBound with approved output limit; no actual provider request (760.0508ms)
+✔ confirmed auth, outage, connection and safely terminated timeout errors can hand off; sandbox failures cannot (9389.1861ms)
+✔ price/balance freshness, scope and concurrent lifetime reservations are enforced before dispatch (838.3651ms)
+✔ unknown remote completion retains the folder even if the local process is confirmed stopped (920.1147ms)
+✔ fallback API requires the dashboard capability and records task-only preapproval without starting work (960.1957ms)
+✔ P0: every allowed and denied fallback retains an explicit safe decision (3337.5823ms)
+✔ P0: disabled policy and unknown outcome record why switching was forbidden (1659.3119ms)
+✔ P0: bounded run approval cannot be broadened by a fallback policy (774.2549ms)
+✔ rotate and assignments persist per project; card order does not reassign workers (1514.0316ms)
+✔ wrong project, stale versions, invalid order, unknown workers and self-review fail closed (1136.2469ms)
+✔ concurrent saves have one winner and stale repetition cannot overwrite it (1077.038ms)
+✖ active reassignment queues without interrupting or changing the current worker and applies after Stop/resume (874.2454ms)
+✔ all prior file authors remain ineligible to review, including a tester who wrote tests (1163.0909ms)
+✔ role API retains dashboard capability and exact session scope without provider dispatch (860.6515ms)
+✖ one bound native run completes exactly three mock calls and preserves owner acceptance (838.9902ms)
+✖ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (709.2259ms)
+✖ requested review corrections pause without a fourth call (629.1396ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (2928.2406ms)
+✖ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (622.8764ms)
+✖ concurrent reservations consume one phase slot and never replenish unknown attempts (986.4974ms)
+✖ dispatch rechecks expiry and role identity, without silently reaching paid fallback (892.766ms)
+✔ Builder-only selection requires separate approval and no future role assignments (849.8318ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.3664ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (999.7016ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (1916.8693ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (1132.4507ms)
+✔ Builder-only rejects wrong session project database root and approval mutation (685.0828ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 47
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104213.4114
+
+✖ failing tests:
+
+test at tests\project-studio.test.js:5:1
+✖ different problems allow more than three rounds and more than one call to each agent (2882.0283ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'paused'
+  - 'awaiting_owner'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/project-studio.test.js:5:320)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'paused',
+    expected: 'awaiting_owner',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\project-studio.test.js:6:1
+✖ same failing test three consecutive times pauses and records a durable stuck alert (2446.3467ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 3
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/project-studio.test.js:6:282)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\project-studio.test.js:13:1
+✖ a recurring test pauses on its third consecutive failure even if other failures differ (3039.693ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 3
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/project-studio.test.js:13:310)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\studio-failover.test.js:16:1
+✖ B: both Codex accounts unavailable selects authorized Claude; later independent-review conflict pauses (1401.4917ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(f.calls.some(x=>x.agent==='claude-code'&&x.phase==='tester'))
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-failover.test.js:16:218)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\studio-failover.test.js:17:1
+✖ C: DeepSeek fallback requires the exact task prepaid approval and reserves usage before proceeding (2386.3515ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-failover.test.js:17:269)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\studio-roles.test.js:7:1
+✖ active reassignment queues without interrupting or changing the current worker and applies after Stop/resume (874.2454ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'paused'
+  - 'awaiting_owner'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-roles.test.js:7:1157)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'paused',
+    expected: 'awaiting_owner',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\studio-run-scope.test.js:4:1
+✖ one bound native run completes exactly three mock calls and preserves owner acceptance (838.9902ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:4:137)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    status: 409
+  }
+
+test at tests\studio-run-scope.test.js:5:1
+✖ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (709.2259ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:5:149)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 409
+  }
+
+test at tests\studio-run-scope.test.js:6:1
+✖ requested review corrections pause without a fourth call (629.1396ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:6:107)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 409
+  }
+
+test at tests\studio-run-scope.test.js:8:1
+✖ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (622.8764ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:8:137)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 409
+  }
+
+test at tests\studio-run-scope.test.js:9:1
+✖ concurrent reservations consume one phase slot and never replenish unknown attempts (986.4974ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:9:134)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 409
+  }
+
+test at tests\studio-run-scope.test.js:10:1
+✖ dispatch rechecks expiry and role identity, without silently reaching paid fallback (892.766ms)
+  Error: The Tester must be independent of the Builder, including its model family.
+      at independentRoles (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-independence.js:9:11)
+      at StudioRoles.validate (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-roles.js:12:263)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:16:33
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:10:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 409
+  }

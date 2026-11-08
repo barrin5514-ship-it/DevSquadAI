@@ -1,0 +1,33 @@
+{
+  "kind": "NON-GENERATING LOCAL STARTUP CHECK",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\9a28ca1c-ff7e-46f5-8f69-86987d867a2a",
+  "profile": "Personal",
+  "methods": [
+    "initialize",
+    "initialized",
+    "thread/start"
+  ],
+  "modelTurnsSent": 0,
+  "exit": 1,
+  "elapsedMs": 30901,
+  "timedOut": true,
+  "outputLimit": false,
+  "reply": {
+    "phase": "thread/start",
+    "ok": true,
+    "instructionSources": [
+      "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\9a28ca1c-ff7e-46f5-8f69-86987d867a2a\\AGENTS.md"
+    ],
+    "cwd": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\9a28ca1c-ff7e-46f5-8f69-86987d867a2a",
+    "runtimeWorkspaceRoots": [
+      "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\9a28ca1c-ff7e-46f5-8f69-86987d867a2a"
+    ],
+    "permissions": {
+      "id": "devsquad_demo",
+      "extends": ":workspace"
+    },
+    "turns": 0
+  },
+  "stderr": "",
+  "terminationVerified": true
+}

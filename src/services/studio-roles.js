@@ -19,7 +19,7 @@ export class StudioRoles {
   const next=changesRoles?this.validate(body.rotate?{builder:before.reviewer,tester:before.builder,reviewer:before.tester}:body.roles,chat?.state.authors||[]):prior.roles;
   const order=body.order??prior.order;if(!Array.isArray(order)||order.length!==3||[...order].sort().join(',')!==[...studioRoleOrder].sort().join(','))throw new ApiError(400,'Move the three role cards without changing their assignments');
   this.db.prepare('INSERT INTO studio_role_preferences VALUES (?,?,?,1,?) ON CONFLICT(project_id) DO UPDATE SET roles=excluded.roles,display_order=excluded.display_order,version=version+1,updated_at=excluded.updated_at').run(projectId,JSON.stringify(next),JSON.stringify(order),new Date().toISOString());
-  let queued=false;if(chat&&changesRoles){queued=['running','stopping','awaiting_owner','accepted'].includes(chat.status)||!!this.db.prepare('SELECT 1 FROM studio_locks WHERE chat_id=?').get(chat.id);this.studio.change(chat.id,chat.status,queued?{pendingRoles:next}:{roles:next,pendingRoles:null},queued?'roles_queued':'roles_changed','owner');}
+  let queued=false;if(chat&&changesRoles){queued=['running','stopping','awaiting_owner','accepted'].includes(chat.status);this.studio.change(chat.id,chat.status,queued?{pendingRoles:next}:{roles:next,pendingRoles:null},queued?'roles_queued':'roles_changed','owner');}
   if(!chat||!changesRoles)this.team.fileActions?.record(projectId,changesRoles?'project_roles_changed':'role_positions_changed',{roles:next,order});
   return {...this.get(projectId),queued,chat:chat?this.studio.get(chat.id):null};
  });}

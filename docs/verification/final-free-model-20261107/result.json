@@ -1,0 +1,33 @@
+{
+  "verdict": "PASS",
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "httpStatus": 200,
+  "reportedModel": "nvidia/nemotron-3.5-super-vl:free",
+  "reportedCostUSD": 0,
+  "retryAfter": null,
+  "elapsedMs": 2359,
+  "timeoutMs": 60000,
+  "finishReason": "stop",
+  "usage": {
+    "input": 96,
+    "output": 175,
+    "total": 271,
+    "source": "provider_reported",
+    "reasoning": 0,
+    "estimatedCost": 0
+  },
+  "complete": true,
+  "structuredValid": true,
+  "response": "{\"edgeCase\": \"Non-array or non-numeric inputs such as strings, null, undefined, NaN, or Infinity cause incorrect totals or runtime errors.\", \"code\": \"function calculateTotal(prices) {\\n  if (!Array.isArray(prices)) throw new TypeError(\\\"Input must be an array\\\");\\n  if (prices.some(price => typeof price !== \\\"number\\\" || !Number.isFinite(price))) {\\n    throw new TypeError(\\\"All elements must be finite numbers\\\");\\n  }\\n  return prices.reduce((sum, price) => sum + price, 0);\\n}\", \"tests\": [\"calculateTotal([10, 20, 30]) === 60\", \"calculateTotal([\\\"10\\\", 20]) throws TypeError\"]}",
+  "review": {
+    "edgeCase": "Non-array or non-numeric inputs such as strings, null, undefined, NaN, or Infinity cause incorrect totals or runtime errors.",
+    "code": "function calculateTotal(prices) {\n  if (!Array.isArray(prices)) throw new TypeError(\"Input must be an array\");\n  if (prices.some(price => typeof price !== \"number\" || !Number.isFinite(price))) {\n    throw new TypeError(\"All elements must be finite numbers\");\n  }\n  return prices.reduce((sum, price) => sum + price, 0);\n}",
+    "tests": [
+      "calculateTotal([10, 20, 30]) === 60",
+      "calculateTotal([\"10\", 20]) throws TypeError"
+    ]
+  },
+  "generationRequests": 1,
+  "databaseTablesCompared": 64,
+  "databaseUnchanged": true
+}

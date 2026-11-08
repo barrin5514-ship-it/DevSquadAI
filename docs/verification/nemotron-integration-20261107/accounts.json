@@ -1,0 +1,61 @@
+{
+  "checkedAt": "2026-11-07T16:39:03.661Z",
+  "generationRequests": 0,
+  "requests": [
+    {
+      "host": "api.deepseek.com",
+      "path": "/models",
+      "method": "GET"
+    },
+    {
+      "host": "api.deepseek.com",
+      "path": "/user/balance",
+      "method": "GET"
+    },
+    {
+      "host": "api-docs.deepseek.com",
+      "path": "/quick_start/pricing/",
+      "method": "GET"
+    }
+  ],
+  "deepseek": {
+    "checkedAt": "2026-11-07T16:39:03.664Z",
+    "httpStatus": 200,
+    "balanceStatus": 200,
+    "modelIds": [
+      "deepseek-flash",
+      "deepseek-v4-pro"
+    ],
+    "balance": {
+      "available_usd": 16.42,
+      "checked_at": "2026-11-07T16:39:03.664Z",
+      "usable": true
+    }
+  },
+  "prices": {
+    "input": 0.3,
+    "output": 1.2,
+    "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-07T16:39:05.781Z",
+    "sourceHash": "af6679690eb9a7838c47727bfc5ffdc4ac91c4445a0c1219741ffe00c076ece5",
+    "unit": "USD per million tokens, uncached peak rates",
+    "conservativeReservationUSD": 0.013343999999999998,
+    "proposedCapUSD": 0.02
+  },
+  "codex": {
+    "id": "codex-personal",
+    "label": "Personal",
+    "ok": true,
+    "method": "ChatGPT native login",
+    "allowance": "UNKNOWN — native login status does not report remaining included usage"
+  },
+  "configuration": {
+    "model": "deepseek-flash",
+    "inputUSDPerMillion": 0.3,
+    "outputUSDPerMillion": 1.2,
+    "priceLeaseExpires": "2026-10-22T21:49:00.747Z",
+    "priceLeaseCurrentlyValid": false,
+    "timeoutMs": 90000
+  }
+}

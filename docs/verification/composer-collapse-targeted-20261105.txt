@@ -1,0 +1,41 @@
+✔ Big Three shows project picker, task box and Run without any consent or scope controls (23.0922ms)
+✔ Run posts only the selected project, task and duplicate-protection ID (4.6786ms)
+✔ Stop remains visible and operational even while the ordinary page is busy (5.3407ms)
+✔ new task selection keeps prior project chats in history without dispatch (4.7215ms)
+✔ stuck alert uses an on-screen alert role and does not silently resume work (2.9114ms)
+✔ Stop remains visible when the owner selects another project or chat (3.2447ms)
+✔ Send saves one message then dispatches the existing project runner once (15.3179ms)
+✔ Save message persists locally without a worker request (2.6429ms)
+✔ first local message creates its project-bound session before saving, without dispatch (3.9312ms)
+✔ Send with no new text resumes existing work without inventing another owner message (6.4696ms)
+✔ reviewed states without a valid review cannot dispatch (6.1207ms)
+✔ messages retain chronological event order and render saved agent reports without fake streaming (3.5277ms)
+✔ feedback after a valid review sends the new task ID to Builder dispatch without accepting the source (7.3481ms)
+✔ empty Send after review cannot silently rerun the reviewed task (3.6418ms)
+✔ mock command events never claim that the real isolated runner executed (35.8643ms)
+✔ read-only connected projects can save messages but cannot dispatch workers from the composer (7.2644ms)
+✔ composer collapse hides the entire writing area and Team, preserves the draft and never dispatches (5.7051ms)
+✔ Team opens the supported role panel rather than an unsupported model selector (4.7733ms)
+✔ active chat accepts a typed message without starting another worker and exposes Stop (6.9892ms)
+✔ live activity updates chat without replacing the draft and surfaces idle alert (4.581ms)
+✔ Stop remains usable even while another dashboard save is busy (3.8446ms)
+✔ collapsed running composer keeps the same working Stop button in its slim bar (6.8804ms)
+✔ the selected workspace uses its composer Stop instead of a duplicate floating Stop bar; other jobs stay stoppable (4.5543ms)
+✔ role picker Rotate posts only guarded role settings, never Run or acceptance (13.5533ms)
+✔ dragging cards saves positions only; foreign drops do nothing and move buttons preserve assignments (4.9865ms)
+✔ role save uses the latest received session version after live progress, retaining preference version checks (11.1553ms)
+✔ layout controls persist, reset, and close by Escape without provider access (4.1419ms)
+✔ keyboard and pointer resizing clamp widths and clean up pointer handlers (1.9021ms)
+✔ invalid or unavailable saved preferences do not break the workspace (9.0742ms)
+✔ focus presets preserve manual sizes, persist selection, restore balanced panes and still allow resizing (3.7294ms)
+✔ shell reuses original controls, keeps acceptance and Stop, and shows honest pending panes (2.6239ms)
+✔ normal dashboard serves shell asset under existing same-origin policy without provider calls (214.0044ms)
+✔ all secondary pages retain one studio shell and shared navigation without constructing a second workspace (2.9692ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2424.4461

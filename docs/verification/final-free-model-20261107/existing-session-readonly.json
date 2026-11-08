@@ -1,0 +1,16 @@
+{
+  "projectId": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "sessionId": "b1e11259-d5f7-427e-b004-c66d9a818fe3",
+  "status": "ready",
+  "phase": "builder",
+  "roles": {
+    "builder": "deepseek",
+    "tester": "codex-personal",
+    "reviewer": "claude-code"
+  },
+  "hasApproval": false,
+  "executions": 0,
+  "sessionLock": false,
+  "historicalLockCount": 1,
+  "configuredDeepSeekModel": "deepseek-flash"
+}

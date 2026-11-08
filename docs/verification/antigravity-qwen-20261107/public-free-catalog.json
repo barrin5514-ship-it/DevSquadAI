@@ -1,0 +1,289 @@
+{
+  "httpStatus": 200,
+  "totalModels": 460,
+  "freeVariants": [
+    {
+      "id": "liquid/lfm-3-1.7b:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 262144,
+      "supportedParameters": [
+        "frequency_penalty",
+        "include_reasoning",
+        "logprobs",
+        "max_completion_tokens",
+        "max_tokens",
+        "min_p",
+        "presence_penalty",
+        "reasoning",
+        "repetition_penalty",
+        "response_format",
+        "seed",
+        "stop",
+        "structured_outputs",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_k",
+        "top_logprobs",
+        "top_p"
+      ],
+      "maxOutputTokens": 8192,
+      "expirationDate": null
+    },
+    {
+      "id": "recursive/flint-v1.0:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 262144,
+      "supportedParameters": [
+        "include_reasoning",
+        "logprobs",
+        "max_tokens",
+        "reasoning",
+        "response_format",
+        "seed",
+        "stop",
+        "temperature",
+        "tools",
+        "top_logprobs",
+        "top_p"
+      ],
+      "maxOutputTokens": 235929,
+      "expirationDate": null
+    },
+    {
+      "id": "xingchen-agi/xing4.0-29b-a4b:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 262144,
+      "supportedParameters": [
+        "frequency_penalty",
+        "include_reasoning",
+        "max_tokens",
+        "min_p",
+        "presence_penalty",
+        "reasoning",
+        "repetition_penalty",
+        "response_format",
+        "seed",
+        "stop",
+        "structured_outputs",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_k",
+        "top_p"
+      ],
+      "maxOutputTokens": 235929,
+      "expirationDate": null
+    },
+    {
+      "id": "nvidia/nemotron-3.5-super-vl:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 1000000,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "response_format",
+        "seed",
+        "structured_outputs",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 131072,
+      "expirationDate": null
+    },
+    {
+      "id": "dots-studio/dots-3-note-preview:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 512000,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "response_format",
+        "structured_outputs",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 460800,
+      "expirationDate": "2026-12-31"
+    },
+    {
+      "id": "liquid/lfm-2.5-2.6b:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 65536,
+      "supportedParameters": [
+        "frequency_penalty",
+        "include_reasoning",
+        "logprobs",
+        "max_completion_tokens",
+        "max_tokens",
+        "min_p",
+        "presence_penalty",
+        "reasoning",
+        "repetition_penalty",
+        "response_format",
+        "seed",
+        "stop",
+        "structured_outputs",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_k",
+        "top_logprobs",
+        "top_p"
+      ],
+      "maxOutputTokens": 8192,
+      "expirationDate": "2026-11-13"
+    },
+    {
+      "id": "nvidia/nemotron-3.5-lightning:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 1000000,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "seed",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 65536,
+      "expirationDate": null
+    },
+    {
+      "id": "cohere/north-mini-code:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 256000,
+      "supportedParameters": [
+        "frequency_penalty",
+        "include_reasoning",
+        "max_tokens",
+        "presence_penalty",
+        "reasoning",
+        "seed",
+        "stop",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_k",
+        "top_p"
+      ],
+      "maxOutputTokens": 64000,
+      "expirationDate": null
+    },
+    {
+      "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 1000000,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "reasoning_effort",
+        "seed",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 65536,
+      "expirationDate": null
+    },
+    {
+      "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 256000,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "seed",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 65536,
+      "expirationDate": null
+    },
+    {
+      "id": "google/gemma-4-26b-a4b-it:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 262144,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "response_format",
+        "seed",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 32768,
+      "expirationDate": null
+    },
+    {
+      "id": "google/gemma-4-31b-it:free",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "contextLength": 262144,
+      "supportedParameters": [
+        "include_reasoning",
+        "max_tokens",
+        "reasoning",
+        "response_format",
+        "seed",
+        "temperature",
+        "tool_choice",
+        "tools",
+        "top_p"
+      ],
+      "maxOutputTokens": 32768,
+      "expirationDate": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "projects": 15,
+  "sessions": 15,
+  "activeRuns": 0,
+  "newProjectLocks": 0,
+  "newProjectSessions": 0,
+  "newInitializationLockPresent": false,
+  "counters": [
+    {
+      "id": "fc00a59b-c31e-4b93-b448-35ebbc0de048",
+      "recordsUnchanged": true,
+      "filesUnchanged": true,
+      "lockCount": 1,
+      "executionCount": 0
+    },
+    {
+      "id": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+      "recordsUnchanged": true,
+      "filesUnchanged": true,
+      "lockCount": 0,
+      "executionCount": 1
+    }
+  ]
+}

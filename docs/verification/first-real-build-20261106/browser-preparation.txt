@@ -1,0 +1,16 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.fill: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('textbox', { name: 'Message', exact: true })
+
+    at C:\Users\barri\OneDrive\Desktop\Next Chapter Projects\DevSquadAI\scripts\prepare-first-real-build-20261106.js:8:62 {
+  log: [
+    "  - waiting for getByRole('textbox', { name: 'Message', exact: true })"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

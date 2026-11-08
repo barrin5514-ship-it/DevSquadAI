@@ -1,0 +1,695 @@
+[
+  {
+    "source": "sweep",
+    "cycle": 1,
+    "chat": "4f05f0f0-fb3c-46ba-bf7d-52334b9e3dc7",
+    "id": "bf276982-ae8f-42b6-8cbf-478e49f026a9",
+    "requestId": "137213f2-ffc4-4d99-8e5e-8181866d2739",
+    "agent": "codex-school",
+    "status": "failed",
+    "code": "worker_error",
+    "startedAt": "2026-11-08T03:01:09.289Z",
+    "lastActivityAt": "2026-11-08T03:01:14.932Z",
+    "endedAt": "2026-11-08T03:01:15.409Z",
+    "elapsedMs": 6310,
+    "stdoutBytes": 357,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": true,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:01:09.301Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:01:13.766Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:01:13.786Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:01:15.399Z",
+        "status": "failed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 2,
+    "chat": "bdd1005b-8a70-42ff-b131-855691fc3915",
+    "id": "926ee90c-5081-421f-8dc4-495fcdad3111",
+    "requestId": "e3bb8e61-c983-4a93-adeb-91b4de85926c",
+    "agent": "codex-personal",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T03:01:39.285Z",
+    "lastActivityAt": "2026-11-08T03:02:05.404Z",
+    "endedAt": "2026-11-08T03:02:06.704Z",
+    "elapsedMs": 27623,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:01:39.310Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:01:43.418Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:01:43.421Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:02:06.718Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 2,
+    "chat": "bdd1005b-8a70-42ff-b131-855691fc3915",
+    "id": "5b166f63-7420-42bd-8db2-957f94eabc61",
+    "requestId": "d695a267-3007-48bd-a167-5bd0bde590d3",
+    "agent": "codex-personal",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T03:02:23.893Z",
+    "lastActivityAt": "2026-11-08T03:02:50.410Z",
+    "endedAt": "2026-11-08T03:02:51.498Z",
+    "elapsedMs": 27926,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:02:23.905Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:02:28.355Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:02:28.390Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:02:51.510Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 3,
+    "chat": "34f47a04-5694-4ace-85ee-6cfb1a769ca9",
+    "id": "0450ac30-0afd-42f2-ba7b-4db4f318bab5",
+    "requestId": "711bf78f-219d-4e61-935b-f1aa586d69f2",
+    "agent": "codex-personal",
+    "status": "failed",
+    "code": "inactivity_timeout",
+    "startedAt": "2026-11-08T03:03:30.279Z",
+    "lastActivityAt": "2026-11-08T03:03:56.485Z",
+    "endedAt": "2026-11-08T03:06:57.396Z",
+    "elapsedMs": 207364,
+    "stdoutBytes": 3642,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": false,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": "inactivity_timeout",
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:03:30.281Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:03:33.452Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:03:33.476Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:06:56.915Z",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:06:57.380Z",
+        "status": "stopping",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:06:57.389Z",
+        "status": "paused",
+        "terminationRequested": "inactivity_timeout",
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 4,
+    "chat": "698d9a49-623f-43f8-8287-056b70ba4938",
+    "id": "4ad31574-3a2d-4715-abda-65f3b12ed1bc",
+    "requestId": "968e7793-f1ed-48d1-ae6f-d3655ab3c41c",
+    "agent": "codex-personal",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T03:08:08.405Z",
+    "lastActivityAt": "2026-11-08T03:08:33.827Z",
+    "endedAt": "2026-11-08T03:08:35.034Z",
+    "elapsedMs": 27040,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:08:08.422Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:08:12.026Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:08:12.073Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:08:35.036Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 4,
+    "chat": "698d9a49-623f-43f8-8287-056b70ba4938",
+    "id": "75eb6455-f7b7-4639-9ca9-dcf49ad07dea",
+    "requestId": "d783a5a1-829b-45b6-b71e-e608f15f9e97",
+    "agent": "codex-personal",
+    "status": "failed",
+    "code": "inactivity_timeout",
+    "startedAt": "2026-11-08T03:09:01.458Z",
+    "lastActivityAt": "2026-11-08T03:09:28.746Z",
+    "endedAt": "2026-11-08T03:12:30.088Z",
+    "elapsedMs": 208995,
+    "stdoutBytes": 3764,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": false,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": "inactivity_timeout",
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:09:01.461Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:09:06.115Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:09:06.173Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:12:29.314Z",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:12:30.071Z",
+        "status": "stopping",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:12:30.077Z",
+        "status": "paused",
+        "terminationRequested": "inactivity_timeout",
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "sweep",
+    "cycle": 6,
+    "chat": "14347627-e696-46e4-8b49-99da4cbec5f0",
+    "id": "5e2fe7de-2821-416a-97ec-cbacacbcc2b4",
+    "requestId": "3acc19b0-ac90-4c62-9583-e091d62b4673",
+    "agent": "codex-personal",
+    "status": "failed",
+    "code": "inactivity_timeout",
+    "startedAt": "2026-11-08T03:13:39.660Z",
+    "lastActivityAt": "2026-11-08T03:14:07.454Z",
+    "endedAt": "2026-11-08T03:17:08.400Z",
+    "elapsedMs": 209199,
+    "stdoutBytes": 3572,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": false,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": "inactivity_timeout",
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T03:13:39.711Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T03:13:45.593Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T03:13:45.677Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T03:17:07.901Z",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:17:08.364Z",
+        "status": "stopping",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T03:17:08.389Z",
+        "status": "paused",
+        "terminationRequested": "inactivity_timeout",
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 1,
+    "chat": "2ad9c0f2-a90f-4c20-96f7-8f227cd03957",
+    "id": "cf7ff74b-1cde-42a9-a2e8-3879fc307346",
+    "requestId": "b6a2458f-a912-40bd-a006-43eca235da48",
+    "agent": "codex-personal",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T01:37:02.294Z",
+    "lastActivityAt": "2026-11-08T01:37:23.868Z",
+    "endedAt": "2026-11-08T01:37:25.158Z",
+    "elapsedMs": 23145,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T01:37:02.347Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T01:37:07.788Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T01:37:07.840Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T01:37:25.178Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 1,
+    "chat": "2ad9c0f2-a90f-4c20-96f7-8f227cd03957",
+    "id": "7eda1dee-3989-43fb-9c95-455425daf4f1",
+    "requestId": "719be17f-851c-43b4-b9e7-f7043747cc69",
+    "agent": "codex-personal",
+    "status": "failed",
+    "code": "inactivity_timeout",
+    "startedAt": "2026-11-08T01:53:19.232Z",
+    "lastActivityAt": "2026-11-08T01:53:38.076Z",
+    "endedAt": "2026-11-08T01:56:39.279Z",
+    "elapsedMs": 199982,
+    "stdoutBytes": 2396,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": false,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": "inactivity_timeout",
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T01:53:19.238Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T01:53:23.190Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T01:53:23.238Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T01:56:38.253Z",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T01:56:38.986Z",
+        "status": "stopping",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T01:56:38.990Z",
+        "status": "paused",
+        "terminationRequested": "inactivity_timeout",
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 1,
+    "chat": "2ad9c0f2-a90f-4c20-96f7-8f227cd03957",
+    "id": "624150ab-164a-4af7-8a43-19ba0e410854",
+    "requestId": "719be17f-851c-43b4-b9e7-f7043747cc69",
+    "agent": "codex-school",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T01:56:39.771Z",
+    "lastActivityAt": "2026-11-08T01:57:00.821Z",
+    "endedAt": "2026-11-08T01:57:02.066Z",
+    "elapsedMs": 22516,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T01:56:39.779Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T01:56:43.021Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T01:56:43.061Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T01:57:02.070Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 3,
+    "chat": "c1a4f527-2df3-4e62-9ac9-6c073d0caebf",
+    "id": "11e02c46-ff6d-4b07-b659-b14852a930ae",
+    "requestId": "fa2f845c-9583-4d40-8502-026f4f89a431",
+    "agent": "codex-personal",
+    "status": "failed",
+    "code": "inactivity_timeout",
+    "startedAt": "2026-11-08T01:59:29.141Z",
+    "lastActivityAt": "2026-11-08T01:59:48.839Z",
+    "endedAt": "2026-11-08T02:02:50.178Z",
+    "elapsedMs": 201067,
+    "stdoutBytes": 2543,
+    "stderrBytes": 39,
+    "stdinNotice": true,
+    "creditExhausted": false,
+    "exitCode": 1,
+    "terminationVerified": true,
+    "terminationReason": "inactivity_timeout",
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T01:59:29.157Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T01:59:32.681Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T01:59:32.708Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T02:02:49.048Z",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T02:02:49.766Z",
+        "status": "stopping",
+        "terminationRequested": "inactivity_timeout"
+      },
+      {
+        "at": "2026-11-08T02:02:49.789Z",
+        "status": "paused",
+        "terminationRequested": "inactivity_timeout",
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 3,
+    "chat": "c1a4f527-2df3-4e62-9ac9-6c073d0caebf",
+    "id": "2926f76a-2b97-4985-b165-943962bcb2ef",
+    "requestId": "fa2f845c-9583-4d40-8502-026f4f89a431",
+    "agent": "codex-school",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T02:02:50.785Z",
+    "lastActivityAt": "2026-11-08T02:03:11.631Z",
+    "endedAt": "2026-11-08T02:03:12.460Z",
+    "elapsedMs": 21905,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T02:02:50.790Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T02:02:54.305Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T02:02:54.341Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T02:03:12.468Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 3,
+    "chat": "c1a4f527-2df3-4e62-9ac9-6c073d0caebf",
+    "id": "c918de76-c70e-49bf-b6c7-f330d8be1f1a",
+    "requestId": "211d2ced-8ef5-4905-a305-4038cf590ac1",
+    "agent": "codex-school",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T02:03:31.544Z",
+    "lastActivityAt": "2026-11-08T02:03:52.360Z",
+    "endedAt": "2026-11-08T02:03:53.330Z",
+    "elapsedMs": 22067,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T02:03:31.559Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T02:03:35.693Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T02:03:35.698Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T02:03:53.331Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 3,
+    "chat": "c1a4f527-2df3-4e62-9ac9-6c073d0caebf",
+    "id": "39de77fb-c01e-43e5-9fe2-49a6aeaede73",
+    "requestId": "3652dd0b-15e2-4700-b1d3-36934ba2b713",
+    "agent": "codex-school",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T02:03:58.946Z",
+    "lastActivityAt": "2026-11-08T02:04:18.786Z",
+    "endedAt": "2026-11-08T02:04:19.688Z",
+    "elapsedMs": 20984,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T02:03:58.964Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T02:04:03.448Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T02:04:03.493Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T02:04:19.702Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  },
+  {
+    "source": "hunt",
+    "cycle": 3,
+    "chat": "c1a4f527-2df3-4e62-9ac9-6c073d0caebf",
+    "id": "e70cb66e-8fae-41ff-a50b-d0649be45dab",
+    "requestId": "b07556ff-017b-421d-b784-7d265d2971eb",
+    "agent": "codex-school",
+    "status": "completed",
+    "code": null,
+    "startedAt": "2026-11-08T02:04:41.190Z",
+    "lastActivityAt": "2026-11-08T02:05:01.541Z",
+    "endedAt": "2026-11-08T02:05:02.618Z",
+    "elapsedMs": 21662,
+    "stdinNotice": null,
+    "creditExhausted": null,
+    "exitCode": 0,
+    "terminationReason": null,
+    "stdinDescription": "JSON task packet supplied as context for the fixed instruction",
+    "events": [
+      {
+        "at": "2026-11-08T02:04:41.206Z",
+        "status": "running",
+        "launchAcknowledged": true
+      },
+      {
+        "at": "2026-11-08T02:04:44.056Z",
+        "status": "running",
+        "progress": "CLI session started."
+      },
+      {
+        "at": "2026-11-08T02:04:44.076Z",
+        "status": "running",
+        "progress": "CLI reported a turn started."
+      },
+      {
+        "at": "2026-11-08T02:05:02.635Z",
+        "status": "completed",
+        "terminationRequested": null,
+        "closeObserved": true
+      }
+    ]
+  }
+]

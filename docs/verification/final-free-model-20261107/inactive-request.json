@@ -1,0 +1,67 @@
+{
+  "active": false,
+  "authorization": "PENDING — no generation approved",
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "timeoutMs": 60000,
+  "maxGenerationRequests": 1,
+  "retries": 0,
+  "body": {
+    "model": "nvidia/nemotron-3.5-super-vl:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Return only concise JSON matching the supplied schema. No tools, Markdown fences, or claims that tests ran."
+      },
+      {
+        "role": "user",
+        "content": "Review function calculateTotal(prices) { return prices.reduce((sum, price) => sum + price, 0); } Identify an invalid-input edge case, provide a corrected JavaScript function accepting an array of finite numbers and rejecting invalid inputs, and suggest two meaningful tests."
+      }
+    ],
+    "stream": false,
+    "max_tokens": 2048,
+    "reasoning": {
+      "enabled": false
+    },
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "calculateTotalReview",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "edgeCase": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "tests": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "edgeCase",
+            "code",
+            "tests"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "provider": {
+      "allow_fallbacks": false,
+      "require_parameters": true,
+      "max_price": {
+        "prompt": 0,
+        "completion": 0,
+        "request": 0
+      }
+    }
+  }
+}

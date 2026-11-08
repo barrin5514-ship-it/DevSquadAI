@@ -1,0 +1,15 @@
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (5270.922ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (4291.2228ms)
+✔ requested review corrections pause without a fourth call (4143.8525ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (9172.7585ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (2467.0433ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (2869.1014ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (2967.7998ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35618.0234

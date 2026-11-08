@@ -1,0 +1,68 @@
+{
+  "message": "page.waitForFunction: Timeout 30000ms exceeded.",
+  "checks": [
+    {
+      "name": "Opening dashboard dispatches nothing",
+      "pass": true
+    },
+    {
+      "name": "Exactly three mocked roles, in required order",
+      "pass": true
+    },
+    {
+      "name": "Actual isolated Node runner passed two independent tests",
+      "pass": true
+    },
+    {
+      "name": "Runner selected Tester tests, not deliberately failing Builder tests",
+      "pass": true
+    },
+    {
+      "name": "Reviewer received hash-bound independent evidence",
+      "pass": true
+    },
+    {
+      "name": "Owner acceptance remains pending",
+      "pass": true
+    },
+    {
+      "name": "All three reports visible in actual conversation",
+      "pass": true
+    },
+    {
+      "name": "Reload preserves reports, independent evidence and checkpoint",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\three-agent-browser-xIasct",
+  "calls": [
+    {
+      "agent": "deepseek",
+      "phase": "builder",
+      "goal": "MOCK THREE ROLE FLOW"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester",
+      "goal": "MOCK THREE ROLE FLOW"
+    },
+    {
+      "agent": "claude-code",
+      "phase": "reviewer",
+      "goal": "MOCK THREE ROLE FLOW"
+    }
+  ],
+  "chats": [
+    {
+      "id": "03f818f4-11f9-48c0-b223-0b8e83ce5fac",
+      "status": "ready",
+      "alert": null
+    },
+    {
+      "id": "7e882486-45c2-49cc-b844-0afebfa840c6",
+      "status": "awaiting_owner",
+      "alert": "Work and independent review are ready for your inspection."
+    }
+  ]
+}

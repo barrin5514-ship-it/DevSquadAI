@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "normalCapture": true,
+    "overflowStopsAt8192": true
+  },
+  "modelInvocations": 0
+}

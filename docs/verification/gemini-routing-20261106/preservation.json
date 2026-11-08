@@ -1,0 +1,25 @@
+{
+  "tablesCompared": 64,
+  "changedTables": [
+    "team_runtime_lease"
+  ],
+  "onlyRuntimeLeaseChanged": true,
+  "fingerprints": {
+    "originalCounter": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785",
+    "counterTest2": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "successfulTodo": "e3c2d205f4f35621d61941abfa25b61325832ae1652ebcb17f4707dacf0274d2",
+    "expense": "6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771"
+  },
+  "expenseFiles": [
+    "AGENTS.md"
+  ],
+  "locks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ],
+  "runtime": {
+    "pid": 6920
+  },
+  "projectRequestsSent": 0
+}

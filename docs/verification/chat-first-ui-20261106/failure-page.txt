@@ -1,0 +1,166 @@
+Skip to workspace
+D
+↗
+Dev Squad AI
+＋ New Project
+⌘
+Workspace
+▤
+Projects
+◇
+Agent team
+◷
+Activity / History
+⚙
+Settings
+More tools
+Projects
++
+▾
+To-do App · UI simulation
+⋯
+Files
+Tasks
+Git
+Search conversations in To-do App · UI simulation
+＋ Conversation
+SIMULATION ONLY · STOP FIXTURE
+⋯
+New session
+⋯
+SIMULATION ONLY · Ready conversation
+⋯
+SIMULATION ONLY · Builder-only draft
+⋯
+SIMULATION ONLY · Historical error
+⋯
+SIMULATION ONLY · Paused connection
+⋯
+New session
+⋯
+SIMULATION ONLY · Long conversation
+⋯
+Search message history
+▾
+Calculator · UI simulation
+⋯
+Files
+Tasks
+Git
+Search conversations in Calculator · UI simulation
+＋ Conversation
+SIMULATION ONLY · other project history
+⋯
+Search message history
+▸
+New project · UI simulation
+⋯
+How it works ↗
+☰
+Workspace / To-do App · UI simulation
+▥ Layout
+Local backend connected
+↻ Refresh
+</>
+To-do App · UI simulation
+Ready
+Three-agent team
+Files
+＋ Session
+Hide tools
+Y
+You
+11/6/2026, 4:36:50 PM
+
+SIMULATION ONLY · Ready conversation
+
+fixture · 11/6/2026, 4:36:50 PM
+roles changed · 11/6/2026, 4:36:58 PM
+Y
+You
+11/6/2026, 4:36:59 PM
+
+SIMULATION: save this message and attachment without a worker.
+
+Attachment: notes.txt
+Referenced file: sample.mjs
+Message
+＋ Attach
+@ Reference
+Minimize composer
+Save message
+Send
+Project tools
+×
+Agent team
+⌘
+Builder
+Claude Code
+Assigned
+✓
+Tester
+Codex Personal
+Assigned
+◇
+Reviewer
+Codex School
+Assigned
+
+Assignments are not a live login or quota check.
+
+Team & execution mode
+Execution mode
+Three-agent team
+Builder only — one Codex draft
+Team roles — choose, rotate or move
+How Send, saved messages and attachments work
+Sessions
+Project files
+Files
+↻
+⋯
+
+C:\Users\barri\AppData\Local\Temp\chat-first-ui-IXvVyY\projects\5a3a59c1-44b2-4666-b3fe-3dca8e27159e
+
+Find files by name
+
+5a3a59c1-44b2-4666-b3fe-3dca8e27159e · main
+
+¶
+AGENTS.md
+U
+⋯
+JS
+sample.mjs
+U
+⋯
+Task, changes & review
+Expand / restore
+Task
+Changes
+Compare
+Review
+Agents
+Context
+SIMULATION ONLY · Ready conversation
+READY
+
+SIMULATION ONLY · Ready conversation
+Owner follow-up: SIMULATION: save this message and attachment without a worker.
+
+builder — claude-code · current phase
+tester — codex-personal
+reviewer — codex-school
+
+No structured implementation checklist is stored for this session. Percentages are not inferred from message counts.
+
+Live preview
+Expand preview
+Application server · http://127.0.0.1:50278
+
+Application document loaded.
+
+Refresh preview
+Revoke preview authorization
+Open externally ↗
+Logs & live activity

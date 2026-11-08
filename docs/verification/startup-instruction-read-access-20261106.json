@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "label": "counter2",
+      "exit": 0,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd\\AGENTS.md",
+          "read": false,
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "read": false,
+          "code": "EPERM"
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    },
+    {
+      "label": "fresh-onedrive",
+      "exit": 0,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS\\AGENTS.md",
+          "read": true,
+          "bytes": 84,
+          "sha256": "05d98b63e15216a8555d8f2a9b68991b5817acebb66a92b7fdc054da468927c7"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "read": false,
+          "code": "EPERM"
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    },
+    {
+      "label": "fresh-temp",
+      "exit": 0,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-startup-probe-gQbk39\\AGENTS.md",
+          "read": true,
+          "bytes": 84,
+          "sha256": "05d98b63e15216a8555d8f2a9b68991b5817acebb66a92b7fdc054da468927c7"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "read": false,
+          "code": "EPERM"
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    }
+  ],
+  "modelRequests": 0
+}

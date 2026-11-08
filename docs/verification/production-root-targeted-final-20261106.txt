@@ -1,0 +1,19 @@
+✔ new production project owns Git and mandatory local instructions; legacy folders are untouched (676.8285ms)
+✔ mandatory security comes after project notes and source text/provenance is preserved (379.1143ms)
+✔ ready initialization is idempotent without another git invocation or checkpoint change (595.903ms)
+✔ post-Git interruption resumes the same identity and preserves repository metadata (543.5414ms)
+✔ unknown Git completion and live/unknown initialization locks prevent duplicate writers (403.5295ms)
+✔ tampered controls, shadow instructions and worker patches are rejected before execution (501.168ms)
+✔ failed creation remains unregistered; explicit recovery preserves original project ID (644.1197ms)
+✔ journal-less existing roots and Windows traversal/junction paths are never adopted (44.0778ms)
+✔ concurrent processes materialize one root without double Git initialization (580.1566ms)
+✔ recovery endpoint requires the existing dashboard capability and explicit owner confirmation (227.9525ms)
+✔ Git failure diagnostics preserve safe timeout evidence and never replenish an unknown attempt (392.7026ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5784.3894

@@ -1,0 +1,13 @@
+{
+  "jsonValid": false,
+  "completeArtifact": false,
+  "statementSyntaxCheck": {
+    "exactReturnedStatement": "if (!Array.isArray prices) throw new TypeError('Input must be an array');",
+    "exit": 1,
+    "executed": false,
+    "diagnostic": "SyntaxError: Unexpected identifier 'prices'"
+  },
+  "behaviorTestsRun": 0,
+  "generatedCodeExecuted": false,
+  "verdict": "FAIL — truncated JSON/code and visible syntax error; no reconstructed artifact or automatic correction"
+}

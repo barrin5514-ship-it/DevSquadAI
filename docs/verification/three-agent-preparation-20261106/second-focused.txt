@@ -1,0 +1,149 @@
+✔ local mock project runs without consuming API budgets, call grants, round caps or messenger setup (959.0232ms)
+✔ different problems allow more than three rounds and more than one call to each agent (1904.9809ms)
+✔ same failing test three consecutive times pauses and records a durable stuck alert (1208.4706ms)
+✔ worker patch cannot escape the selected project or read/write credentials (549.3115ms)
+✔ a builder cannot review its own step and no owner acceptance is granted (507.1107ms)
+✔ duplicate Run and simultaneous chats cannot dispatch twice or share a folder lock (675.5736ms)
+✔ file changes and earlier contents remain in history; changed reviewed files cannot be accepted (929.756ms)
+✔ unknown native outcome keeps folder locked instead of allowing overlapping work (594.3017ms)
+✔ a recurring test pauses on its third consecutive failure even if other failures differ (1919.9776ms)
+✔ hard-linked files cannot redirect a worker write outside its selected folder (763.2085ms)
+✔ a prior Run request ID stays deduplicated after the same chat is resumed (645.0406ms)
+✔ retired demo grant files cannot authorize or block the new project workflow (427.9414ms)
+✔ same known worker problem on three owner-requested continuations shows the stuck alert (619.6985ms)
+✔ a known Tester protocol failure preserves phase and saved Builder files; resume never reruns Builder (888.864ms)
+✔ legacy incomplete logs recover the actual failed Tester phase without rewriting their history (991.6407ms)
+✔ resume rejects stale task versions, changed checkpoints and changed saved files before dispatch (607.3403ms)
+✔ confirmed Codex quota hands the saved Tester step to School exactly once without rerunning Builder (822.2585ms)
+✔ both exhausted profiles pause without ping-pong or fallback; unknown outcome never switches (1297.6031ms)
+✔ a Codex profile cannot review work authored by the other Codex profile (491.6718ms)
+✔ closing a known failed run preserves evidence; unresolved folder locks cannot be closed away (1067.1139ms)
+✔ native login preflight failure pauses before any Builder charge; resumption remains Builder (486.6455ms)
+✔ A: Personal usage limit hands the same Tester checkpoint to School, then independent review and owner gate (838.875ms)
+✔ B: both Codex accounts unavailable cannot assign the Reviewer as Tester (621.9467ms)
+✔ C: prepaid approval never permits DeepSeek Builder to become its own Tester (1502.6411ms)
+✔ D: all remaining providers unavailable pauses safely with a durable reason and intact files (764.9175ms)
+✔ E: partial response is diagnostic only; fallback receives the last saved Builder files (949.1325ms)
+✔ F: unknown previous outcome retains the folder lock and prevents every alternative (582.0862ms)
+✔ G: a recovered Personal account does not steal a successful School turn; duplicate Run stays deduplicated (769.9067ms)
+✔ H: another Codex profile never establishes independent review; unapproved workers are not tried (751.184ms)
+✔ missing native login can hand off in preflight without skipping or repeating the Builder stage (1276.9783ms)
+✔ task settings reject stale versions, review-complete edits, foreign folders and expired paid approvals (938.1145ms)
+✔ budget dispatch is bounded, duplicate-proof and retains unknown reservations; stale prices/balance stop before fetch (685.305ms)
+✔ real DeepSeek adapter path selects generateBound with approved output limit; no actual provider request (981.3432ms)
+✔ confirmed auth, outage, connection and safely terminated timeout errors can hand off; sandbox failures cannot (5277.2575ms)
+✔ price/balance freshness, scope and concurrent lifetime reservations are enforced before dispatch (548.9064ms)
+✔ unknown remote completion retains the folder even if the local process is confirmed stopped (707.7526ms)
+✔ fallback API requires the dashboard capability and records task-only preapproval without starting work (799.3157ms)
+✔ P0: every allowed and denied fallback retains an explicit safe decision (3708.3572ms)
+✔ P0: disabled policy and unknown outcome record why switching was forbidden (1768.8458ms)
+✔ P0: bounded run approval cannot be broadened by a fallback policy (731.8153ms)
+✔ rotate and assignments persist per project; card order does not reassign workers (1326.7585ms)
+✔ wrong project, stale versions, invalid order, unknown workers and self-review fail closed (1150.2513ms)
+✔ concurrent saves have one winner and stale repetition cannot overwrite it (765.4736ms)
+✔ active reassignment queues without interrupting or changing the current worker and applies after Stop/resume (1112.6115ms)
+✔ all prior file authors remain ineligible to review, including a tester who wrote tests (998.6513ms)
+✔ role API retains dashboard capability and exact session scope without provider dispatch (913.1218ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (1041.6623ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (880.9415ms)
+✔ requested review corrections pause without a fourth call (1087.2443ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (6051.1955ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (1030.6115ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (862.0206ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (608.8084ms)
+✖ Builder-only selection requires separate approval and no future role assignments (609.5678ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.9039ms)
+✖ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (676.5425ms)
+✖ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (666.0886ms)
+✖ completed Builder-only state cannot dispatch after a database reopen (799.1601ms)
+✖ Builder-only rejects wrong session project database root and approval mutation (3552.2913ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 54
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 69296.1489
+
+✖ failing tests:
+
+test at tests\studio-run-scope.test.js:13:1
+✖ Builder-only selection requires separate approval and no future role assignments (609.5678ms)
+  Error: Invalid request fields
+      at object (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:3:162)
+      at TeamOrchestrator.fields (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/orchestrator/team.js:48:40)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:56
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:13:328)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 400
+  }
+
+test at tests\studio-run-scope.test.js:15:1
+✖ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (676.5425ms)
+  Error: Invalid request fields
+      at object (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:3:162)
+      at TeamOrchestrator.fields (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/orchestrator/team.js:48:40)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:56
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:15:160)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 400
+  }
+
+test at tests\studio-run-scope.test.js:16:1
+✖ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (666.0886ms)
+  Error: Invalid request fields
+      at object (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:3:162)
+      at TeamOrchestrator.fields (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/orchestrator/team.js:48:40)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:56
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:16:192)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 400
+  }
+
+test at tests\studio-run-scope.test.js:17:1
+✖ completed Builder-only state cannot dispatch after a database reopen (799.1601ms)
+  Error: Invalid request fields
+      at object (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:3:162)
+      at TeamOrchestrator.fields (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/orchestrator/team.js:48:40)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:56
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:17:129)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 400
+  }
+
+test at tests\studio-run-scope.test.js:19:1
+✖ Builder-only rejects wrong session project database root and approval mutation (3552.2913ms)
+  Error: Invalid request fields
+      at object (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:3:162)
+      at TeamOrchestrator.fields (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/orchestrator/team.js:48:40)
+      at file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:56
+      at transaction (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/middleware/ai-validation.js:11:89)
+      at StudioRunScope.arm (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-run-scope.js:12:19)
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-run-scope.test.js:19:133)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19) {
+    status: 400
+  }

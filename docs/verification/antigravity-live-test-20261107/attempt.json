@@ -1,0 +1,30 @@
+{
+  "approvedAtRecorded": "2026-11-07T06:19:32.684Z",
+  "authorization": "One invocation; native built-in retries permitted within 60 seconds; no relaunch/fallback/paid use",
+  "model": "gemini-3.8-flash-low",
+  "timeoutMs": 60000,
+  "captureBytes": 8192,
+  "hardTokenCap": null,
+  "promptHash": "92c3662d3577a94d0152fe1b16616084060af932fdc86091f52f8386f2ac6a4f",
+  "settings": {
+    "useG1Credits": false,
+    "toolPermission": "strict",
+    "allowNonWorkspaceAccess": false,
+    "enableTerminalSandbox": true,
+    "verbosity": "low",
+    "permissions": {
+      "allow": [],
+      "ask": [],
+      "deny": [
+        "read_file(*)",
+        "write_file(*)",
+        "command(*)",
+        "unsandboxed(*)",
+        "read_url(*)",
+        "execute_url(*)",
+        "mcp(*)"
+      ]
+    }
+  },
+  "cwd": "C:\\Users\\barri\\AppData\\Local\\Temp\\agy-approved-review-XfVYPC"
+}

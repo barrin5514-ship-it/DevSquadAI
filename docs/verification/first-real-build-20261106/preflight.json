@@ -1,0 +1,20 @@
+{
+  "backup": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\backups\\backup-1794006212689-3c5f0da8-77d3-4fb9-bbbb-4c91a977d621.sqlite",
+  "authentication": {
+    "id": "codex-personal",
+    "label": "Personal",
+    "ok": true,
+    "method": "ChatGPT native login"
+  },
+  "profileHome": "C:\\Users\\barri\\.devsquad\\codex\\personal",
+  "modelSettings": [
+    "No top-level model override; native CLI default"
+  ],
+  "active": 0,
+  "locks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ],
+  "existingNamedProjects": []
+}

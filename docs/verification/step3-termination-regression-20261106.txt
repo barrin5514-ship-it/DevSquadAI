@@ -1,0 +1,42 @@
+✔ demo preparation is offline, ID-bound, idempotent, on its own branch; no active grant or acceptance (5044.2079ms)
+✔ production isolation fails closed before any process, paid dispatch or generated test (5701.6347ms)
+✔ unrelated task and missing included-usage/spending approval cannot reach worker (5559.7728ms)
+✔ only the bound source file can be written; shell, tests, traversal and extra files rejected (15424.3511ms)
+✔ base revision, test tampering and unexpected files are rejected (6946.2728ms)
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (1.7198ms)
+✔ native transport uses fixed argument arrays, stdin, no API credentials, bounded output and no retry (18.564ms)
+✔ timeout, cancellation, quota and unknown results never retry and are classified conservatively (5096.8223ms)
+✔ mock connectors finish full messenger loop and independently execute nine tests on exact fixture source (28526.9045ms)
+✔ pricing proposal binds the exact JSON and does not represent an active grant or guaranteed invoice (1.5939ms)
+✔ late checkpoint failure preserves original and revised source evidence, and unauthorized source edits are rejected (26828.5914ms)
+✔ an expired approval cannot consume a model-check slot (5757.2113ms)
+✔ review importer rejects wrong revision/test bindings and invented reviewer execution without approving (40516.7062ms)
+✔ imported independent review persists, freezes tests and preserves explicit owner acceptance (11102.2657ms)
+✔ one native call cannot be replenished by moving the same worker into another role (7439.3807ms)
+✔ failed test evidence is retained; review may request corrections but cannot approve it (17504.8833ms)
+✔ native API-key or expired authentication cannot reach inference transport (5.5253ms)
+✔ public price verification uses uncached peak rates and rejects price/model changes (6.1034ms)
+✔ owner scope preparation uses actual dashboard action time, does not dispatch, and cannot reset clocks (3941.6116ms)
+✔ price failure or missing exact consent cannot create a live scope (3058.7203ms)
+✔ Stop during public pricing verification fences scope creation without dispatch (3289.2125ms)
+✔ isolation receipt binds exact job, root, base, executable and all denial checks; no weaker fallback (2157.712ms)
+✔ scoped builder makes one model GET, balance GET, POST; records tokens and full cap in existing spending ledger (2618.9076ms)
+✔ concurrent attempts and unknown POST outcomes retain reservation and cannot replenish request slots (2126.2977ms)
+✔ builder rejects expired, altered payload, different task/model/database and changed pricing before dispatch (18222.0856ms)
+✔ restart preserves a valid current demo review using the exact draft ID and rejects a mismatched revision (11592.0978ms)
+✔ a reused PID is never killed or treated as the original worker termination (31.7867ms)
+✔ Codex structured schema is passed explicitly; UTF-8 replies survive arbitrary chunk boundaries (12.6777ms)
+✔ rejected native responses preserve sanitized protocol evidence without response text or retries (13.472ms)
+✔ an unsupported profile cannot silently dispatch Claude instead (0.9798ms)
+✔ native timeout distinguishes confirmed tree termination from unknown outcome without retries (39.9238ms)
+✔ OS launch failure is a known failure, never a phantom active worker (7.4239ms)
+✔ three-minute inactivity guard pauses once; real output renews the idle deadline (201.6261ms)
+✔ profile home is used for both login check and worker spawn; nonzero stderr is categorized and never saved raw (7.5056ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 231782.5165

@@ -1,0 +1,14 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.selectOption: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByLabel('Builder agent', { exact: true })
+
+    at C:\Users\barri\OneDrive\Desktop\Next Chapter Projects\DevSquadAI\scripts\prepare-three-agent-session-20261106.js:1:2543 {
+  log: [ "  - waiting for getByLabel('Builder agent', { exact: true })" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

@@ -1,0 +1,86 @@
+[
+  {
+    "label": "normal visible answer",
+    "passed": true,
+    "limit": 512000,
+    "rawBodyBytes": 5858,
+    "visibleCharacters": 5619,
+    "reasoningBytes": 0,
+    "outputCharacters": 5619,
+    "finishReason": "stop",
+    "usage": {
+      "input": 100,
+      "output": 10,
+      "total": 110,
+      "source": "provider_reported",
+      "reasoning": null,
+      "estimatedCost": 0.000042
+    }
+  },
+  {
+    "label": "reasoning-heavy 600k, same 5,619 visible",
+    "passed": true,
+    "limit": 512000,
+    "rawBodyBytes": 605939,
+    "visibleCharacters": 5619,
+    "reasoningBytes": 600000,
+    "outputCharacters": 5619,
+    "finishReason": "stop",
+    "usage": {
+      "input": 100,
+      "output": 10,
+      "total": 110,
+      "source": "provider_reported",
+      "reasoning": null,
+      "estimatedCost": 0.000042
+    }
+  },
+  {
+    "label": "genuinely oversized visible answer 520k",
+    "passed": false,
+    "limit": 512000,
+    "rawBodyBytes": 520239,
+    "visibleCharacters": 520000,
+    "reasoningBytes": 0,
+    "error": "Provider returned more visible answer than the bounded response limit. No complete response was accepted.",
+    "code": "answer_limit",
+    "httpStatus": 200,
+    "failedCheck": "answer_limit",
+    "diagnostic": {
+      "failedCheck": "answer_limit",
+      "completionObserved": false,
+      "finishReason": null,
+      "usageReported": false,
+      "visibleAnswerBytes": 520000,
+      "rawStreamBytes": 520071,
+      "limits": {
+        "answer": 512000,
+        "raw": 2000000
+      }
+    }
+  },
+  {
+    "label": "genuinely oversized raw stream 2.1MB",
+    "passed": false,
+    "limit": 512000,
+    "rawBodyBytes": 2105939,
+    "visibleCharacters": 5619,
+    "reasoningBytes": 2100000,
+    "error": "Provider stream exceeded the bounded raw safety limit. No complete response was accepted.",
+    "code": "body_limit",
+    "httpStatus": 200,
+    "failedCheck": "body_limit",
+    "diagnostic": {
+      "failedCheck": "body_limit",
+      "completionObserved": false,
+      "finishReason": null,
+      "usageReported": false,
+      "visibleAnswerBytes": 5619,
+      "rawStreamBytes": 5690,
+      "limits": {
+        "answer": 512000,
+        "raw": 2000000
+      }
+    }
+  }
+]

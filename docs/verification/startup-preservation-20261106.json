@@ -1,0 +1,17 @@
+{
+  "projects": 14,
+  "sessions": 15,
+  "status": "paused",
+  "roles": {
+    "builder": "codex-personal",
+    "tester": "codex-school",
+    "reviewer": "claude-code"
+  },
+  "fallbackEnabled": false,
+  "executions": 1,
+  "taskLocks": 0,
+  "originalCounterLock": true,
+  "originalCounterFingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785",
+  "counter2Fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "active": 0
+}

@@ -1,0 +1,88 @@
+{
+  "root": "C:\\Users\\barri\\AppData\\Local\\Temp\\team-cleanup-diagnostic-ZK4kaU",
+  "error": {
+    "code": "timeout",
+    "stopped": true,
+    "message": "Tests exceeded their time or output limit; no pass recorded."
+  },
+  "events": [
+    {
+      "status": "running",
+      "stage": "isolated-tests",
+      "pid": 29768,
+      "birth": "2026-11-07T00:09:19.3643770Z",
+      "treeCaptured": true,
+      "descendants": [],
+      "closeObserved": false,
+      "terminationRequested": null,
+      "treeKillConfirmed": false,
+      "launchAcknowledged": true,
+      "startedAt": "2026-11-07T00:09:19.359Z",
+      "observedAt": "2026-11-07T00:09:19.547Z"
+    },
+    {
+      "status": "stopping",
+      "terminationRequested": "timeout",
+      "descendants": [
+        {
+          "pid": 36236,
+          "parent": 29768,
+          "birth": "2026-11-07T00:09:19.3845310Z"
+        },
+        {
+          "pid": 6108,
+          "parent": 29768,
+          "birth": "2026-11-07T00:09:19.6170230Z"
+        },
+        {
+          "pid": 16400,
+          "parent": 6108,
+          "birth": "2026-11-07T00:09:20.0810930Z"
+        },
+        {
+          "pid": 14300,
+          "parent": 16400,
+          "birth": "2026-11-07T00:09:20.1096840Z"
+        }
+      ],
+      "observedAt": "2026-11-07T00:09:20.751Z"
+    },
+    {
+      "status": "timed_out",
+      "exitCode": 1,
+      "closeObserved": true,
+      "treeKillConfirmed": true,
+      "terminationRequested": "timeout",
+      "descendants": [
+        {
+          "pid": 36236,
+          "parent": 29768,
+          "birth": "2026-11-07T00:09:19.3845310Z"
+        },
+        {
+          "pid": 6108,
+          "parent": 29768,
+          "birth": "2026-11-07T00:09:19.6170230Z"
+        },
+        {
+          "pid": 16400,
+          "parent": 6108,
+          "birth": "2026-11-07T00:09:20.0810930Z"
+        },
+        {
+          "pid": 14300,
+          "parent": 16400,
+          "birth": "2026-11-07T00:09:20.1096840Z"
+        }
+      ],
+      "endedAt": "2026-11-07T00:09:21.612Z",
+      "terminationVerified": true,
+      "timeoutMs": 1200,
+      "observedAt": "2026-11-07T00:09:21.612Z"
+    }
+  ],
+  "observation": {
+    "verified": true,
+    "processes": []
+  }
+}

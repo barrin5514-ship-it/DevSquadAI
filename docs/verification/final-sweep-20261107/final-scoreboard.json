@@ -1,0 +1,118 @@
+{
+  "sweep": "FINAL SWEEP",
+  "measuredAt": "2026-11-08T03:18:00.000Z",
+  "editorCheck": {
+    "checkedAt": "2026-11-08T02:33:17.573Z",
+    "observed": "Backend PID 12900 plus idle Codex helpers; no active checkout edit found",
+    "concurrentEditorDetectedAt": "2026-11-08T03:11:08.601Z",
+    "concurrentEditor": "Codex",
+    "concurrentFiles": [
+      "src/services/native-diagnostics.js (22:12:58 ET)",
+      "tests/codex-hunt-credit-limit.test.js (22:14:21 ET)"
+    ],
+    "stoppedFurtherEdits": true
+  },
+  "items": {
+    "1": "FIXED",
+    "2": "FIXED",
+    "3": "FIXED",
+    "4": "FIXED",
+    "5": "FIXED",
+    "6": "FIXED",
+    "7": "ALREADY-FIXED / PLATFORM DIFFERENCE",
+    "8": "NOT MET"
+  },
+  "focused": {
+    "commandFile": "docs/verification/final-sweep-20261107/focused-all-items.txt",
+    "tests": 117,
+    "passed": 117,
+    "failed": 0,
+    "durationMs": 75956.3272
+  },
+  "item7": {
+    "file": "docs/verification/final-sweep-20261107/item7-demo-workers-windows.txt",
+    "tests": 26,
+    "passed": 26,
+    "failed": 0,
+    "durationMs": 63935.9176,
+    "classification": "platform difference; Muse Linux failure not reproduced on Windows; no code change"
+  },
+  "fullSerial": {
+    "file": "docs/verification/final-sweep-20261107/full-serial-final.txt",
+    "tests": 718,
+    "passed": 718,
+    "failed": 0,
+    "durationMs": 403955.8608,
+    "note": "Run completed before the concurrent Codex delta at 22:12:58 ET. The current tree includes that unverified delta."
+  },
+  "backend": {
+    "pid": 2200,
+    "health": "ok",
+    "migrations": 22,
+    "runningChats": 0,
+    "locks": 1,
+    "lockDetail": "Historical Calculator project lock fc00a59b-c31e-4b93-b448-35ebbc0de048; no AutoTest lock",
+    "startedAt": "2026-11-07T22:00:39-05:00"
+  },
+  "live": {
+    "attempts": 6,
+    "cleanCycles": 0,
+    "cleanStreak": 0,
+    "bug5": {
+      "provenLive": true,
+      "cycles": [2, 4],
+      "build2BodyBytes": [24654, 25182],
+      "oldByteRejection": 0,
+      "note": "Both build 2 requests exceeded 24,000 bytes of full JSON and were dispatched without the removed byte rejection. Neither cycle reached both-build Awaiting Owner."
+    },
+    "cycles": [
+      {
+        "number": 1,
+        "lineup": "DeepSeek / Codex School / Nemotron",
+        "result": "provider-side pause at build 1 Tester: Codex School worker_error, stdin text"
+      },
+      {
+        "number": 2,
+        "lineup": "DeepSeek / Codex Personal / Nemotron",
+        "result": "build 1 Awaiting Owner; build 2 paused at Reviewer: Nemotron invalid_response; build2 body 24,654 bytes; no byte rejection"
+      },
+      {
+        "number": 3,
+        "lineup": "DeepSeek / Codex Personal / Nemotron",
+        "result": "provider-side pause at build 1 Tester: Codex Personal inactivity_timeout, stdin text"
+      },
+      {
+        "number": 4,
+        "lineup": "DeepSeek / Codex Personal / Nemotron",
+        "result": "build 1 Awaiting Owner; build 2 paused at Tester: Codex Personal inactivity_timeout; build2 body 25,182 bytes; no byte rejection"
+      },
+      {
+        "number": 5,
+        "lineup": "DeepSeek / Claude Code / Nemotron",
+        "result": "provider-side pause at build 1 Tester: Claude Code worker_error, Structured CLI error"
+      },
+      {
+        "number": 6,
+        "lineup": "DeepSeek / Codex Personal / Nemotron",
+        "result": "provider-side pause at build 1 Tester: Codex Personal inactivity_timeout, stdin text"
+      }
+    ],
+    "providerFailures": [
+      "Codex School: worker_error; 'Reading additional input from stdin...'",
+      "Codex Personal: inactivity_timeout; same stdin text; succeeded for two build-1 Tester turns but failed three Tester turns",
+      "Nemotron: one invalid_response at Reviewer in cycle 2 build 2",
+      "Claude Code: worker_error; Structured CLI error"
+    ],
+    "locksAfter": "No AutoTest lock; only historical Calculator lock"
+  },
+  "unproven": [
+    "Three consecutive clean live two-build cycles",
+    "Both builds Awaiting Owner in any sweep cycle",
+    "Reliable Codex and Claude availability after the reset",
+    "Full Codex/Claude/DeepSeek three-agent cycle",
+    "Zapier live callbacks",
+    "Major #5 staged atomic multi-file apply",
+    "Full serial suite on the current tree after the concurrent Codex delta"
+  ],
+  "noCommitPushDeploy": true
+}

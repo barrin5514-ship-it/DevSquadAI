@@ -1,0 +1,42 @@
+✔ new production project owns Git and mandatory local instructions; legacy folders are untouched (784.5785ms)
+✔ mandatory security comes after project notes and source text/provenance is preserved (465.1661ms)
+✔ ready initialization is idempotent without another git invocation or checkpoint change (796.9762ms)
+✔ post-Git interruption resumes the same identity and preserves repository metadata (843.2605ms)
+✔ unknown Git completion and live/unknown initialization locks prevent duplicate writers (484.5004ms)
+✔ tampered controls, shadow instructions and worker patches are rejected before execution (753.61ms)
+✔ failed creation remains unregistered; explicit recovery preserves original project ID (995.5133ms)
+✔ journal-less existing roots and Windows traversal/junction paths are never adopted (36.105ms)
+✔ concurrent processes materialize one root without double Git initialization (748.7718ms)
+✔ recovery endpoint requires the existing dashboard capability and explicit owner confirmation (265.1652ms)
+✔ Git failure diagnostics preserve safe timeout evidence and never replenish an unknown attempt (480.7902ms)
+✔ new managed root preserves instructions, owns Git and has a stable checkpoint after reopening (402.3587ms)
+✔ existing folders/repositories are never initialized or overwritten (14.6795ms)
+✔ nested roots stop at their own Git metadata without granting parent reads (874.4184ms)
+✔ missing, oversized and unrelated instruction sources fail before folder creation (26.6175ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (1099.3022ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (1087.2898ms)
+✔ requested review corrections pause without a fourth call (1621.5944ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (2755.972ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (634.5331ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (763.0645ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (757.2197ms)
+✔ real tree includes nested/empty directories and excludes private files and hard links (1563.4426ms)
+✔ viewer rejects traversal, outside paths, credentials, binary and oversized files without returning content (1396.5126ms)
+✔ Git reports its actual branch plus added, modified and deleted files using real committed contents (5318.4548ms)
+✔ viewer does not borrow a parent repository or enable an external Git monitor (1520.8917ms)
+✔ custom Git filters and includes stop metadata inspection instead of running helpers (924.6821ms)
+✔ saved revision reads are bound to the actual session and verified content hashes (912.8247ms)
+✔ review eligibility uses current independent evidence and rejects changed reviewed files (936.6282ms)
+✔ inspection keeps registry, session context and history scoped, without provider or CLI calls (962.522ms)
+✔ same-origin APIs serve files and revision data read-only while acceptance remains protected (889.1012ms)
+✔ chat feedback after review creates a linked Builder task without accepting or rewriting the reviewed task (1450.1476ms)
+✔ invalid feedback cannot fork a reviewed task or consume its previous review (834.6977ms)
+✔ Git inspection rejects object-store junctions and shared metadata without following outside files (794.194ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37001.8001

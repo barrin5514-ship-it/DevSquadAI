@@ -1,0 +1,22 @@
+✔ structured capability answer preserves code and two distinct suggested tests without claiming execution (2.4058ms)
+✔ invalid JSON, incomplete output, duplicate tests and unexpected fields are rejected (0.3568ms)
+✔ HTTP 200 catalog, free confirmation or failed generation cannot qualify a worker role (0.2187ms)
+✔ a successful disposable answer still does not prove production Builder/Reviewer integration or real Tester execution (0.1169ms)
+✔ each role requires its own contract and evidence; no model has a permanent role (0.142ms)
+✔ capability caller passes separate strings through the actual adapter contract exactly once (0.219ms)
+✔ malformed local capability prompts fail before any adapter/provider invocation (0.484ms)
+✔ corrected caller constructs the real Gemini request with JSON, low thinking and a 500-token cap (24.6762ms)
+✔ 3.8 uses documented low thinking, shared cap and native JSON schema; joins only final text (27.8794ms)
+✔ thinking controls are model-specific and invalid 3.8 controls fail before HTTP (1.4856ms)
+✔ MAX_TOKENS never becomes a draft even with parseable final JSON; safe partial and usage survive (0.7326ms)
+✔ empty final content is incomplete even with STOP and thought text present (1.0144ms)
+✔ diagnostic previews are bounded and omit literal or JSON-escaped credential echoes (1.7789ms)
+✔ unexpected finish metadata is not copied into sanitized errors (2.3489ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 351.8252

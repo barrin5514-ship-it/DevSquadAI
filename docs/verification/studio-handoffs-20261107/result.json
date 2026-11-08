@@ -1,0 +1,146 @@
+{
+  "checks": [
+    {
+      "name": "One dashboard Send returned 202",
+      "ok": true
+    },
+    {
+      "name": "Successful run ends at owner review",
+      "ok": true
+    },
+    {
+      "name": "Both automatic Zapier handoffs accepted",
+      "ok": true
+    },
+    {
+      "name": "No manual unlock and no lock remains",
+      "ok": true
+    },
+    {
+      "name": "Builder file, independent test and review evidence exist",
+      "ok": true
+    },
+    {
+      "name": "Exactly one worker call per role",
+      "ok": true
+    },
+    {
+      "name": "Second dashboard Send accepted for active-writer check",
+      "ok": true
+    },
+    {
+      "name": "Active writer holds the folder lock",
+      "ok": true
+    },
+    {
+      "name": "Unknown-outcome dashboard Send accepted",
+      "ok": true
+    },
+    {
+      "name": "Unknown outcome releases write access and no lock remains",
+      "ok": true
+    },
+    {
+      "name": "Dashboard shows unknown outcome without claiming the folder is locked",
+      "ok": true
+    },
+    {
+      "name": "No page JavaScript errors",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "calls": [
+    {
+      "agent": "deepseek",
+      "phase": "builder",
+      "goal": "Create a disposable handoff fixture with independent tests."
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester",
+      "goal": "Create a disposable handoff fixture with independent tests."
+    },
+    {
+      "agent": "nemotron",
+      "phase": "reviewer",
+      "goal": "Create a disposable handoff fixture with independent tests."
+    },
+    {
+      "agent": "deepseek",
+      "phase": "builder",
+      "goal": "Build [SLOW] checkpoint fixture"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester",
+      "goal": "Build [SLOW] checkpoint fixture"
+    },
+    {
+      "agent": "nemotron",
+      "phase": "reviewer",
+      "goal": "Build [SLOW] checkpoint fixture"
+    },
+    {
+      "agent": "deepseek",
+      "phase": "builder",
+      "goal": "Build [UNKNOWN] checkpoint fixture"
+    }
+  ],
+  "webhookCalls": [
+    {
+      "event": "studio_checkpoint_handoff",
+      "handoffId": "hof_0306326c73695261c9b3a37f5d34f921434594a87ae6e908",
+      "projectId": "71eb96e7-3109-4626-bc53-9584dfd6cc5c",
+      "chatId": "3853594b-3ac4-477b-9cec-665770d0e618",
+      "requestId": "2a99ce19-3c33-40e3-925e-06e4d6ef3049",
+      "phase": "builder",
+      "nextPhase": "tester",
+      "checkpointHash": "ae1605ab7c318fbfe16fd48392e5ceed96dbb361eb11375fd89d55cd73401a23",
+      "testEvidenceHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "executionId": null,
+      "createdAt": "2026-11-07T21:12:25.094Z"
+    },
+    {
+      "event": "studio_checkpoint_handoff",
+      "handoffId": "hof_6a39b11dcd3eac7d7b477355f45e029840714ac12a4ea6cd",
+      "projectId": "71eb96e7-3109-4626-bc53-9584dfd6cc5c",
+      "chatId": "3853594b-3ac4-477b-9cec-665770d0e618",
+      "requestId": "2a99ce19-3c33-40e3-925e-06e4d6ef3049",
+      "phase": "tester",
+      "nextPhase": "reviewer",
+      "checkpointHash": "988204d727a41193633effbb37aa9f5bbe6bebd877c6f1339f66df98d9b5c7f9",
+      "testEvidenceHash": "c27315578bffc7a5df577a2f834d1b9d94362dbcee442b7f6a0a88ce1b7f25fd",
+      "executionId": null,
+      "createdAt": "2026-11-07T21:12:25.593Z"
+    },
+    {
+      "event": "studio_checkpoint_handoff",
+      "handoffId": "hof_c4e4056b7559eda4a6db113336961985f460c865df384f22",
+      "projectId": "2980a289-6633-49e8-9149-07e13648ac33",
+      "chatId": "5a9c4883-9025-4c6d-8b44-5fcd86c70702",
+      "requestId": "220eb013-ff5d-4897-b46e-e42e330b91f7",
+      "phase": "builder",
+      "nextPhase": "tester",
+      "checkpointHash": "ae1605ab7c318fbfe16fd48392e5ceed96dbb361eb11375fd89d55cd73401a23",
+      "testEvidenceHash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "executionId": null,
+      "createdAt": "2026-11-07T21:12:28.515Z"
+    },
+    {
+      "event": "studio_checkpoint_handoff",
+      "handoffId": "hof_cadba5bf44d191352e1ad614c0c99e58cb07adcafc116c58",
+      "projectId": "2980a289-6633-49e8-9149-07e13648ac33",
+      "chatId": "5a9c4883-9025-4c6d-8b44-5fcd86c70702",
+      "requestId": "220eb013-ff5d-4897-b46e-e42e330b91f7",
+      "phase": "tester",
+      "nextPhase": "reviewer",
+      "checkpointHash": "988204d727a41193633effbb37aa9f5bbe6bebd877c6f1339f66df98d9b5c7f9",
+      "testEvidenceHash": "1ec9122fc6e75e3f6dc5bc202af5f0ccc9d15df591ee1f674916ac058b6eb5a7",
+      "executionId": null,
+      "createdAt": "2026-11-07T21:12:29.090Z"
+    }
+  ],
+  "liveModelCalls": 0,
+  "simulation": true
+}

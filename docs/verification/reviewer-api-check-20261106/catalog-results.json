@@ -1,0 +1,489 @@
+{
+  "checkedAt": "2026-11-07T03:22:39.731Z",
+  "results": [
+    {
+      "provider": "gemini",
+      "configured": true,
+      "model": "gemini-3.8-flash",
+      "freeConfirmed": true,
+      "storedAccountEvidence": null,
+      "httpStatus": 200,
+      "models": [
+        {
+          "id": "models/gemini-2.5-flash",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-2.5-pro",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-2.5-flash-preview-tts",
+          "capabilities": [
+            "countTokens",
+            "generateContent"
+          ],
+          "inputTokens": 8192,
+          "outputTokens": 16384
+        },
+        {
+          "id": "models/gemini-2.5-pro-preview-tts",
+          "capabilities": [
+            "countTokens",
+            "generateContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 8192,
+          "outputTokens": 16384
+        },
+        {
+          "id": "models/gemini-2.5-flash-lite",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-2.5-flash-image",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 32768,
+          "outputTokens": 32768
+        },
+        {
+          "id": "models/gemini-3.6-flash",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-3.7-flash",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-3.8-flash",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "createCachedContent",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 1048576,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-3.8-flash-tts",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 8192,
+          "outputTokens": 16384
+        },
+        {
+          "id": "models/gemini-3.8-flash-lite-tts",
+          "capabilities": [
+            "generateContent",
+            "countTokens",
+            "batchGenerateContent"
+          ],
+          "inputTokens": 8192,
+          "outputTokens": 16384
+        },
+        {
+          "id": "models/gemini-2.5-flash-native-audio-latest",
+          "capabilities": [
+            "countTokens",
+            "bidiGenerateContent"
+          ],
+          "inputTokens": 131072,
+          "outputTokens": 8192
+        },
+        {
+          "id": "models/gemini-2.5-flash-native-audio-preview-09-2025",
+          "capabilities": [
+            "countTokens",
+            "bidiGenerateContent"
+          ],
+          "inputTokens": 131072,
+          "outputTokens": 8192
+        },
+        {
+          "id": "models/gemini-2.5-flash-native-audio-preview-12-2025",
+          "capabilities": [
+            "countTokens",
+            "bidiGenerateContent"
+          ],
+          "inputTokens": 131072,
+          "outputTokens": 8192
+        },
+        {
+          "id": "models/gemini-3.8-live",
+          "capabilities": [
+            "bidiGenerateContent"
+          ],
+          "inputTokens": 131072,
+          "outputTokens": 65536
+        },
+        {
+          "id": "models/gemini-3.8-live-extended-thinking",
+          "capabilities": [
+            "bidiGenerateContent"
+          ],
+          "inputTokens": 131072,
+          "outputTokens": 65536
+        }
+      ],
+      "rateLimits": {},
+      "generationRequests": 0,
+      "modelCount": 61,
+      "nextPage": false,
+      "selectedListed": true,
+      "elapsedMs": 1355
+    },
+    {
+      "provider": "mistral",
+      "configured": true,
+      "model": "codestral-2508",
+      "freeConfirmed": false,
+      "storedAccountEvidence": null,
+      "httpStatus": 200,
+      "models": [
+        {
+          "id": "codestral-2508",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": false,
+            "completion_fim": true,
+            "fine_tuning": false,
+            "vision": false,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 256000,
+          "outputTokens": null
+        },
+        {
+          "id": "codestral-latest",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": false,
+            "completion_fim": true,
+            "fine_tuning": false,
+            "vision": false,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 256000,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-large-4",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": true
+          },
+          "inputTokens": 1048576,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-large-4-0",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": true
+          },
+          "inputTokens": 1048576,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium-latest",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium-3-5",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium-3.5",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium-3",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-medium-2604",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-small-2603",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "mistral-small-latest",
+          "capabilities": {
+            "completion_chat": true,
+            "function_calling": true,
+            "reasoning": true,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": true,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 262144,
+          "outputTokens": null
+        },
+        {
+          "id": "codestral-embed",
+          "capabilities": {
+            "completion_chat": false,
+            "function_calling": false,
+            "reasoning": false,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": false,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 8192,
+          "outputTokens": null
+        },
+        {
+          "id": "codestral-embed-2505",
+          "capabilities": {
+            "completion_chat": false,
+            "function_calling": false,
+            "reasoning": false,
+            "completion_fim": false,
+            "fine_tuning": false,
+            "vision": false,
+            "ocr": false,
+            "classification": false,
+            "moderation": false,
+            "audio": false,
+            "audio_transcription": false,
+            "audio_transcription_realtime": false,
+            "audio_speech": false,
+            "unified_resources": false
+          },
+          "inputTokens": 8192,
+          "outputTokens": null
+        }
+      ],
+      "rateLimits": {},
+      "generationRequests": 0,
+      "modelCount": 55,
+      "nextPage": false,
+      "selectedListed": true,
+      "elapsedMs": 1078
+    }
+  ]
+}

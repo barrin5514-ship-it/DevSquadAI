@@ -1,0 +1,10 @@
+{
+  "approvedBy": "owner",
+  "confirmation": "Free access confirmed — approve one test",
+  "model": "gemini-3.8-flash",
+  "maxOutputTokens": 500,
+  "timeoutMs": 60000,
+  "noRetry": true,
+  "noFallback": true,
+  "attemptedAt": "2026-11-07T03:45:27.321Z"
+}

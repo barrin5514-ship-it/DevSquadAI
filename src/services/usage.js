@@ -5,11 +5,11 @@ const now=()=>new Date().toISOString();
 export class UsageService {
   constructor(db,config){this.db=db;this.config=config;}
   reserve(task,agent,provider,inputBytes,executionId){
-    // Reservation is a conservative local control, never presented as provider-reported usage.
+    // Reservation is usage/tracking evidence, never a provider-reported charge.
     const reserved=inputBytes+provider.tokenLimit;
     return transaction(this.db,()=>{
-      const totals=this.db.prepare('SELECT count(*) requests,coalesce(sum(reserved_tokens),0) tokens FROM usage_events').get();
-      if(totals.requests>=this.config.requestBudget||totals.tokens+reserved>this.config.tokenBudget)throw new ApiError(429,'Local AI budget exhausted; review configuration before continuing');
+      // Usage is recorded for visibility, but local request/token budget
+      // configuration is never a dispatch gate.
       const id=randomUUID();
       this.db.prepare("INSERT INTO usage_events (id,execution_id,provider_id,model,agent_id,task_id,source,reserved_tokens,outcome,created_at) VALUES (?,?,?,?,?,?,'unknown',?,'started',?)").run(id,executionId,provider.id,provider.model,agent.id,task.id,reserved,now());
       return id;

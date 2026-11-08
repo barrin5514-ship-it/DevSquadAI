@@ -1,0 +1,114 @@
+{"name":"Real UI saves task-scoped fallback permission through the protected API","passed":true}
+{"name":"Normal composer starts only the local mock job","passed":true}
+{"name":"Personal quota error selects School without rerunning Builder","passed":true}
+{"name":"Browser shows handoff notification and actual selected profile","passed":true}
+{"name":"Checkpoint belongs to the correct project and contains saved Builder files","passed":true}
+{"name":"Real isolated Node tests pass after the replacement worker","passed":true}
+{"name":"Independent review and owner acceptance gate remain accurate","passed":true}
+{"name":"One job, one handoff, four model attempts plus one isolated test execution, no duplicate writes","passed":true}
+{"name":"Known process exits release only this mock job lock","passed":true}
+{"name":"Supported restart preserves handoff history, test evidence and task scope","passed":true}
+{"name":"No browser JavaScript errors","passed":true}
+{"name":"Browser Stop terminates only the local fixture and no later phase starts","passed":true}
+{"name":"Unsupported Jest configuration is visibly blocked without install or reviewer dispatch","passed":true}
+{"name":"No browser JavaScript errors across Stop and blocked-state checks","passed":true}
+{"name":"No fixture locks or active workers remain","passed":true}
+{
+  "checks": [
+    {
+      "name": "Real UI saves task-scoped fallback permission through the protected API",
+      "passed": true
+    },
+    {
+      "name": "Normal composer starts only the local mock job",
+      "passed": true
+    },
+    {
+      "name": "Personal quota error selects School without rerunning Builder",
+      "passed": true
+    },
+    {
+      "name": "Browser shows handoff notification and actual selected profile",
+      "passed": true
+    },
+    {
+      "name": "Checkpoint belongs to the correct project and contains saved Builder files",
+      "passed": true
+    },
+    {
+      "name": "Real isolated Node tests pass after the replacement worker",
+      "passed": true
+    },
+    {
+      "name": "Independent review and owner acceptance gate remain accurate",
+      "passed": true
+    },
+    {
+      "name": "One job, one handoff, four model attempts plus one isolated test execution, no duplicate writes",
+      "passed": true
+    },
+    {
+      "name": "Known process exits release only this mock job lock",
+      "passed": true
+    },
+    {
+      "name": "Supported restart preserves handoff history, test evidence and task scope",
+      "passed": true
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "passed": true
+    },
+    {
+      "name": "Browser Stop terminates only the local fixture and no later phase starts",
+      "passed": true
+    },
+    {
+      "name": "Unsupported Jest configuration is visibly blocked without install or reviewer dispatch",
+      "passed": true
+    },
+    {
+      "name": "No browser JavaScript errors across Stop and blocked-state checks",
+      "passed": true
+    },
+    {
+      "name": "No fixture locks or active workers remain",
+      "passed": true
+    }
+  ],
+  "calls": [
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester"
+    },
+    {
+      "agent": "codex-school",
+      "phase": "tester"
+    },
+    {
+      "agent": "claude-code",
+      "phase": "reviewer"
+    },
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester"
+    }
+  ],
+  "providerRequests": 0,
+  "webhookRequests": 0,
+  "simulation": true,
+  "screenshots": "C:\\Users\\barri\\.codex\\visualizations\\2026\\10\\20\\01a15721-9f6d-7e52-9209-7d64d043b76c\\worker-recovery-step3-20261106"
+}
+{"preservedFixture":"C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-failover-functional-ZiLtHe","productionModified":false}

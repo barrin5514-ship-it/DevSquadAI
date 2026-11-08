@@ -1,0 +1,32 @@
+✔ legacy locks with no PID are explicitly blocked; reading recovery never removes them (193.0534ms)
+✔ active same-identity worker and unverified descendants prevent reconciliation (149.5952ms)
+✔ unknown termination, wrong scope/version and modified checkpoint fail closed (209.5774ms)
+✔ safe reconciliation releases only its own lock once and retains pending Tester (175.4968ms)
+✔ DeepSeek stream drops hidden reasoning, requires DONE and preserves final usage (8.9457ms)
+✔ actual native file monitoring records create/change/delete but excludes private files (959.0007ms)
+✔ real HTTP SSE replays durable IDs after reconnect and cleans up listeners (409.3894ms)
+✔ Windows records real process identity and observes termination of its own fixture only (8782.2414ms)
+✔ Send dispatch has no budget, output cap or expiry gate; actual token/cost usage persists once (278.2901ms)
+✔ interrupted or crashed API requests retain unknown usage, never invented zero cost (290.7136ms)
+✔ known provider usage is retained even when final application JSON is invalid (565.5154ms)
+✔ historical DeepSeek usage remains visible and new worker reports cannot double-count it (288.5169ms)
+✔ recovery rejects an older completed execution when a later test process owns the same request (196.6215ms)
+✔ new execution binds project/session/profile/checkpoint and sanitizes lifecycle errors (131.2061ms)
+✔ restart marks active executions interrupted and retains locks and latest checkpoint (198.77ms)
+✔ remote unknown outcome cannot borrow native process evidence for recovery (141.6504ms)
+✔ unknown test-runner outcome retains its own execution and preserves Builder files (362.9216ms)
+✔ a historical locked project does not block another folder; independent review remains owner-pending (445.42ms)
+✔ test command detection supports existing npm Node scripts and blocks unsupported frameworks, hooks and shell syntax (210.0449ms)
+✔ missing tests and malformed package metadata are blocked rather than counted as passes (129.1116ms)
+✔ test evidence reports failures, skipped counts, framework and revision without claiming browser globals exist (160.1648ms)
+✔ all-skipped output is evidence of no exercised behavior, never a successful build (251.8571ms)
+✔ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (4479.3376ms)
+✔ owner cancellation is explained separately from a failed test (0.6ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21100.3466

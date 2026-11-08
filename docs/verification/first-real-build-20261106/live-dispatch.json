@@ -1,0 +1,24 @@
+{
+  "approvedAt": "2026-11-06T23:19:40.314Z",
+  "projectId": "479acbbc-9cf1-410c-a276-b45ec2159ed6",
+  "sessionId": "9e17abb3-8e65-4c35-8bb4-c33908264db4",
+  "scope": {
+    "projectId": "479acbbc-9cf1-410c-a276-b45ec2159ed6",
+    "chatId": "9e17abb3-8e65-4c35-8bb4-c33908264db4",
+    "rootHash": "fdf3555ab8833145a55e63c1473b85f6fb2c6d034fec3a371cf721869ec1a781",
+    "databaseHash": "a4235accb37c68514951667a2495c9da87674d9b1b31adffe0c184fe6affa4a8",
+    "mode": "builder-only",
+    "roles": {
+      "builder": "codex-personal"
+    },
+    "goalHash": "c0d5d27255aa19a4f1910952b29585498ee7b7d2bf22e5dbcaf10d6c3dccd6af",
+    "approvedAt": "2026-11-06T23:19:44.072Z",
+    "expiresAt": "2026-11-06T23:49:44.072Z",
+    "requestId": "0c3ed9b9-1ee1-4117-8d69-d34543a52e0c",
+    "maxCalls": 1,
+    "perRole": 1,
+    "timeoutMs": 300000,
+    "maxOutputBytes": 32768
+  },
+  "dispatchAttemptedAt": "2026-11-06T23:19:44.738Z"
+}

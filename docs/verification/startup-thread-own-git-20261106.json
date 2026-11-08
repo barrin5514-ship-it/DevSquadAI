@@ -1,0 +1,30 @@
+{
+  "kind": "NON-GENERATING LOCAL STARTUP CHECK",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS",
+  "profile": "Personal",
+  "methods": [
+    "initialize",
+    "initialized",
+    "thread/start"
+  ],
+  "modelTurnsSent": 0,
+  "exit": 0,
+  "elapsedMs": 6087,
+  "timedOut": false,
+  "outputLimit": false,
+  "reply": {
+    "phase": "thread/start",
+    "ok": true,
+    "instructionSources": [
+      "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS\\AGENTS.md"
+    ],
+    "cwd": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS",
+    "permissions": {
+      "id": "devsquad_demo",
+      "extends": ":workspace"
+    },
+    "turns": 0
+  },
+  "stderr": "",
+  "terminationVerified": true
+}

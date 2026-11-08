@@ -1,0 +1,13 @@
+{
+  "authorization": "FINAL GEMINI GENERATION VERIFICATION — exactly one additional request",
+  "attemptedAt": "2026-11-07T05:23:36.599Z",
+  "model": "gemini-3.8-flash",
+  "endpointHost": "generativelanguage.googleapis.com",
+  "maxOutputTokens": 500,
+  "thinkingLevel": "low",
+  "timeoutMs": 60000,
+  "retry": false,
+  "fallback": false,
+  "promptHash": "708f94d62c710725e9f0c9b7fa4f7876971d05daa9ab8d0277af58cd38f17ca4",
+  "accountFreeEvidence": "Existing owner confirmation and GEMINI_FREE_CONFIRMED; current numeric quota unavailable"
+}

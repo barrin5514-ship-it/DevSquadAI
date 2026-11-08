@@ -1,0 +1,9 @@
+{
+  "exit": 1,
+  "timedOut": false,
+  "sandbox": "Existing Codex MXC root-deny/no-network plus Node permissions; no model invocation",
+  "codeInspected": "Standalone function, Array.isArray/Number.isFinite/some/reduce only; no I/O, imports, tools or side effects",
+  "stdout": "",
+  "stderr": "Could not find 'C:\\Users\\barri\\AppData\\Local\\Temp\\nvidia-code-verify-aFr7ev\\independent.test.cjs'\n",
+  "aiInvocations": 0
+}

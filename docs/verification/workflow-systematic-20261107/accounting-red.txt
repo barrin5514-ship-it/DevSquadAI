@@ -1,0 +1,31 @@
+✖ completed length response settles reported usage without accepting any partial artifact (1068.961ms)
+✔ interrupted stream keeps its unknown reservation even when partial usage was observed (719.0875ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2514.7651
+
+✖ failing tests:
+
+test at tests\workflow-debug-deepseek.test.js:18:1
+✖ completed length response settles reported usage without accepting any partial artifact (1068.961ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'unknown'
+  - 'completed'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/workflow-debug-deepseek.test.js:24:9)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'unknown',
+    expected: 'completed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

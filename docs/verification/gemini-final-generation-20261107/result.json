@@ -1,0 +1,29 @@
+{
+  "verdict": "FAIL",
+  "model": "gemini-3.8-flash",
+  "httpStatus": 503,
+  "elapsedMs": 3591,
+  "timeoutMs": 60000,
+  "finishReason": null,
+  "usage": null,
+  "complete": false,
+  "structuredValid": false,
+  "error": {
+    "code": 503,
+    "status": "UNAVAILABLE",
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."
+  },
+  "diagnostics": {
+    "httpStatus": 503,
+    "headersMs": 3591,
+    "elapsedMs": 3591,
+    "phase": "reading_body",
+    "errorKind": "service_unavailable",
+    "retryAfter": null
+  },
+  "partialFinalText": null,
+  "costUSD": null,
+  "generationRequests": 1,
+  "databaseTablesCompared": 64,
+  "databaseUnchanged": true
+}

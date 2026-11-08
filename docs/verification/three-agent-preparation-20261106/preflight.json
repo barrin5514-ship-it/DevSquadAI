@@ -1,0 +1,26 @@
+{
+  "backup": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\backups\\backup-1794009109259-021afadb-72e3-4495-ab5b-2c43ad8fa34f.sqlite",
+  "personal": {
+    "id": "codex-personal",
+    "label": "Personal",
+    "ok": true,
+    "method": "ChatGPT native login"
+  },
+  "claude": {
+    "ok": true,
+    "method": "Native claude.ai subscription login; quota and extra-usage setting not established by this check"
+  },
+  "deepseek": {
+    "configured": true,
+    "model": "deepseek-flash",
+    "base": "https://api.deepseek.com",
+    "inputPrice": 0.3,
+    "outputPrice": 1.2
+  },
+  "active": 0,
+  "locks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ]
+}

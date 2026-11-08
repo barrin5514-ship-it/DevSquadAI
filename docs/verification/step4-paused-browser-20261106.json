@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "state": "paused",
+  "executions": 1,
+  "files": 0,
+  "browserErrors": [],
+  "applicationVerified": false,
+  "retried": false
+}

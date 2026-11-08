@@ -1,0 +1,14 @@
+[
+  {
+    "additionalNodePermissions": false,
+    "exit": 0,
+    "stdout": "{\"path\":\".\",\"isFile\":false}\n{\"path\":\"independent.test.cjs\",\"isFile\":true}\n{\"path\":\"C:\\\\Users\\\\barri\\\\OneDrive\\\\Desktop\\\\Next Chapter Projects\\\\DevSquadAI\\\\workspaces\\\\.nvidia-evaluation-pWeLJs/independent.test.cjs\",\"isFile\":true}\n",
+    "stderr": ""
+  },
+  {
+    "additionalNodePermissions": true,
+    "exit": 0,
+    "stdout": "{\"path\":\".\",\"isFile\":false}\n{\"path\":\"independent.test.cjs\",\"isFile\":true}\n{\"path\":\"C:\\\\Users\\\\barri\\\\OneDrive\\\\Desktop\\\\Next Chapter Projects\\\\DevSquadAI\\\\workspaces\\\\.nvidia-evaluation-pWeLJs/independent.test.cjs\",\"isFile\":true}\n",
+    "stderr": ""
+  }
+]

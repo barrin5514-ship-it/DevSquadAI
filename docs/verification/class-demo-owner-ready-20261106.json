@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:3002/class-demo",
+  "simulation": true,
+  "jobs": 0,
+  "modelCalls": 0,
+  "ready": true,
+  "browserErrors": 0,
+  "ownerRunStarted": false
+}

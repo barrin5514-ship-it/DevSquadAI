@@ -1,0 +1,8 @@
+{
+  "copyNotice": "Prompt copied.",
+  "expected": "Copy line one\nCopy line two",
+  "clipboard": "Copy line one\r\nCopy line two",
+  "matchesAfterWindowsCrlfNormalization": true,
+  "copyButtonCount": 1,
+  "note": "Chrome on Windows normalizes copied line endings to CRLF. The prompt text and line structure are preserved."
+}

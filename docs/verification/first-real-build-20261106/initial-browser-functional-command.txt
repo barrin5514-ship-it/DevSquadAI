@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "name": "Generated JavaScript syntax passes",
+      "pass": true
+    },
+    {
+      "name": "Builder-authored tests executed separately and pass",
+      "pass": false
+    }
+  ],
+  "passed": 1,
+  "failed": 1,
+  "errors": [],
+  "blocked": [],
+  "syntaxExit": 0,
+  "builderAuthoredTestsExit": 0,
+  "independentMultiAgentTests": false,
+  "temp": "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-first-live-browser-iujoo1",
+  "hashes": {
+    "index.html": "054fa18624a2404a61c9a38a08c36b5ea90b0c083173c4c38301800e35eaef85",
+    "style.css": "f389eed07a464dbdc2267f989ff48e68b4dad138b23f01634cc362c18013c0b7",
+    "app.js": "ca4b23411b23d4752324920e8cdf5d752854aeea6ae0d5cabfe9aa6e3946c36d",
+    "README.md": "c2b826237a40ae8f04d5ffa7b23f147c9a20787ffe75be26f51ab11d5fa063f8",
+    "app.test.cjs": "514c05daa50cbb8cd515e2a9d2d8360ebb81b2199f8001ffd3071375c1dcc9f5"
+  },
+  "modelRequests": 0
+}

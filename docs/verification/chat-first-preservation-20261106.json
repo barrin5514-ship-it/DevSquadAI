@@ -1,0 +1,48 @@
+{
+  "backup": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\backups\\backup-1793995197680-2b47947f-ed1e-4e03-bc8a-65f624f3eb8f.sqlite",
+  "quickCheck": {
+    "quick_check": "ok"
+  },
+  "tablesCompared": 63,
+  "changes": [
+    {
+      "table": "studio_chats",
+      "added": 1,
+      "removed": 1
+    },
+    {
+      "table": "studio_events",
+      "added": 16,
+      "removed": 0
+    },
+    {
+      "table": "studio_executions",
+      "added": 1,
+      "removed": 0
+    }
+  ],
+  "counters": [
+    {
+      "id": "c25dcd14-322c-4004-9ef4-412584640600",
+      "fingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785"
+    },
+    {
+      "id": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+      "fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "projects": 15,
+  "sessions": 15,
+  "active": 0,
+  "locks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ],
+  "runtime": [
+    {
+      "id": 1,
+      "pid": 28976
+    }
+  ]
+}

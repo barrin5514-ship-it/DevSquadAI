@@ -1,0 +1,27 @@
+✔ builder fallback proposal changes only the unfinished role and never dispatches (4.1161ms)
+✔ tester fallback proposal changes only the unfinished role and never dispatches (0.391ms)
+✔ reviewer fallback proposal changes only the unfinished role and never dispatches (0.5254ms)
+✔ unknown or exhausted allowance, auth failure and unverified capabilities exclude candidates (0.4456ms)
+✔ same-family profiles and prior authors cannot become independent reviewers (0.3324ms)
+✔ unknown outcome or unverified termination retains checkpoint and forbids replacement (0.4115ms)
+✔ context, schema or task errors are not mislabeled as quota exhaustion (0.2414ms)
+✔ verified role quality beats a cheaper alternative and roles are not permanently assigned (0.2955ms)
+✔ completed work and missing checkpoint never restart automatically (0.3211ms)
+✔ unknown, absent, invalid and mismatched allowance inputs never produce percentages (2.0978ms)
+✔ verified fresh consumption uses configurable 70/85/95/100 thresholds (0.4879ms)
+✔ old or future usage is STALE and never a current remaining-usage estimate (0.3869ms)
+✔ metrics distinguish verified, estimated, stale and unknown without inventing zero (0.455ms)
+✔ catalog authentication and successful generation do not establish available quota (0.6ms)
+✔ temporary rate limit expires without permanently disabling a model or claiming quota (0.3836ms)
+✔ auth failure and exhausted allowance have distinct states (0.3746ms)
+✔ warning configuration validates order without changing provider authorization (4.6576ms)
+✔ cached endpoint exposes metrics without secrets, network calls, grants or Gemini activation (245.1207ms)
+✔ context-window consumption is not subscription or account allowance (0.3069ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1305.3521

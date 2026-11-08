@@ -13,6 +13,7 @@ export class ProviderAdapter {
     this.fetch = fetchImpl;
     this.timeout = timeout;
     this.tokenLimit = tokenLimit;
+    this.streamIdleTimeout = null;
     this.cooldownUntil = 0;
   }
   availability() {
@@ -30,15 +31,20 @@ export class ProviderAdapter {
     this.ensureAvailable();
     const started=Date.now(),diagnostic={httpStatus:null,headersMs:null,elapsedMs:null,phase:'awaiting_headers',errorKind:null,retryAfter:null};
     this.lastDiagnostics=diagnostic;
-    const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(), this.timeout);
-    let stream=null;
+    const streamed=this.id==='deepseek'&&body?.stream===true,controller = new AbortController();
+    // A non-streamed request keeps the original total deadline. A streamed
+    // request is idle-bounded instead: every raw response byte resets this
+    // timer, so a healthy keep-alive stream may exceed the old total deadline
+    // while a silent stream still fails. Studio supplies its 180-second worker
+    // inactivity bound; direct adapter callers keep the configured timeout.
+    let timer=null;const armTimer=()=>{clearTimeout(timer);timer=setTimeout(()=>controller.abort(),streamed?(this.streamIdleTimeout??this.timeout):this.timeout);};armTimer();
+    let stream=null,reader=null;
     try {
       const headers = { 'Content-Type':'application/json' };
       if (this.id==='gemini') headers['x-goog-api-key']=this.#key;
       else headers.Authorization=`Bearer ${this.#key}`;
       const response = await this.fetch(url,{method:body ? 'POST':'GET',headers,body:body ? JSON.stringify(body):undefined,signal:controller.signal,redirect:'error'});
-      diagnostic.httpStatus=response.status;diagnostic.headersMs=Date.now()-started;diagnostic.phase='reading_body';
+      diagnostic.httpStatus=response.status;diagnostic.headersMs=Date.now()-started;diagnostic.phase='reading_body';if(streamed)armTimer();
       const retryHeader=response.headers.get('retry-after');
       diagnostic.retryAfter=retryHeader&&/^(?:\d{1,8}|[A-Za-z]{3}, [\d A-Za-z:]{10,40} GMT)$/.test(retryHeader)?retryHeader:null;
       if (response.status===429) {
@@ -49,16 +55,23 @@ export class ProviderAdapter {
         const error=new ProviderError('rate_limit');error.retryAt=this.cooldownUntil;error.httpStatus=429;throw error;
       }
       // Bound the decoded body, including streamed/chunked responses.
-      const maxBodyBytes=!body&&this.id==='openrouter'&&[this.base+'/models',this.base+'/models/user'].includes(url)?8000000:512000;
-      const reader=response.body.getReader(); let length=0; const chunks=[];stream=response.ok&&this.id==='deepseek'&&body?.stream===true?deepseekStream(this.onStreamProgress):null;
-      while(true) { const {done,value}=await reader.read(); if(done)break; this.onResponseActivity?.();length+=value.length;
-        if(length>maxBodyBytes){if(stream)diagnostic.deepseekResponse={...stream.metadata(),failedCheck:'body_limit'};await reader.cancel();throw new ProviderError('invalid_response');}if(stream)stream.write(value);else chunks.push(value); }
+      stream=response.ok&&this.id==='deepseek'&&body?.stream===true?deepseekStream(this.onStreamProgress):null;
+      const maxBodyBytes=stream?2000000:!body&&this.id==='openrouter'&&[this.base+'/models',this.base+'/models/user'].includes(url)?8000000:512000;
+      reader=response.body.getReader();let length=0;const chunks=[];
+      while(true) { const {done,value}=await reader.read(); if(done)break; this.onResponseActivity?.();if(streamed)armTimer();length+=value.length;
+        if(length>maxBodyBytes){if(stream)diagnostic.deepseekResponse={...stream.metadata(),failedCheck:'body_limit'};await reader.cancel();throw new ProviderError(stream?'body_limit':'invalid_response');}if(stream)stream.write(value);else chunks.push(value); }
       let data;try{data=stream?stream.end():JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(error){if(response.ok)throw error;data={};}
       if(!response.ok){diagnostic.errorKind=classifyProviderFailure(response.status,data);const error=new ProviderError('provider_error');error.httpStatus=response.status;const retry=response.headers.get('retry-after');if(response.status===503&&retry){const n=Number(retry),date=Date.parse(retry);const wait=Number.isFinite(n)&&n>0?n*1000:Number.isFinite(date)?Math.max(1000,date-Date.now()):0;if(wait)error.retryAt=Date.now()+Math.min(wait,3600000);}throw error;}
       if(stream)diagnostic.deepseekResponse=stream.metadata();
       diagnostic.phase='complete';return data;
     } catch(error) {
-      const failure=error instanceof ProviderError?error:new ProviderError(controller.signal.aborted?'timeout':error instanceof SyntaxError?'invalid_response':'provider_error');
+      // A parser or limit failure stops reading; cancel the reader and abort
+      // the fetch signal so the HTTP body cannot remain open. Capture the
+      // timeout state before aborting so cleanup cannot relabel every error.
+      const timedOut=controller.signal.aborted;
+      try{await reader?.cancel();}catch{}
+      try{controller.abort();}catch{}
+      const failure=error instanceof ProviderError?error:new ProviderError(['body_limit','answer_limit'].includes(error?.code)?error.code:timedOut?'timeout':error instanceof SyntaxError?'invalid_response':'provider_error');
       if(diagnostic.httpStatus&&!failure.httpStatus)failure.httpStatus=diagnostic.httpStatus;
       if(stream){
         const meta=stream.metadata();
@@ -113,10 +126,10 @@ export class ProviderAdapter {
     const data=await this.request(this.base+'/chat/completions',body);
     return this.parseDeepSeek(data);
   }
-  // Regular project work has no app-specified output or spending cap. Retired
-  // immutable review grants keep their separate generateBound validation.
+  // Regular project work now sends the owner-approved (or 8,192-token
+  // default) output bound explicitly. It is not a spending gate.
   async generateStudio(body,expectedHash) {
-    if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||Object.hasOwn(body,'max_tokens')||body.stream!==true||body.stream_options?.include_usage!==true||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('invalid_response');
+    if(this.id!=='deepseek'||this.base!=='https://api.deepseek.com'||body.model!==this.model||body.max_tokens!==this.tokenLimit||body.stream!==true||body.stream_options?.include_usage!==true||body.thinking?.type!=='disabled'||body.response_format?.type!=='json_object'||createHash('sha256').update(JSON.stringify(body)).digest('hex')!==expectedHash)throw new ProviderError('invalid_response');
     const data=await this.request(this.base+'/chat/completions',body);
     return this.parseDeepSeek(data);
   }
@@ -145,7 +158,7 @@ export class ProviderAdapter {
     const unescaped=typeof text==='string'?text.replace(/\\u([0-9a-f]{4})/gi,(_,hex)=>String.fromCharCode(parseInt(hex,16))):null;
     const unsafe=typeof text==='string'&&(text.includes(this.#key)||decoded?.includes(this.#key)||unescaped.includes(this.#key));
     if(typeof text!=='string'||!text.trim()||unsafe||!['stop','STOP'].includes(finish)) {
-      const error=new ProviderError('invalid_response');error.usage=usage;error.finishReason=finishReasons.has(finish)?finish:null;error.diagnostics=this.lastDiagnostics;
+      const error=new ProviderError(this.id==='deepseek'&&finish==='length'?'response_truncated':'invalid_response');error.usage=usage;error.finishReason=finishReasons.has(finish)?finish:null;error.diagnostics=this.lastDiagnostics;
       error.httpStatus=this.lastDiagnostics?.httpStatus??null;
       error.complete=false;
       if(error.diagnostics)error.diagnostics.errorKind='invalid_response';

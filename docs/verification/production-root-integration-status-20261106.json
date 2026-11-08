@@ -1,0 +1,8 @@
+{
+  "webhookConfigured": true,
+  "webhookEnabled": true,
+  "githubReaderConfigured": true,
+  "githubReaderOwnerConfirmedReady": true,
+  "actualExternalDeliveryVerified": false,
+  "classDemoHttp": 200
+}

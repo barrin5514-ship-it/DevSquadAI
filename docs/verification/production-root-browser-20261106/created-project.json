@@ -1,0 +1,17 @@
+{
+  "project": {
+    "id": "9a28ca1c-ff7e-46f5-8f69-86987d867a2a",
+    "name": "DISPOSABLE · Production workspace startup verification · 2026-11-06",
+    "description": "Disposable local root/startup verification only. No AI run, no existing project migration.",
+    "workspaceHidden": false,
+    "workspaceVersion": 0,
+    "folder": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\9a28ca1c-ff7e-46f5-8f69-86987d867a2a",
+    "source": "created",
+    "agentChangesAllowed": false,
+    "accessVersion": 0,
+    "defaultLayout": "conversation",
+    "repositoryURL": null
+  },
+  "creationHttp": 201,
+  "modelTurns": 0
+}

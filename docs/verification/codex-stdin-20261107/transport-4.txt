@@ -1,0 +1,12 @@
+✔ CLI parsers require complete structured replies and reject tool activity, overflow and leaked metadata (1.9127ms)
+✔ native transport uses fixed argument arrays, stdin, no API credentials, bounded output and no retry (12.0174ms)
+✔ native transport captures a result larger than 32 KiB up to the approved bound (7.3138ms)
+✔ timeout, cancellation, quota and unknown results never retry and are classified conservatively (5028.4895ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5693.1881

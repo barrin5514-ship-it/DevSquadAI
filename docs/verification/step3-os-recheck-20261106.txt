@@ -1,0 +1,73 @@
+✔ legacy locks with no PID are explicitly blocked; reading recovery never removes them (242.3624ms)
+✔ active same-identity worker and unverified descendants prevent reconciliation (419.9644ms)
+✔ unknown termination, wrong scope/version and modified checkpoint fail closed (1180.2039ms)
+✔ safe reconciliation releases only its own lock once and retains pending Tester (627.1649ms)
+✔ DeepSeek stream drops hidden reasoning, requires DONE and preserves final usage (1.8923ms)
+✔ actual native file monitoring records create/change/delete but excludes private files (1153.8449ms)
+✔ real HTTP SSE replays durable IDs after reconnect and cleans up listeners (628.463ms)
+✖ Windows records real process identity and observes termination of its own fixture only (12816.957ms)
+✔ Send dispatch has no budget, output cap or expiry gate; actual token/cost usage persists once (538.0586ms)
+✔ interrupted or crashed API requests retain unknown usage, never invented zero cost (294.5251ms)
+✔ known provider usage is retained even when final application JSON is invalid (389.1899ms)
+✔ historical DeepSeek usage remains visible and new worker reports cannot double-count it (247.236ms)
+✔ recovery rejects an older completed execution when a later test process owns the same request (497.5321ms)
+✔ new execution binds project/session/profile/checkpoint and sanitizes lifecycle errors (215.7099ms)
+✔ restart marks active executions interrupted and retains locks and latest checkpoint (280.11ms)
+✔ remote unknown outcome cannot borrow native process evidence for recovery (397.7474ms)
+✔ unknown test-runner outcome retains its own execution and preserves Builder files (701.3271ms)
+✔ a historical locked project does not block another folder; independent review remains owner-pending (1380.6331ms)
+✔ test command detection supports existing npm Node scripts and blocks unsupported frameworks, hooks and shell syntax (882.1743ms)
+✔ missing tests and malformed package metadata are blocked rather than counted as passes (575.9987ms)
+✔ test evidence reports failures, skipped counts, framework and revision without claiming browser globals exist (957.2135ms)
+✔ all-skipped output is evidence of no exercised behavior, never a successful build (675.6853ms)
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (29033.5075ms)
+✔ owner cancellation is explained separately from a failed test (3.9822ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 22
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 314951.9956
+
+✖ failing tests:
+
+test at tests\studio-executions.test.js:13:1
+✖ Windows records real process identity and observes termination of its own fixture only (12816.957ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-executions.test.js:13:455)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\studio-worker-recovery.test.js:17:1
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (29033.5075ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  Error: Isolated test process termination is unknown; the folder remains locked.
+      at async TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-worker-recovery.test.js:17:412)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Isolated test process termination is unknown; the folder remains locked.
+        at finish (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-workers.js:49:697)
+        at Timeout.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-workers.js:50:557)
+        at listOnTimeout (node:internal/timers:635:17)
+        at process.processTimers (node:internal/timers:571:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }

@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-11-07T07:24:44.107Z",
+  "calls": [
+    {
+      "route": "/models",
+      "httpStatus": 200
+    },
+    {
+      "route": "/models/user",
+      "httpStatus": 200
+    },
+    {
+      "route": "/key",
+      "httpStatus": 200
+    }
+  ],
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "publicListed": true,
+  "accountListed": true,
+  "publicPrices": {
+    "prompt": "0",
+    "completion": "0"
+  },
+  "accountPrices": {
+    "prompt": "0",
+    "completion": "0"
+  },
+  "optionalReasoning": {
+    "mandatory": false
+  },
+  "remaining": {
+    "used": 1,
+    "limit": 50,
+    "remaining": 49
+  },
+  "checksPass": true,
+  "generationRequests": 0
+}

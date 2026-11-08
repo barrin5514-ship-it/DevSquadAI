@@ -152,4 +152,34 @@ Open **Big Three Demo** in the left sidebar. For a fresh eligible demo with setu
 
 ## Current project workflow (supersedes demo start steps)
 
-New work uses Big Three → choose a project → type a task → Run. It uses built-in role handoffs, not the old scoped demo/Zapier start controls. No Zapier publication, spending scope or consent setup is required. Existing Zapier configuration and completed demo history remain preserved; the new runner does not trigger the Zap. See PROJECT_WORKFLOW_20261103.md and DEMO_CALL_AUDIT_20261103.md.
+New work uses Big Three → choose a project → type a task → Run. It uses built-in role handoffs, not the old scoped demo/Zapier start controls. No Zapier publication, spending scope or consent setup is required. Existing Zapier configuration and completed demo history remain preserved; the legacy runner does not trigger the Zap. See PROJECT_WORKFLOW_20261103.md and DEMO_CALL_AUDIT_20261103.md.
+
+## Studio checkpoint handoffs (2026-11-07)
+
+The Project Studio team path can now move the saved checkpoint between Builder, Tester and Reviewer through the existing Zapier Catch Hook. This is **off by default**; without it Studio uses its existing local transition.
+
+Set these locally; never put the callback token in a prompt, log, screenshot or Git file:
+
+```dotenv
+STUDIO_ZAPIER_HANDOFFS=true
+STUDIO_ZAPIER_CALLBACK_TOKEN=[private random callback token entered locally]
+STUDIO_HANDOFF_TIMEOUT_MS=120000
+```
+
+The existing Zapier webhook must be enabled in **AI Team → Webhook out**. After a Builder checkpoint or Tester evidence is saved, Dev Squad sends this event to the Catch Hook:
+
+```json
+{"event":"studio_checkpoint_handoff","handoffId":"hof_...","projectId":"...","chatId":"...","requestId":"...","phase":"builder","nextPhase":"tester","checkpointHash":"64-hex","testEvidenceHash":"64-hex or null","executionId":"completed execution id","createdAt":"ISO-8601"}
+```
+
+The Zap must POST the **same fields** plus `"action":"continue"` to:
+
+```text
+POST http://127.0.0.1:3000/api/console/studio/zapier/callback
+Content-Type: application/json
+X-Studio-Callback-Token: [the private token above]
+```
+
+The local URL is not reachable from Zapier’s cloud. A live integration therefore also needs a trusted HTTPS tunnel or reverse proxy to the loopback backend; the callback route rejects a wrong/absent token and does not require the browser dashboard token. A duplicate delivery returns `already_accepted` and cannot start another role. A missing hook, missing callback token, failed delivery, unknown delivery outcome or timeout pauses the run, releases the workspace write lease and starts no next worker. No retry is automatic.
+
+At the time of this implementation, **no live Zap was created or tested**. The Dev Squad side was verified with a simulated Catch Hook and the real callback route. Live Zapier delivery remains unverified.

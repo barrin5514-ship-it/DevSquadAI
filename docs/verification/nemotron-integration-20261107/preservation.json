@@ -1,0 +1,437 @@
+{
+  "checkedAt": "2026-11-07T16:42:03.029Z",
+  "sameTableSet": true,
+  "tables": [
+    {
+      "table": "active_team_agents",
+      "before": 4,
+      "after": 4,
+      "unchanged": true
+    },
+    {
+      "table": "agent_executions",
+      "before": 5,
+      "after": 5,
+      "unchanged": true
+    },
+    {
+      "table": "agent_mistakes",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "agent_models",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "agent_performance",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "agent_positions",
+      "before": 8,
+      "after": 8,
+      "unchanged": true
+    },
+    {
+      "table": "agents",
+      "before": 8,
+      "after": 8,
+      "unchanged": true
+    },
+    {
+      "table": "ai_providers",
+      "before": 4,
+      "after": 4,
+      "unchanged": true
+    },
+    {
+      "table": "corrections",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "deepseek_balance_observation",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "deepseek_review_requests",
+      "before": 2,
+      "after": 2,
+      "unchanged": true
+    },
+    {
+      "table": "demo_artifacts",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "demo_builder_http",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "demo_builder_scopes",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "demo_review_imports",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "demo_worker_attempts",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "demo_worker_bindings",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "draft_tests",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "error_logs",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "generated_drafts",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "hub_connection_checks",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "learned_lessons",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "messenger_events",
+      "before": 18,
+      "after": 18,
+      "unchanged": true
+    },
+    {
+      "table": "messenger_jobs",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "messenger_rounds",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "paid_hello_http",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "paid_hello_scopes",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "paid_request_quotes",
+      "before": 2,
+      "after": 2,
+      "unchanged": true
+    },
+    {
+      "table": "paid_review_http",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "paid_review_scopes",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "positions",
+      "before": 5,
+      "after": 5,
+      "unchanged": true
+    },
+    {
+      "table": "project_context",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "project_files",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "projects",
+      "before": 17,
+      "after": 17,
+      "unchanged": true
+    },
+    {
+      "table": "schema_migrations",
+      "before": 17,
+      "after": 17,
+      "unchanged": true
+    },
+    {
+      "table": "senior_reviews",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "shared_job_history",
+      "before": 19,
+      "after": 19,
+      "unchanged": true
+    },
+    {
+      "table": "shared_jobs",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "studio_api_policy",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "studio_api_reservations",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "studio_chats",
+      "before": 17,
+      "after": 17,
+      "unchanged": true
+    },
+    {
+      "table": "studio_events",
+      "before": 149,
+      "after": 149,
+      "unchanged": true
+    },
+    {
+      "table": "studio_executions",
+      "before": 6,
+      "after": 6,
+      "unchanged": true
+    },
+    {
+      "table": "studio_file_operations",
+      "before": 12,
+      "after": 12,
+      "unchanged": true
+    },
+    {
+      "table": "studio_locks",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "studio_project_connections",
+      "before": 8,
+      "after": 8,
+      "unchanged": true
+    },
+    {
+      "table": "studio_revisions",
+      "before": 11,
+      "after": 11,
+      "unchanged": true
+    },
+    {
+      "table": "studio_role_preferences",
+      "before": 5,
+      "after": 5,
+      "unchanged": true
+    },
+    {
+      "table": "studio_roots",
+      "before": 5,
+      "after": 5,
+      "unchanged": true
+    },
+    {
+      "table": "studio_workspace_preferences",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "task_workflows",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "tasks",
+      "before": 8,
+      "after": 8,
+      "unchanged": true
+    },
+    {
+      "table": "team_checkpoints",
+      "before": 43,
+      "after": 43,
+      "unchanged": true
+    },
+    {
+      "table": "team_events",
+      "before": 42,
+      "after": 42,
+      "unchanged": true
+    },
+    {
+      "table": "team_jobs",
+      "before": 8,
+      "after": 8,
+      "unchanged": true
+    },
+    {
+      "table": "team_model_health",
+      "before": 1,
+      "after": 1,
+      "unchanged": true
+    },
+    {
+      "table": "team_operations",
+      "before": 2,
+      "after": 2,
+      "unchanged": true
+    },
+    {
+      "table": "team_packets",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "team_provider_limits",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "team_runtime_lease",
+      "before": 1,
+      "after": 1,
+      "unchanged": false
+    },
+    {
+      "table": "team_task_locks",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "token_usage",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    {
+      "table": "usage_events",
+      "before": 3,
+      "after": 3,
+      "unchanged": true
+    },
+    {
+      "table": "user_approvals",
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    }
+  ],
+  "changes": [
+    {
+      "table": "team_runtime_lease",
+      "before": 1,
+      "after": 1,
+      "unchanged": false
+    }
+  ],
+  "protectedProjects": [
+    {
+      "id": "c25dcd14-322c-4004-9ef4-412584640600",
+      "fingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785"
+    },
+    {
+      "id": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+      "fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "479acbbc-9cf1-410c-a276-b45ec2159ed6",
+      "fingerprint": "e3c2d205f4f35621d61941abfa25b61325832ae1652ebcb17f4707dacf0274d2"
+    },
+    {
+      "id": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+      "fingerprint": "6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771"
+    }
+  ],
+  "expense": {
+    "status": "ready",
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-personal",
+      "reviewer": "claude-code"
+    },
+    "phase": "builder",
+    "approval": null,
+    "executions": 0,
+    "files": [
+      "AGENTS.md"
+    ]
+  },
+  "historicalCounterLockPreserved": true,
+  "runtime": {
+    "pid": 28412
+  },
+  "integrity": {
+    "integrity_check": "ok"
+  }
+}

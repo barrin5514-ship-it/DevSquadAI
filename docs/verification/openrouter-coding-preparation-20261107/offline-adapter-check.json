@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "mockedRequests": 1,
+  "liveGenerationRequests": 0,
+  "checks": [
+    "Exact pinned zero-price model",
+    "Official endpoint",
+    "500-token cap",
+    "60000-ms adapter timeout",
+    "No provider fallback",
+    "Zero prompt/completion/request price filters",
+    "Existing adapter generates the proposed body",
+    "No unsupported native JSON response_format",
+    "Complete fake response parses"
+  ],
+  "productionConfigurationChanged": false
+}

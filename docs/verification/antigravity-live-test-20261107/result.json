@@ -1,0 +1,138 @@
+{
+  "verdict": "FAIL",
+  "model": "gemini-3.8-flash-low",
+  "modelEvidence": "Pinned CLI model argument; response model separately reported below if supplied",
+  "reportedModel": null,
+  "exit": 1,
+  "httpStatus": null,
+  "httpStatusEvidence": "Native CLI does not expose a provider HTTP status here",
+  "elapsedMs": 63611,
+  "providerDurationSeconds": null,
+  "timeoutMs": 60000,
+  "capturedBytes": 0,
+  "overflow": false,
+  "complete": false,
+  "status": null,
+  "finishReason": null,
+  "usage": null,
+  "costUSD": null,
+  "invocations": 1,
+  "internalAttemptCount": "Not exposed; native retries authorized inside this invocation",
+  "review": null,
+  "error": "No complete valid JSON response",
+  "lifecycle": {
+    "rootIdentity": {
+      "pid": 7908,
+      "parent": 20232,
+      "birth": "2026-11-07T06:19:32.7022930Z"
+    },
+    "descendants": [
+      {
+        "pid": 28328,
+        "parent": 7908,
+        "birth": "2026-11-07T06:19:32.8432880Z"
+      },
+      {
+        "pid": 3496,
+        "parent": 7908,
+        "birth": "2026-11-07T06:19:36.5479050Z"
+      },
+      {
+        "pid": 28808,
+        "parent": 7908,
+        "birth": "2026-11-07T06:19:37.3016540Z"
+      },
+      {
+        "pid": 1500,
+        "parent": 7908,
+        "birth": "2026-11-07T06:20:32.7075360Z"
+      },
+      {
+        "pid": 28632,
+        "parent": 1500,
+        "birth": "2026-11-07T06:20:32.7506380Z"
+      }
+    ],
+    "exit": 1,
+    "signal": null,
+    "closeObserved": true,
+    "spawnFailed": false,
+    "callbackError": false,
+    "elapsedMs": 63610,
+    "timeoutMs": 60000,
+    "timedOut": true,
+    "outputLimit": false,
+    "gracefulRequested": true,
+    "forcedTermination": true,
+    "terminationResults": [
+      {
+        "pid": 28328,
+        "birth": "2026-11-07T06:19:32.8432880Z",
+        "status": 0,
+        "errorCode": null
+      },
+      {
+        "pid": 3496,
+        "birth": "2026-11-07T06:19:36.5479050Z",
+        "status": 0,
+        "errorCode": null
+      },
+      {
+        "pid": 28808,
+        "birth": "2026-11-07T06:19:37.3016540Z",
+        "status": 0,
+        "errorCode": null
+      },
+      {
+        "pid": 7908,
+        "birth": "2026-11-07T06:19:32.7022930Z",
+        "status": 0,
+        "errorCode": null
+      }
+    ],
+    "processChecks": [
+      {
+        "pid": 7908,
+        "birth": "2026-11-07T06:19:32.7022930Z",
+        "verified": true,
+        "exited": true
+      },
+      {
+        "pid": 28328,
+        "birth": "2026-11-07T06:19:32.8432880Z",
+        "verified": true,
+        "exited": true
+      },
+      {
+        "pid": 3496,
+        "birth": "2026-11-07T06:19:36.5479050Z",
+        "verified": true,
+        "exited": true
+      },
+      {
+        "pid": 28808,
+        "birth": "2026-11-07T06:19:37.3016540Z",
+        "verified": true,
+        "exited": true
+      },
+      {
+        "pid": 1500,
+        "birth": "2026-11-07T06:20:32.7075360Z",
+        "verified": true,
+        "exited": true
+      },
+      {
+        "pid": 28632,
+        "birth": "2026-11-07T06:20:32.7506380Z",
+        "verified": true,
+        "exited": true
+      }
+    ],
+    "terminationVerified": true,
+    "cleanup": "forced-verified"
+  },
+  "databaseTablesCompared": 64,
+  "databaseUnchanged": true,
+  "temporaryWorkspaceEntryCount": 0,
+  "remoteModelOutcome": "UNKNOWN — no CLI result; local process termination verified but server-side completion/cancellation not observable"
+}

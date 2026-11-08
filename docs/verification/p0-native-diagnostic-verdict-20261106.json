@@ -1,0 +1,23 @@
+{
+  "approvedNativeInvocations": 1,
+  "completedResponses": 0,
+  "profile": "Personal",
+  "elapsedMs": 11796,
+  "exitCode": 1,
+  "stdoutBytes": 0,
+  "stderrBytes": 387,
+  "originalDiagnosticCode": "worker_error",
+  "currentClassification": {
+    "code": "sandbox_error",
+    "reason": "instruction_access_denied",
+    "stage": "startup"
+  },
+  "processObservationVerified": true,
+  "originalProcessStillPresent": false,
+  "filesPresent": 0,
+  "tokenUsage": "Not supplied",
+  "providerHttpStatus": "Not supplied",
+  "paidApiKeyBilling": false,
+  "retries": 0,
+  "fallback": false
+}

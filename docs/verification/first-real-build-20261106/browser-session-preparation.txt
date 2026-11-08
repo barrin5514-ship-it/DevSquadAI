@@ -1,0 +1,16 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('button', { name: '＋ Session', exact: true })
+
+    at C:\Users\barri\OneDrive\Desktop\Next Chapter Projects\DevSquadAI\scripts\finish-first-real-build-preparation-20261106.js:5:414 {
+  log: [
+    "  - waiting for getByRole('button', { name: '＋ Session', exact: true })"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

@@ -1,0 +1,20 @@
+{
+  "pid": 6920,
+  "executions": 0,
+  "jobs": 0,
+  "tree": {
+    "verified": true,
+    "processes": [
+      {
+        "pid": 6920,
+        "parent": 1360,
+        "birth": "2026-11-07T05:11:16.5307580Z"
+      },
+      {
+        "pid": 29196,
+        "parent": 6920,
+        "birth": "2026-11-07T05:11:16.6172360Z"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "oldIdentity": {
+    "pid": 26848,
+    "parent": 28892,
+    "birth": "2026-11-06T17:34:35.9716150Z"
+  },
+  "activeBefore": 0,
+  "executionsBefore": 0,
+  "stopStatus": 0,
+  "oldServerExited": true
+}

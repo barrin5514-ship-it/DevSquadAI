@@ -1,0 +1,23 @@
+{
+  "approval": {
+    "projectId": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+    "chatId": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+    "rootHash": "c38d2e6f5eea128a593bfd2452ea37043adcf89a75c982a3bcee498b116221a0",
+    "databaseHash": "a4235accb37c68514951667a2495c9da87674d9b1b31adffe0c184fe6affa4a8",
+    "roles": {
+      "builder": "codex-personal",
+      "tester": "codex-school",
+      "reviewer": "claude-code"
+    },
+    "goalHash": "f69cd17dd01607e200c816fb41a92a811b7cb279554bf5fcd3090e67a6fdd80c",
+    "approvedAt": "2026-11-06T11:53:14.000Z",
+    "expiresAt": "2026-11-06T12:23:14.000Z",
+    "requestId": "6165baf0-ea67-4666-b699-b57e23a147a1",
+    "maxCalls": 3,
+    "perRole": 1,
+    "timeoutMs": 300000,
+    "maxOutputBytes": 32768
+  },
+  "ownerConfirmedIncludedUsage": true,
+  "ownerConfirmedClaudeExtraOff": true
+}

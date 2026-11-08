@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "label": "counter2",
+      "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+      "realpathMatches": true,
+      "exit": 0,
+      "elapsedMs": 942,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd\\AGENTS.md",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd\\.git",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\.git",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "ok": true,
+          "directory": false
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\.git",
+          "ok": true,
+          "directory": true
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    },
+    {
+      "label": "fresh-onedrive",
+      "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS",
+      "realpathMatches": true,
+      "exit": 0,
+      "elapsedMs": 1067,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS\\AGENTS.md",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS\\.git",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\.git",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "ok": true,
+          "directory": false
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\.git",
+          "ok": true,
+          "directory": true
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    },
+    {
+      "label": "fresh-temp",
+      "root": "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-startup-probe-gQbk39",
+      "realpathMatches": true,
+      "exit": 0,
+      "elapsedMs": 944,
+      "reads": [
+        {
+          "path": "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-startup-probe-gQbk39\\AGENTS.md",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-startup-probe-gQbk39\\.git",
+          "code": "ENOENT"
+        },
+        {
+          "path": "C:\\Users\\barri\\AppData\\Local\\Temp\\.git",
+          "code": "EPERM"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\AGENTS.md",
+          "code": "EPERM"
+        },
+        {
+          "path": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\.git",
+          "code": "EPERM"
+        }
+      ],
+      "diagnostic": "",
+      "modelRequests": 0
+    }
+  ],
+  "temporaryFolders": [
+    "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\startup-probe-fu34tS",
+    "C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-startup-probe-gQbk39"
+  ],
+  "modelRequests": 0
+}

@@ -1,0 +1,15 @@
+{
+  "model": "gemini-3.8-flash",
+  "httpStatus": 400,
+  "elapsedMs": 91,
+  "timeoutMs": 60000,
+  "finishReason": null,
+  "usage": null,
+  "complete": false,
+  "code": "provider_error",
+  "error": "Sanitized provider failure: provider_error",
+  "partialFinalText": null,
+  "generationRequests": 1,
+  "localDiagnosticDefect": "Original caller used generate(promptObject), but adapter requires generate(systemString,userString). Request was malformed. Server error payload was not retained, so exact server rejection wording remains unavailable.",
+  "capabilityVerdict": "INCONCLUSIVE — invalid local probe; one approved attempt consumed"
+}

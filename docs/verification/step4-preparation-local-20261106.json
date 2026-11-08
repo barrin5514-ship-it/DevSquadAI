@@ -1,0 +1,29 @@
+{
+  "projectName": "Counter Test 2",
+  "projectId": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+  "sessionId": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+  "roles": {
+    "builder": "codex-personal",
+    "tester": "codex-school",
+    "reviewer": "claude-code"
+  },
+  "status": "ready",
+  "files": [],
+  "executions": 0,
+  "fallback": {
+    "enabled": false,
+    "allowedWorkers": [],
+    "chatId": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+    "projectId": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+    "rootHash": "c38d2e6f5eea128a593bfd2452ea37043adcf89a75c982a3bcee498b116221a0",
+    "approvedAt": "2026-11-06T11:07:39.250Z",
+    "approvedBy": "owner"
+  },
+  "budget": null,
+  "rootHasLock": false,
+  "originalLockPreserved": true,
+  "prebuildCommit": "5c75c78bee41d6c06ee09beece45e4d7467cb1e1",
+  "goal": "Build Counter Test 2 using HTML, CSS and vanilla JavaScript, with no external runtime dependencies. Create index.html, styles.css, app.js, README.md and Node built-in tests only. Show a clear Counter Test 2 title, counter initially 0, Increment, Decrement and Reset buttons. Verify 0 -> 1 -> 2 -> 1 -> 0; allow negative values and repeated clicks. Use a clean responsive dark design, accessible button names and visible keyboard focus indicators. No Jest, jsdom, framework installation or API calls. Keep all source, tests and README small enough for the existing 9 KB file snapshot where practical. Tester must independently inspect the actual source and create compatible *.test.js/mjs/cjs tests with node:test and node:assert/strict. Browser DOM code must be exercised with an explicit small VM/DOM fixture, not imported into bare Node. Test initial state, increment, decrement, reset, repeated clicks, negatives, and practical accessibility/browser markup. The application executes tests; agents must not claim they ran tests. Claude must independently inspect requirements, files and recorded exact-revision evidence. Use the existing reviewBinding and schema; its report must clearly state PASS, CHANGES REQUESTED or BLOCKED, with honest findings. Do not accept work for the owner. No files outside this project's root.",
+  "liveRequests": 0
+}

@@ -1,0 +1,14 @@
+{
+  "counterRecordsPreserved": true,
+  "mainBackendPid": 26848,
+  "projectCount": 15,
+  "sessionCount": 15,
+  "activeRuns": 0,
+  "mainHttp": 200,
+  "classHttp": 200,
+  "pendingNewWorkspaces": 0,
+  "configuredSecretScan": "PASS",
+  "affectedFiles": [],
+  "head": "9983d20f1ee6394cbfbff484ae9f7345c91195d7",
+  "scanNote": "Git configuration KEY_n fields are setting names, not credential values, and are excluded"
+}

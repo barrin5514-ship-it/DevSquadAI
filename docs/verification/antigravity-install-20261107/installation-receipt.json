@@ -1,0 +1,16 @@
+{
+  "version": "1.5.2",
+  "executable": "C:\\Users\\barri\\AppData\\Local\\agy\\bin\\agy.exe",
+  "signatureStatus": "Valid",
+  "publisherIsGoogle": true,
+  "sha512": "D0B00AF82E3FD882F83EFBE97905222C80AFC4283D74FBFBE362B4E5BB6CAB6FA0D3188D3851B2B31D45FBD6312FEB54F22321E146F0972ED9583FB38EFB7276",
+  "standaloneCLIOnly": true,
+  "generationRequests": 0,
+  "authentication": "VERIFIED connection: owner-completed personal Google sign-in and successful built-in backend quota report; account email/tokens not inspected",
+  "headlessHelpVerified": true,
+  "hardOutputTokenCap": "Not advertised in installed help",
+  "routingChanged": false,
+  "ownerConfirmedSignIn": true,
+  "quotaReportSucceeded": true,
+  "freePlan": "UNKNOWN — model/quota reports do not identify subscription or credit-overage setting"
+}

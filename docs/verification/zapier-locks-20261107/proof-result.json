@@ -1,0 +1,50 @@
+{
+  "handoffId": "hof_af75d17b91039f28ef35f1bd26b8d2d7644638fdca66f051",
+  "executionId": "402a8c06-fb35-4f64-b62d-f25e5fae03a9",
+  "chatId": "ccd6f742-bf93-42a5-9be1-416b99a28e0d",
+  "requestId": "63c7d153-b537-4843-9f0b-0204fca3276e",
+  "projectId": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+  "zapRunId": "01bcce9c-072a-aa87-3c61-af442e5ed614",
+  "zapVersion": "v2",
+  "zapOn": true,
+  "zapAction": "Code by Zapier (JavaScript) POSTs the callback with the X-Studio-Callback-Token header and action=continue",
+  "handoffDelivery": "delivered HTTP 200",
+  "callback": "accepted",
+  "callbackAcceptedAt": "2026-11-08T05:08:11.622Z",
+  "zapHistoryIdsMatch": true,
+  "zapHistoryFields": {
+    "handoffId": "hof_af75d17b91039f28ef35f1bd26b8d2d7644638fdca66f051",
+    "projectId": "7beb0afa-6c83-4976-9040-4a129f9a573d",
+    "chatId": "ccd6f742-bf93-42a5-9be1-416b99a28e0d",
+    "requestId": "63c7d153-b537-4843-9f0b-0204fca3276e",
+    "executionId": "402a8c06-fb35-4f64-b62d-f25e5fae03a9"
+  },
+  "replay": {
+    "callbackStatus": 200,
+    "callbackBody": {
+      "status": "already_accepted",
+      "handoffId": "hof_af75d17b91039f28ef35f1bd26b8d2d7644638fdca66f051"
+    },
+    "executionsBefore": 2,
+    "executionsAfter": 2,
+    "extraAgents": 0
+  },
+  "testerOutcome": {
+    "status": "paused",
+    "code": "worker_error",
+    "detail": "Native worker configuration is invalid",
+    "note": "The callback proof succeeded; the subsequent Tester failure is separate from Zapier/locks."
+  },
+  "step4": {
+    "status": "already fixed by the concurrent Codex/Superpowers session",
+    "source": "src/services/project-studio.js failure display prefers sanitized stdout/explicit structured error over stderr stdin notice",
+    "test": "tests/workflow-debug-pipeline.test.js: the displayed failure favors the real structured error over the ordinary stdin startup notice"
+  },
+  "backend": {
+    "pid": 31976,
+    "health": "ok",
+    "migrations": 22,
+    "locks": 0,
+    "running": 0
+  }
+}

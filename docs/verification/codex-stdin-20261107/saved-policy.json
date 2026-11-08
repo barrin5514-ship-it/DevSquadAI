@@ -1,0 +1,66 @@
+[
+  {
+    "id": "bf276982-ae8f-42b6-8cbf-478e49f026a9",
+    "cycle": 1,
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-school",
+      "reviewer": "nemotron"
+    },
+    "fallbackEnabled": false,
+    "decision": "task_policy_disabled",
+    "candidates": [],
+    "checkpointPreservedAtRelease": true,
+    "releaseCheckpoint": "cd0ec5c42b40907cae89313021364f6d735df9ae8b10505eb721b725f04625b1",
+    "failedCheckpoint": "cd0ec5c42b40907cae89313021364f6d735df9ae8b10505eb721b725f04625b1",
+    "verifiedCheckpointAtRelease": true
+  },
+  {
+    "id": "0450ac30-0afd-42f2-ba7b-4db4f318bab5",
+    "cycle": 3,
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-personal",
+      "reviewer": "nemotron"
+    },
+    "fallbackEnabled": false,
+    "decision": "task_policy_disabled",
+    "candidates": [],
+    "checkpointPreservedAtRelease": true,
+    "releaseCheckpoint": "ef4b133d192a4485c64e4f3d3cf1f1cd0de422727c1dd206b3a95a504853f2fb",
+    "failedCheckpoint": "ef4b133d192a4485c64e4f3d3cf1f1cd0de422727c1dd206b3a95a504853f2fb",
+    "verifiedCheckpointAtRelease": true
+  },
+  {
+    "id": "75eb6455-f7b7-4639-9ca9-dcf49ad07dea",
+    "cycle": 4,
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-personal",
+      "reviewer": "nemotron"
+    },
+    "fallbackEnabled": false,
+    "decision": "task_policy_disabled",
+    "candidates": [],
+    "checkpointPreservedAtRelease": true,
+    "releaseCheckpoint": "f2c95ed71b624583c60f08488482efa8e7f438537ce0abd9aaad7be53203d99a",
+    "failedCheckpoint": "f2c95ed71b624583c60f08488482efa8e7f438537ce0abd9aaad7be53203d99a",
+    "verifiedCheckpointAtRelease": true
+  },
+  {
+    "id": "5e2fe7de-2821-416a-97ec-cbacacbcc2b4",
+    "cycle": 6,
+    "roles": {
+      "builder": "deepseek",
+      "tester": "codex-personal",
+      "reviewer": "nemotron"
+    },
+    "fallbackEnabled": false,
+    "decision": "task_policy_disabled",
+    "candidates": [],
+    "checkpointPreservedAtRelease": true,
+    "releaseCheckpoint": "ed6d3e0e7d2fdc3d46ba5ed5e93c1460da86d275a96c09edee264121c5b1619a",
+    "failedCheckpoint": "ed6d3e0e7d2fdc3d46ba5ed5e93c1460da86d275a96c09edee264121c5b1619a",
+    "verifiedCheckpointAtRelease": true
+  }
+]

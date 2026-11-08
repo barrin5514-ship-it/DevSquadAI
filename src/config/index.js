@@ -15,5 +15,12 @@ export function loadConfig(env = process.env) {
   config.teamFocus = env.TEAM_FOCUS === 'big_three' ? 'big_three' : 'legacy';
   // This token is for one fixed read-only handoff endpoint, not code pushes.
   config.handoff = {token:env.GITHUB_HANDOFF_TOKEN||'',readOnlyConfirmed:env.GITHUB_HANDOFF_READONLY_CONFIRMED==='true'};
+  // Studio checkpoint handoffs use the existing Zapier Catch Hook. The callback
+  // is a separate capability token; it is never the dashboard or provider key.
+  config.studioZapier = {
+    enabled: env.STUDIO_ZAPIER_HANDOFFS === 'true',
+    callbackToken: env.STUDIO_ZAPIER_CALLBACK_TOKEN || '',
+    handoffTimeoutMs: integer('STUDIO_HANDOFF_TIMEOUT_MS', 120000, 900000)
+  };
   return Object.freeze(config);
 }

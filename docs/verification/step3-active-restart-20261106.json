@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "name": "Active local worker has persisted OS birth identity",
+      "passed": true
+    },
+    {
+      "name": "Saved worker identity survives restart and fresh OS observation is available",
+      "passed": true
+    },
+    {
+      "name": "Restart marks the actual interrupted worker unknown and keeps its lock",
+      "passed": true
+    },
+    {
+      "name": "Same project, checkpoint and saved file survive abrupt backend exit",
+      "passed": true
+    },
+    {
+      "name": "Unresolved worker outcome blocks another Run without spawning duplicates",
+      "passed": true
+    }
+  ],
+  "providerRequests": 0,
+  "simulation": true
+}

@@ -1,0 +1,19 @@
+✔ recovery rejects an older completed execution when a later test process owns the same request (105.9153ms)
+✔ new execution binds project/session/profile/checkpoint and sanitizes lifecycle errors (82.3416ms)
+✔ restart marks active executions interrupted and retains locks and latest checkpoint (98.5148ms)
+✔ remote unknown outcome cannot borrow native process evidence for recovery (77.1156ms)
+✔ unknown test-runner outcome retains its own execution and preserves Builder files (183.7077ms)
+✔ a historical locked project does not block another folder; independent review remains owner-pending (207.9192ms)
+✔ test command detection supports existing npm Node scripts and blocks unsupported frameworks, hooks and shell syntax (96.6098ms)
+✔ missing tests and malformed package metadata are blocked rather than counted as passes (73.9072ms)
+✔ test evidence reports failures, skipped counts, framework and revision without claiming browser globals exist (99.1092ms)
+✔ all-skipped output is evidence of no exercised behavior, never a successful build (109.62ms)
+✔ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (7136.1619ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8692.1754

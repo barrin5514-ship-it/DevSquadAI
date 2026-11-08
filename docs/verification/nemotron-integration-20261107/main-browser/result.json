@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-11-07T16:41:03.735Z",
+  "checks": [
+    {
+      "name": "Actual regular dashboard and existing Expense session load",
+      "pass": true
+    },
+    {
+      "name": "No executions or approval were added",
+      "pass": true
+    },
+    {
+      "name": "Existing roles preserved",
+      "pass": true
+    },
+    {
+      "name": "Builder offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Tester offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Reviewer offers Nemotron without changing selection",
+      "pass": true
+    },
+    {
+      "name": "Explicit non-generating check returns through real backend",
+      "pass": true
+    },
+    {
+      "name": "Seven actual model/profile readings load",
+      "pass": true
+    },
+    {
+      "name": "Exact model and honest live-role qualification shown",
+      "pass": true
+    },
+    {
+      "name": "Preview accurately reports separately running app required",
+      "pass": true
+    },
+    {
+      "name": "No page errors, blocked writes or horizontal overflow",
+      "pass": true
+    }
+  ],
+  "passed": 11,
+  "errors": [],
+  "blocked": [],
+  "access": {
+    "httpStatus": 200,
+    "result": {
+      "data": {
+        "configured": true,
+        "ok": true,
+        "model": "nvidia/nemotron-3.5-super-vl:free",
+        "checkedAt": "2026-11-07T16:39:22.736Z",
+        "reason": "Free route/account verified; generation and role evidence are separate.",
+        "access": {
+          "checkedAt": "2026-11-07T16:39:22.736Z",
+          "available": true,
+          "model": "nvidia/nemotron-3.5-super-vl:free",
+          "zeroPrice": true,
+          "quota": {
+            "used": 2,
+            "limit": 50,
+            "remaining": 48
+          },
+          "reason": "Free route/account verified; generation and role evidence are separate."
+        }
+      }
+    }
+  },
+  "modelRequests": 0,
+  "project": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "session": "b1e11259-d5f7-427e-b004-c66d9a818fe3"
+}

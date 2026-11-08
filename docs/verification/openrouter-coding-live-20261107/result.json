@@ -1,0 +1,37 @@
+{
+  "verdict": "FAIL",
+  "model": "cohere/north-mini-code:free",
+  "httpStatus": 200,
+  "reportedModel": "cohere/north-mini-code:free",
+  "reportedCostUSD": 0,
+  "retryAfter": null,
+  "elapsedMs": 2819,
+  "timeoutMs": 60000,
+  "finishReason": "length",
+  "usage": {
+    "input": 91,
+    "output": 498,
+    "total": 589,
+    "source": "provider_reported",
+    "reasoning": 401,
+    "estimatedCost": 0
+  },
+  "complete": false,
+  "structuredValid": false,
+  "error": {
+    "code": "invalid_response",
+    "message": "Provider returned an invalid or incomplete response."
+  },
+  "partialFinalText": "{\n  \"explanation\": \"The original function uses Array.reduce to add up all values in the array, starting with sum 0.\",\n  \"edgeCase\": \"Passing a non‑array (e.g., a string) or an array containing a non‑finite number (NaN, Infinity, or a non‑number) leads to incorrect results or runtime errors.\",\n  \"code\": \"function calculateTotal(prices) {\\n  if (!Array.isArray prices) throw new TypeError('Input must be an array');\\n  for (let p of prices) {\\n    if (!Number.isFinite(p)) throw new TypeError(`Invalid price: ${p}`);\\n  }\\n  return prices.reduce((sum",
+  "diagnostics": {
+    "httpStatus": 200,
+    "headersMs": 2817,
+    "elapsedMs": 2817,
+    "phase": "complete",
+    "errorKind": "invalid_response",
+    "retryAfter": null
+  },
+  "generationRequests": 1,
+  "databaseTablesCompared": 64,
+  "databaseUnchanged": true
+}

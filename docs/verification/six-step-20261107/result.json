@@ -1,0 +1,16 @@
+﻿{
+  "date": "2026-11-07",
+  "status": "PARTIALLY VERIFIED",
+  "full_serial": {"tests": 695, "pass": 695, "fail": 0, "cancelled": 0, "skipped": 0},
+  "focused": {
+    "step1_stage_continuation": "2/2 continuation; 3/3 retry/delete; 76/76 combined Step 1 regression",
+    "step2_bounded_correction": "2/2 correction; 31/31 scope/correction/continuation after mode distinction",
+    "step3_stream_cleanup": "4/4 DeepSeek body/cleanup; 52/52 adapter/team budget regression",
+    "step4_lock_banner": "29/29 conversation UI",
+    "step5_execution_id": "7/7 handoff suite",
+    "step6_fallback_policy": "20/20 fallback suite; 29/29 conversation UI"
+  },
+  "runtime": {"pid": 32324, "health": "ok", "migrations": 21, "locks": 1, "running_chats": 0},
+  "zapier": {"studio_enabled": false, "callback_token": "absent", "saved_hook_configured": true, "saved_hook_enabled": true, "callback_route": "POST /api/console/studio/zapier/callback", "callback_header": "X-Studio-Callback-Token", "live_zap": "not created or tested"},
+  "not_run": ["live provider calls", "live Zapier callback", "owner browser walkthrough", "Major #5 multi-file rollback fix"]
+}

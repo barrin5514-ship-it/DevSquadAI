@@ -1,0 +1,59 @@
+{
+  "message": "Final owner acceptance control is available but never pressed",
+  "checks": [
+    {
+      "name": "Opening dashboard dispatches nothing",
+      "pass": true
+    },
+    {
+      "name": "Exactly three mocked roles, in required order",
+      "pass": true
+    },
+    {
+      "name": "Actual isolated Node runner passed two independent tests",
+      "pass": true
+    },
+    {
+      "name": "Runner selected Tester tests, not deliberately failing Builder tests",
+      "pass": true
+    },
+    {
+      "name": "Reviewer received hash-bound independent evidence",
+      "pass": true
+    },
+    {
+      "name": "Owner acceptance remains pending",
+      "pass": true
+    },
+    {
+      "name": "Final owner acceptance control is available but never pressed",
+      "pass": false
+    }
+  ],
+  "errors": [],
+  "fixture": "C:\\Users\\barri\\AppData\\Local\\Temp\\three-agent-browser-1Qf67b",
+  "calls": [
+    {
+      "agent": "deepseek",
+      "phase": "builder",
+      "goal": "MOCK THREE ROLE FLOW"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester",
+      "goal": "MOCK THREE ROLE FLOW"
+    },
+    {
+      "agent": "claude-code",
+      "phase": "reviewer",
+      "goal": "MOCK THREE ROLE FLOW"
+    }
+  ],
+  "chats": [
+    {
+      "id": "8f87ef75-5c3f-4bad-9a9f-3865beffbf77",
+      "status": "awaiting_owner",
+      "alert": "Work and independent review are ready for your inspection."
+    }
+  ]
+}

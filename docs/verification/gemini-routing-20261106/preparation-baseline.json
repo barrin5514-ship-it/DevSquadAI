@@ -1,0 +1,11 @@
+{
+  "backup": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\backups\\backup-1794023339947-9b61595c-e6a4-437c-8707-27fbaeb87115.sqlite",
+  "active": 0,
+  "locks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ],
+  "expense": "ready",
+  "modelRequests": 1
+}

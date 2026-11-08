@@ -1,0 +1,77 @@
+{
+  "files": [
+    {
+      "file": ".env.example",
+      "sha256": "1245af212ab9d9195f1adae4bd4e1b10b04c9b26c9c46a5fc67bea93848ab3cf"
+    },
+    {
+      "file": "src/config/index.js",
+      "sha256": "bf536eb9db2f82c1cbb78e054682df9c0a64f62c17f7d488fa092cee6c278edc"
+    },
+    {
+      "file": "src/routes/console.js",
+      "sha256": "72912ea83803226ddc528e737ac401f291db6095695a698fb5d432336b8acbc7"
+    },
+    {
+      "file": "src/dashboard/dashboard.js",
+      "sha256": "8a905807e75ba94237b5bdafff10f61b467ec6139b87ba687288ac78e4cae76c"
+    },
+    {
+      "file": "src/services/model-health.js",
+      "sha256": "81c6424dba027de76bc5718038c21d1603faf6e07075877a50e77af7f1951e84"
+    },
+    {
+      "file": "src/services/capability-review.js",
+      "sha256": "1e084e9fc5561b94253a2de9d2c62f8ae0a9700e439df6f2595f6e74341b9b9b"
+    },
+    {
+      "file": "src/services/continuation-plan.js",
+      "sha256": "eb8c818a14528afd0dd947d511f3fb2eaf2b131e68ad345b3a96ba3636a78b4b"
+    },
+    {
+      "file": "tests/model-health.test.js",
+      "sha256": "54db429596ce75d052639ae647763d35738b9c99ef4ca1a5f3b24cfc6aa84284"
+    },
+    {
+      "file": "tests/capability-review.test.js",
+      "sha256": "dc63eee29640c2381066e964d966168209275962155df7634d3bbd6a8148e6a9"
+    },
+    {
+      "file": "tests/continuation-plan.test.js",
+      "sha256": "eb9d03ba7d4a4db262bd7afdd5f00649a5b10e7f6150b174c5293f7d43deab19"
+    },
+    {
+      "file": "scripts/verify-gemini-capability-20261106.js",
+      "sha256": "9016e7bb324eb8fab4b2e4828b358a680f5e286629c8485b2558324830616d42"
+    },
+    {
+      "file": "scripts/verify-gemini-readiness-isolation-20261106.js",
+      "sha256": "ff4d08d7e98f7c19f06c016d2e3d304060b9d84e8825671e51659a9311fa9e45"
+    },
+    {
+      "file": "scripts/verify-gemini-readiness-workflow-20261106.js",
+      "sha256": "364f20645527be3fb31dc7532cfedb3dc888296a809e359d8ff4293108f06dcd"
+    },
+    {
+      "file": "scripts/verify-model-health-main-20261106.js",
+      "sha256": "b5eb767fd7960b3c2b6187ddf99042df211d1f6a5aa9818c52b2a829916cf612"
+    },
+    {
+      "file": "docs/DEV_SQUAD_GEMINI_FALLBACK_READINESS_20261106.md",
+      "sha256": "90f001872749f1a8cdbecf60ad2392817a322afe38f6c477ab363ccd647d448a"
+    },
+    {
+      "file": "docs/PROMPT_LOG.md",
+      "sha256": "162ffaee81138e293c9955637c060c65186923a5a139973615721149969a30d1"
+    }
+  ],
+  "credentialMatches": [],
+  "finalFocusedPass": 43,
+  "fullCheckpointPass": 634,
+  "mainChromePass": 9,
+  "mockChromePass": 13,
+  "isolationPass": 6,
+  "liveGenerationRequests": 1,
+  "geminiVerdict": "INCONCLUSIVE",
+  "productionActivation": false
+}

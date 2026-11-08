@@ -1,0 +1,12 @@
+{
+  "dashboardURL": "http://127.0.0.1:3000/team#project/7d913bbc-9f16-4a5a-abf8-e0202b04a3dd/chat/99273d3f-9164-4727-8b73-b59a5fc83e6e",
+  "roles": {
+    "builder": "codex-personal",
+    "tester": "codex-school",
+    "reviewer": "claude-code"
+  },
+  "browserErrors": [],
+  "readOnly": true,
+  "runPressed": false,
+  "liveRequests": 0
+}

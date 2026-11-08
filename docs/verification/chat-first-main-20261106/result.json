@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "name": "Regular dashboard HTTP 200",
+      "pass": true
+    },
+    {
+      "name": "Actual chat-first workspace and composer visible",
+      "pass": true
+    },
+    {
+      "name": "Laptop viewport has no horizontal page overflow",
+      "pass": true
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "pass": true
+    },
+    {
+      "name": "No write or external request attempted",
+      "pass": true
+    }
+  ],
+  "passed": 5,
+  "errors": [],
+  "blocked": [],
+  "readOnly": true,
+  "modelInvocations": 0,
+  "url": "http://127.0.0.1:3000/team#project/27453fc9-75d8-468a-a42b-b25e44a62a69/chat/1b28625d-db6a-4117-9879-52f7da5dace1"
+}

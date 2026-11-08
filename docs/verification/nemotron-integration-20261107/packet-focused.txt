@@ -1,0 +1,23 @@
+✔ actual builder API contract uses the guarded existing pipeline and records usage, with no model execution (836.1524ms)
+✔ actual tester API contract uses the guarded existing pipeline and records usage, with no model execution (562.4079ms)
+✔ actual reviewer API contract uses the guarded existing pipeline and records usage, with no model execution (536.692ms)
+✔ missing approval and unverified/free-retired routes never dispatch (540.4903ms)
+✔ nonzero public/account pricing excludes the route without paid substitution (424.2238ms)
+✔ model discrepancy fails closed, records actual identity and usage, and cannot be retried (522.6173ms)
+✔ malformed, incomplete and unbound review results are rejected with known usage, not fabricated test execution (1670.7724ms)
+✔ concurrent use of one execution dispatches at most once (788.5276ms)
+✔ Stop aborts the request; unknown remote outcome and single-use record remain (627.9382ms)
+✔ expired/task-changed approvals fail before posting and wrong free terms cannot arm (527.1871ms)
+✔ Reviewer cannot return files or claim execution; unknown fields are invalid (0.8674ms)
+✔ provider auth, quota and outage failures stop after one request with distinct classifications (1768.2448ms)
+✔ modified packet requirements, guarded file input and review binding cannot dispatch (1560.657ms)
+✔ late natural completion cannot evade the isolated-worker deadline (3.6091ms)
+✔ successful tree-kill return is not proof when a recorded child survives (2.0498ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11239.1761

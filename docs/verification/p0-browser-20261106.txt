@@ -1,0 +1,115 @@
+{"name":"Real UI saves task-scoped fallback permission through the protected API","passed":true}
+{"name":"Normal composer starts only the local mock job","passed":true}
+{"name":"Personal quota error selects School without rerunning Builder","passed":true}
+{"name":"Browser shows handoff notification and actual selected profile","passed":true}
+{"name":"Checkpoint belongs to the correct project and contains saved Builder files","passed":true}
+{"name":"Real isolated Node tests pass after the replacement worker","passed":true}
+{"name":"Independent review and owner acceptance gate remain accurate","passed":true}
+{"name":"One job, one handoff, four local worker simulations plus one isolated test execution, no duplicate writes","passed":true}
+{"name":"Known process exits release only this mock job lock","passed":true}
+{"name":"Supported restart preserves handoff history, test evidence and task scope","passed":true}
+{"name":"No browser JavaScript errors","passed":true}
+{"name":"Actual native transport retains sanitized exit-1 details in execution evidence","passed":true}
+{"name":"Unapproved fallback has a durable reason and no replacement dispatch","passed":true}
+{"name":"Chrome displays safe native failure and fallback decision","passed":true}
+{"name":"No browser JavaScript errors across successful handoff and denied fallback","passed":true}
+{"name":"No fixture locks or active workers remain","passed":true}
+{
+  "checks": [
+    {
+      "name": "Real UI saves task-scoped fallback permission through the protected API",
+      "passed": true
+    },
+    {
+      "name": "Normal composer starts only the local mock job",
+      "passed": true
+    },
+    {
+      "name": "Personal quota error selects School without rerunning Builder",
+      "passed": true
+    },
+    {
+      "name": "Browser shows handoff notification and actual selected profile",
+      "passed": true
+    },
+    {
+      "name": "Checkpoint belongs to the correct project and contains saved Builder files",
+      "passed": true
+    },
+    {
+      "name": "Real isolated Node tests pass after the replacement worker",
+      "passed": true
+    },
+    {
+      "name": "Independent review and owner acceptance gate remain accurate",
+      "passed": true
+    },
+    {
+      "name": "One job, one handoff, four local worker simulations plus one isolated test execution, no duplicate writes",
+      "passed": true
+    },
+    {
+      "name": "Known process exits release only this mock job lock",
+      "passed": true
+    },
+    {
+      "name": "Supported restart preserves handoff history, test evidence and task scope",
+      "passed": true
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "passed": true
+    },
+    {
+      "name": "Actual native transport retains sanitized exit-1 details in execution evidence",
+      "passed": true
+    },
+    {
+      "name": "Unapproved fallback has a durable reason and no replacement dispatch",
+      "passed": true
+    },
+    {
+      "name": "Chrome displays safe native failure and fallback decision",
+      "passed": true
+    },
+    {
+      "name": "No browser JavaScript errors across successful handoff and denied fallback",
+      "passed": true
+    },
+    {
+      "name": "No fixture locks or active workers remain",
+      "passed": true
+    }
+  ],
+  "calls": [
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester"
+    },
+    {
+      "agent": "codex-school",
+      "phase": "tester"
+    },
+    {
+      "agent": "claude-code",
+      "phase": "reviewer"
+    },
+    {
+      "agent": "deepseek",
+      "phase": "builder"
+    },
+    {
+      "agent": "codex-personal",
+      "phase": "tester"
+    }
+  ],
+  "providerRequests": 0,
+  "webhookRequests": 0,
+  "simulation": true,
+  "screenshots": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\docs\\verification\\native-diagnostics-browser-20261106"
+}
+{"preservedFixture":"C:\\Users\\barri\\AppData\\Local\\Temp\\devsquad-failover-functional-J5mV13","productionModified":false}

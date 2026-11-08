@@ -1,0 +1,18 @@
+import fs from 'node:fs';import path from 'node:path';import {createRequire} from 'node:module';import {rootHash,verifyManagedRoot} from '../src/services/managed-workspace-root.js';
+const output=path.resolve('docs/verification/first-real-build-20261106');fs.mkdirSync(output,{recursive:true});const evidenceFile=path.join(output,'created-project.json');
+const require=createRequire(import.meta.url),{chromium}=require(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')),browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+try{const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],mutations=[];page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',route=>{const req=route.request(),url=new URL(req.url());if(url.origin!=='http://127.0.0.1:3000'||/\/events(?:\?|$)/.test(url.href))return route.abort();if(!['GET','HEAD'].includes(req.method())){if(req.method()!=='POST'||!['/api/console/studio/project-connections/inspect','/api/console/studio/project-connections/confirm'].includes(url.pathname)&&!/^\/api\/console\/studio\/(?:projects\/[^/]+\/sessions|chats\/[^/]+\/(?:messages|execution-mode))$/.test(url.pathname))return route.abort();mutations.push(url.pathname);}return route.continue();});
+ const record=JSON.parse(fs.readFileSync(evidenceFile,'utf8')),project=record.project,name=project.name,result={projectId:project.id,name,root:project.folder,creationHttp:record.creationHttp,modelTurns:0};await page.goto('http://127.0.0.1:3000/team#project/'+project.id);await page.waitForFunction(id=>state.studioProject===id&&!state.busy,project.id);await page.getByRole('button',{name:'＋ Conversation',exact:true}).click();await page.waitForFunction(()=>state.studioChat&&!state.busy);await page.getByRole('form',{name:'Message composer'}).waitFor();
+ await page.getByRole('textbox',{name:'Message',exact:true}).fill('Build a small, clean, responsive To-Do List web application using HTML, CSS and vanilla JavaScript, with no external dependencies, database, API keys or deployment. Required files: index.html, style.css, app.js, README.md. Support adding and displaying tasks, marking them complete/incomplete, deleting them, showing the remaining task count, and saving/restoring tasks with browser localStorage. Use plain-English comments and README instructions. Return the implementation through the existing artifact workflow. Do not claim independent tests or review ran.');
+ await page.getByRole('button',{name:'Save message',exact:true}).click();
+ await page.waitForFunction(()=>state.studioChat&&state.studioDetail?.state.goal&&!state.busy);
+ result.sessionId=await page.evaluate(()=>state.studioChat);fs.writeFileSync(evidenceFile,JSON.stringify({...result,phase:'task saved, not approved'},null,2));
+ await page.locator('#chat-execution-tools>summary').click();
+ await page.getByLabel('Execution mode',{exact:true}).selectOption('builder-only');
+ await page.waitForFunction(()=>state.studioDetail?.state.executionMode==='builder-only'&&!state.busy);
+ result.mode='builder-only';result.builder='codex-personal';result.approvalCreated=await page.evaluate(()=>!!state.studioDetail?.state.runApproval);
+ result.executions=await page.evaluate(()=>state.studioDetail?.executions?.length||0);
+ if(result.approvalCreated||result.executions)throw Error('Preparation unexpectedly authorized or executed');
+ await page.screenshot({path:path.join(output,'prepared-awaiting-owner.png'),fullPage:true});
+ fs.writeFileSync(path.join(output,'verification.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));
+}finally{await browser.close();}

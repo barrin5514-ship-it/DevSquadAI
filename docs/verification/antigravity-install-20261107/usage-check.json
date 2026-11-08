@@ -1,0 +1,8 @@
+{
+  "command": "agy --print /usage (built-in quota report, not a model prompt)",
+  "exit": 0,
+  "timedOut": false,
+  "quotaReport": "Gemini Models\tWeekly Limit Remaining\t98%\t2026-11-14T05:42:16Z\nClaude and GPT models\tWeekly Limit Remaining\t100%\t2026-11-14T06:08:05Z\n",
+  "stderrClassification": null,
+  "generationRequests": 0
+}

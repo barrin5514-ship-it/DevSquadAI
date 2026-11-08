@@ -1,0 +1,27 @@
+✔ rotate and assignments persist per project; card order does not reassign workers (1151.8099ms)
+✔ wrong project, stale versions, invalid order, unknown workers and self-review fail closed (1094.0494ms)
+✔ concurrent saves have one winner and stale repetition cannot overwrite it (537.6303ms)
+✔ active reassignment queues without interrupting or changing the current worker and applies after Stop/resume (1407.1125ms)
+✔ all prior file authors remain ineligible to review, including a tester who wrote tests (1127.4092ms)
+✔ role API retains dashboard capability and exact session scope without provider dispatch (923.5054ms)
+✔ completed length response settles reported usage without accepting any partial artifact (942.9764ms)
+✔ interrupted stream keeps its unknown reservation even when partial usage was observed (807.8938ms)
+✔ one HTTP Send passes actual files and executed test evidence to independent roles and awaits the owner (2761.0329ms)
+✔ confirmed truncation obeys fallback=true and settles its final reported usage (3131.0769ms)
+✔ confirmed truncation obeys fallback=false and settles its final reported usage (1346.4095ms)
+✔ unknown interrupted response pauses with its reservation retained and a duplicate Send cannot charge again (1484.8416ms)
+✔ a Builder returning no files for an empty project cannot advance to Tester or owner review (1501.1811ms)
+✔ an unchanged existing implementation can still advance to independent testing and review (2519.3125ms)
+✔ a confirmed usage limit obeys fallback=true with a rejected, zero-cost reservation (2342.0817ms)
+✔ a confirmed usage limit obeys fallback=false with a rejected, zero-cost reservation (1518.3177ms)
+✔ duplicate and competing Send while active cannot start an extra worker (2381.8212ms)
+✔ paused Tester resumes from the actual saved files with no second paid Builder send (2604.6314ms)
+✔ the displayed failure favors the real structured error over the ordinary stdin startup notice (2062.5685ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33761.842

@@ -1,0 +1,33 @@
+✔ one HTTP Send passes actual files and executed test evidence to independent roles and awaits the owner (1866.9061ms)
+✔ confirmed truncation obeys fallback=true and settles its final reported usage (1455.6713ms)
+✔ confirmed truncation obeys fallback=false and settles its final reported usage (891.3924ms)
+✔ unknown interrupted response pauses with its reservation retained and a duplicate Send cannot charge again (846.9839ms)
+✖ a Builder returning no files for an empty project cannot advance to Tester or owner review (2230.5346ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7831.2327
+
+✖ failing tests:
+
+test at tests\workflow-debug-pipeline.test.js:29:1
+✖ a Builder returning no files for an empty project cannot advance to Tester or owner review (2230.5346ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/workflow-debug-pipeline.test.js:30:105)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

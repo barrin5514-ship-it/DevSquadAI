@@ -1,0 +1,58 @@
+﻿{
+  "date": "2026-11-07",
+  "status": "PARTIALLY VERIFIED",
+  "budget_failure_classification": {
+    "category": "old-behavior tests",
+    "baseline": "Focused budget tests were already green (55/55) before changes; the previous full suite was 695/695. No red budget test was reproducible in this tree.",
+    "not_regression_from_default_fallback": true,
+    "not_timing": true,
+    "detail": "The budget assertions encoded the old capped policy. They were replaced with tests that assert a dispatch proceeds despite zero/stale funding, low caps, and old per-request/day/total limits."
+  },
+  "full_serial": {"tests": 695, "pass": 695, "fail": 0, "cancelled": 0, "skipped": 0},
+  "focused": {"tests": 185, "pass": 185, "fail": 0},
+  "runtime": {"pid": 24084, "health": "ok", "migrations": 21, "locks": 1, "running_chats": 0},
+  "budget_gates_removed": [
+    "StudioRunScope.preview two-cent capUSD line",
+    "StudioRunScope.preview funding / estimate / balance issues",
+    "StudioRunScope.arm capUSD validation and storage",
+    "StudioRunScope.check pre-dispatch fundingReady gate",
+    "StudioFailover.configure task budget cap/expiry/held-policy rejection",
+    "StudioFailover.paidReady budget_missing/remaining/balance/funding gate",
+    "StudioFailover.prepareFunding automatic funding refresh gate",
+    "StudioFailover.fundingReady pricing + fresh-balance hard gate",
+    "StudioFailover.reserve paidReady, remaining, balance and request/day/total limit rejections",
+    "StudioWorkers.preflight DeepSeek funding gate",
+    "UsageService.requestBudget and tokenBudget rejection",
+    "DeepSeekService.pricesValid request/day/total requirement and price-expiry gate",
+    "DeepSeekService.quote requestLimit rejection",
+    "DeepSeekService.execute maximumUSD, fresh-balance, daily and total limit gates"
+  ],
+  "tracking_kept": [
+    "studio_api_reservations reserved/completed/unknown records",
+    "studio usage events and knownEstimatedUSD",
+    "AI usage_events rows and estimated cost",
+    "DeepSeek quote/pricing/balance metadata displayed, never a gate"
+  ],
+  "other_protections_kept": [
+    "folder locks and leases",
+    "checkpoints and resume behavior",
+    "idempotency/replay protection",
+    "body_limit and answer_limit",
+    "repeated-problem correction stop",
+    "phase/model/input-bound integrity checks",
+    "provider 401/402/403/429 errors surfaced as provider errors"
+  ],
+  "zapier": {
+    "studio_handoffs_env": "unset/false",
+    "callback_token": "absent",
+    "saved_hook_configured": true,
+    "saved_hook_enabled": true,
+    "live_zap": "not created or tested"
+  },
+  "limitations": [
+    "No live provider calls.",
+    "No live Zapier callback.",
+    "No interactive browser walkthrough.",
+    "Retired demo/hello one-shot capability files retain their historical fixed-scope validation; they are not the active Project Studio Send path."
+  ]
+}

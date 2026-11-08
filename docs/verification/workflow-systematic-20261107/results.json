@@ -1,0 +1,63 @@
+{
+  "platform": "win32",
+  "node": "v24.19.0",
+  "full": {
+    "command": "node scripts/test-serial.js",
+    "tests": 734,
+    "passed": 734,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 581142.1362
+  },
+  "initialFull": {
+    "tests": 734,
+    "passed": 732,
+    "failed": 2,
+    "reason": "Two role fixtures returned empty Builder patches; fixed only mock artifact responses."
+  },
+  "windowsDemoWorkers": {
+    "tests": 27,
+    "passed": 27,
+    "failed": 0
+  },
+  "finalFocused": {
+    "tests": 19,
+    "passed": 19,
+    "failed": 0
+  },
+  "browser": {
+    "simulatedProviders": true,
+    "realLocalFixtureTests": true,
+    "source": "regular dashboard served by disposable app/database",
+    "chatId": "4a9cc2e3-4eda-4865-a469-f64fe6db4f6e",
+    "requestId": "87d85b49-7177-4883-afd9-57b8aa0e6e16",
+    "status": "awaiting_owner",
+    "tests": 2,
+    "roles": [
+      {
+        "agent": "deepseek",
+        "phase": "builder"
+      },
+      {
+        "agent": "nemotron",
+        "phase": "tester"
+      },
+      {
+        "agent": "claude-code",
+        "phase": "reviewer"
+      }
+    ],
+    "modelFixturePosts": 1,
+    "runPosts": 1,
+    "approvalPosts": 0,
+    "pageErrors": 0
+  },
+  "liveDevSquadProviderCalls": 0,
+  "regularBackendRestarted": false,
+  "productionFiles": [
+    "src/services/studio-workers.js",
+    "src/services/project-studio.js"
+  ],
+  "sourceChangesDuringVerification": []
+}

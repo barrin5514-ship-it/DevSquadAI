@@ -1,0 +1,30 @@
+[
+  {
+    "label": "normal visible answer (before)",
+    "passed": true,
+    "limit": 512000,
+    "rawBodyBytes": 5858,
+    "visibleCharacters": 5619,
+    "reasoningBytes": 0,
+    "outputCharacters": 5619,
+    "finishReason": "stop"
+  },
+  {
+    "label": "reasoning-heavy 600k, same 5,619 visible (before)",
+    "passed": false,
+    "limit": 512000,
+    "rawBodyBytes": 605939,
+    "visibleCharacters": 5619,
+    "reasoningBytes": 600000,
+    "error": "Provider returned an invalid or incomplete response.",
+    "code": "invalid_response",
+    "httpStatus": 200,
+    "failedCheck": "body_limit",
+    "diagnostic": {
+      "failedCheck": "body_limit",
+      "completionObserved": false,
+      "finishReason": null,
+      "usageReported": false
+    }
+  }
+]

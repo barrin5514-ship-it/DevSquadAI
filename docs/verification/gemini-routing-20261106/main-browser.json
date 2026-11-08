@@ -1,0 +1,46 @@
+{
+  "checks": [
+    {
+      "name": "Regular dashboard opens the existing Expense Tracker session",
+      "pass": true
+    },
+    {
+      "name": "Existing session has no executions or active execution approval",
+      "pass": true
+    },
+    {
+      "name": "Three existing roles remain unchanged",
+      "pass": true
+    },
+    {
+      "name": "All six provider/profile health rows load from the actual backend",
+      "pass": true
+    },
+    {
+      "name": "Gemini reports the actual HTTP 400 as an inconclusive local diagnostic",
+      "pass": true
+    },
+    {
+      "name": "Gemini is not integrated or available for fallback",
+      "pass": true
+    },
+    {
+      "name": "Refresh preserves local-only evidence and no writable requests",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript errors or horizontal page overflow",
+      "pass": true
+    },
+    {
+      "name": "Actual Live Preview clearly requires a separately running and authorized app",
+      "pass": true
+    }
+  ],
+  "passed": 9,
+  "errors": [],
+  "blocked": [],
+  "modelRequests": 0,
+  "project": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "session": "b1e11259-d5f7-427e-b004-c66d9a818fe3"
+}

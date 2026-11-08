@@ -1,0 +1,56 @@
+✔ one HTTP Send passes actual files and executed test evidence to independent roles and awaits the owner (1273.6334ms)
+✔ confirmed truncation obeys fallback=true and settles its final reported usage (1365.8069ms)
+✔ confirmed truncation obeys fallback=false and settles its final reported usage (862.0099ms)
+✔ unknown interrupted response pauses with its reservation retained and a duplicate Send cannot charge again (949.6161ms)
+✖ a Builder returning no files for an empty project cannot advance to Tester or owner review (2112.0463ms)
+✔ a confirmed usage limit obeys fallback=true with a rejected, zero-cost reservation (1620.3663ms)
+✔ a confirmed usage limit obeys fallback=false with a rejected, zero-cost reservation (857.6564ms)
+✔ duplicate and competing Send while active cannot start an extra worker (1553.9937ms)
+✔ paused Tester resumes from the actual saved files with no second paid Builder send (1847.4125ms)
+✖ the displayed failure favors the real structured error over the ordinary stdin startup notice (962.2686ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13973.5105
+
+✖ failing tests:
+
+test at tests\workflow-debug-pipeline.test.js:29:1
+✖ a Builder returning no files for an empty project cannot advance to Tester or owner review (2112.0463ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/workflow-debug-pipeline.test.js:30:105)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\workflow-debug-pipeline.test.js:55:1
+✖ the displayed failure favors the real structured error over the ordinary stdin startup notice (962.2686ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /out of credits/. Input:
+  
+  'NVIDIA Nemotron stopped while testing: reached a usage or rate limit. Earlier saved files and history were preserved. CLI: Reading additional input from stdin...\n'
+  
+      at TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/workflow-debug-pipeline.test.js:57:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'NVIDIA Nemotron stopped while testing: reached a usage or rate limit. Earlier saved files and history were preserved. CLI: Reading additional input from stdin...\n',
+    expected: /out of credits/,
+    operator: 'match',
+    diff: 'simple'
+  }

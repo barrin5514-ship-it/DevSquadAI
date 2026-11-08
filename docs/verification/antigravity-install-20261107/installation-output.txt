@@ -1,0 +1,12 @@
+ERROR: logging before google.Init: I1107 00:37:49.411252       1 installer.go:27] Running Antigravity CLI setup...
+ERROR: logging before google.Init: I1107 00:37:49.413434       1 installer_windows.go:45] Configuring Windows user PATH registry environment...
+ERROR: logging before google.Init: I1107 00:37:49.431862       1 installer_windows.go:117] Successfully added %LOCALAPPDATA%\agy\bin to User PATH registry variable.
+ERROR: logging before google.Init: I1107 00:37:49.431862       1 installer_windows.go:148] Broadcasting environment update system-wide...
+ERROR: logging before google.Init: I1107 00:37:49.532896       1 installer_windows.go:167] Environment update broadcast completed.
+
+Warning: C:\Users\barri\AppData\Local\agy\bin is not present in your active Environment PATH.
+Please restart your active terminal session, or add it manually if needed.
+
+
+✅ Antigravity CLI binary placed successfully at C:\Users\barri\AppData\Local\agy\bin\agy.exe
+Note: The binary is installed, but it is not in your active PATH. Please follow the instructions above to add it, then restart your terminal session.

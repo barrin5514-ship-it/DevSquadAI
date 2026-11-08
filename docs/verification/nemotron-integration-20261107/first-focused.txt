@@ -1,0 +1,43 @@
+✔ unknown, absent, invalid and mismatched allowance inputs never produce percentages (0.7431ms)
+✔ verified fresh consumption uses configurable 70/85/95/100 thresholds (0.177ms)
+✔ old or future usage is STALE and never a current remaining-usage estimate (0.1336ms)
+✔ metrics distinguish verified, estimated, stale and unknown without inventing zero (0.1355ms)
+✔ catalog authentication and successful generation do not establish available quota (0.1891ms)
+✔ temporary rate limit expires without permanently disabling a model or claiming quota (0.1074ms)
+✔ auth failure and exhausted allowance have distinct states (0.1099ms)
+✔ warning configuration validates order without changing provider authorization (1.6015ms)
+✔ cached endpoint exposes metrics without secrets, network calls, grants or Gemini activation (97.3312ms)
+✔ context-window consumption is not subscription or account allowance (0.2103ms)
+✔ a malformed local probe is inconclusive, not provider unavailability (0.1033ms)
+✔ actual builder API contract uses the guarded existing pipeline and records usage, with no model execution (588.5777ms)
+✔ actual tester API contract uses the guarded existing pipeline and records usage, with no model execution (487.1153ms)
+✔ actual reviewer API contract uses the guarded existing pipeline and records usage, with no model execution (513.2233ms)
+✔ missing approval and unverified/free-retired routes never dispatch (713.8253ms)
+✔ nonzero public/account pricing excludes the route without paid substitution (452.3309ms)
+✔ model discrepancy fails closed, records actual identity and usage, and cannot be retried (486.556ms)
+✔ malformed, incomplete and unbound review results are rejected with known usage, not fabricated test execution (1417.2971ms)
+✔ concurrent use of one execution dispatches at most once (453.2289ms)
+✔ Stop aborts the request; unknown remote outcome and single-use record remain (461.8707ms)
+✔ expired/task-changed approvals fail before posting and wrong free terms cannot arm (478.7671ms)
+✔ Reviewer cannot return files or claim execution; unknown fields are invalid (0.2698ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (874.4411ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (717.5984ms)
+✔ requested review corrections pause without a fourth call (671.4244ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (1628.0703ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (422.9981ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (415.7775ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (405.5682ms)
+✔ Builder-only selection requires separate approval and no future role assignments (487.9716ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.0556ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (794.2574ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (926.7783ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (473.2743ms)
+✔ Builder-only rejects wrong session project database root and approval mutation (472.8255ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16002.0918

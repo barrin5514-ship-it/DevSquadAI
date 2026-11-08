@@ -1,0 +1,201 @@
+{
+  "checkedAt": "2026-11-07T16:45:18.592Z",
+  "syntax": [
+    {
+      "file": "src/services/nemotron-worker.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/studio-workers.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/studio-roles.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/studio-run-scope.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/studio-usage.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/big-three.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/project-studio.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/model-health.js",
+      "pass": true
+    },
+    {
+      "file": "src/services/studio-independence.js",
+      "pass": true
+    },
+    {
+      "file": "src/routes/console.js",
+      "pass": true
+    },
+    {
+      "file": "src/dashboard/dashboard.js",
+      "pass": true
+    },
+    {
+      "file": "src/dashboard/roles.js",
+      "pass": true
+    },
+    {
+      "file": "src/dashboard/conversations.js",
+      "pass": true
+    },
+    {
+      "file": "src/dashboard/workspace-shell.js",
+      "pass": true
+    },
+    {
+      "file": "tests/nemotron-worker.test.js",
+      "pass": true
+    },
+    {
+      "file": "tests/worker-deadline.test.js",
+      "pass": true
+    },
+    {
+      "file": "tests/model-health.test.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/prepare-nemotron-accounts-20261107.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/verify-nemotron-integration-20261107.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/verify-nemotron-isolation-20261107.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/verify-nemotron-main-20261107.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/verify-nemotron-preservation-20261107.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/verify-nemotron-reopen-20261107.js",
+      "pass": true
+    }
+  ],
+  "filesScanned": 49,
+  "credentialMatches": [],
+  "hashes": [
+    {
+      "file": "src/services/nemotron-worker.js",
+      "sha256": "074fcdab1b74b560c8c61822dd9d3dec11746f07488550b59e25a150614472fb"
+    },
+    {
+      "file": "src/services/studio-workers.js",
+      "sha256": "4e4a203986790aed25c8c3ca231cb4736f5249763c159acdc323c14c67ddf188"
+    },
+    {
+      "file": "src/services/studio-roles.js",
+      "sha256": "dc2f336bc65609f8557ea68ea89e529812977f55459f1aee935ab9c422130c4b"
+    },
+    {
+      "file": "src/services/studio-run-scope.js",
+      "sha256": "f858b0cd7ec959b2a627c891e7e001e2a520800abd61a697358e7ba393beb0a4"
+    },
+    {
+      "file": "src/services/studio-usage.js",
+      "sha256": "e54df3584135c90bfae34227d626fa626f2a88c5d3e5cb6a6908df4b05712a2f"
+    },
+    {
+      "file": "src/services/big-three.js",
+      "sha256": "251c7a68af0404bb618d7e775d851a834b873ce8d1bad0a89c66ce4a0c4afa44"
+    },
+    {
+      "file": "src/services/project-studio.js",
+      "sha256": "8b6be9513aec59d7d26663fb5d91db30e61c3f4aa3ada92fcf1138fab429b263"
+    },
+    {
+      "file": "src/services/model-health.js",
+      "sha256": "e4e47720dc7c71f755682db17b92378647e9d48fba7803aa8e8ec398a9d920c6"
+    },
+    {
+      "file": "src/services/studio-independence.js",
+      "sha256": "b10c3d82b7448c39c23c32eb90f5a63b08e8a9d2ab42b49ccf37737cc9405859"
+    },
+    {
+      "file": "src/routes/console.js",
+      "sha256": "690e8a11cce42e02f9e8bde61b26ad79c3dd1c8d86020dda13e50d151838c786"
+    },
+    {
+      "file": "src/dashboard/dashboard.js",
+      "sha256": "e63f4c24c83b444cf80d4a287c0016231d480aa28cdac0032df5faf6d85fb88d"
+    },
+    {
+      "file": "src/dashboard/roles.js",
+      "sha256": "7ea4a2580506acfbf00b5955647e5e8231c4ff81f04659f6121bbc761cebce31"
+    },
+    {
+      "file": "src/dashboard/conversations.js",
+      "sha256": "4cbf1dab3fee10d5b47f7bfb79d126bdadcc7692380280e13d2b14f08fdba9b8"
+    },
+    {
+      "file": "src/dashboard/workspace-shell.js",
+      "sha256": "7fa207ac68a6e7f86311ffe8df12e79be92c92027aded326aff8da9c61b91e22"
+    },
+    {
+      "file": "tests/nemotron-worker.test.js",
+      "sha256": "69cc1548ad16cc76cc5cd5f05175763579e4752f1b3547207cc84de8606d1b1f"
+    },
+    {
+      "file": "tests/worker-deadline.test.js",
+      "sha256": "d04548f15f16afaeb5966ca547e9b21d83598afb77ccfd702a9fecb321ae9731"
+    },
+    {
+      "file": "tests/model-health.test.js",
+      "sha256": "1a931a08bc81b28ddc72248b5b3dd64afea11bcc29440c0bdf0ec751e365cefe"
+    },
+    {
+      "file": "scripts/prepare-nemotron-accounts-20261107.js",
+      "sha256": "ded877b8a2bd31dde896a422c038e1a76b74214c3c56d7b13e89cca3dc67a2dc"
+    },
+    {
+      "file": "scripts/verify-nemotron-integration-20261107.js",
+      "sha256": "332be5d7944156d63110a10bb1234cf4c831c3628f753c57939a264c18674a05"
+    },
+    {
+      "file": "scripts/verify-nemotron-isolation-20261107.js",
+      "sha256": "8a2c44dbc2089f20ee5bf9f095460f36591a801c7ff21c3051012ca0dd130637"
+    },
+    {
+      "file": "scripts/verify-nemotron-main-20261107.js",
+      "sha256": "7aba0626a0665c1f3cf5dd4bfe4635054f75e42386374e85340a80aa4b34ee08"
+    },
+    {
+      "file": "scripts/verify-nemotron-preservation-20261107.js",
+      "sha256": "1f740e7d23cfaf1d24f8a3aea709c5fa3e307c36ba00eb4199946f7219022f4d"
+    },
+    {
+      "file": "scripts/verify-nemotron-reopen-20261107.js",
+      "sha256": "418cbd0b0cefeaa829d50c23eb51d1726387c690b2ffc17b8bf3987f0dbcc052"
+    },
+    {
+      "file": "docs/NVIDIA_NEMOTRON_DEVSQUAD_INTEGRATION_20261107.md",
+      "sha256": "1cd3b9bc47f77e390719cd19d3e49a5d211d10691338c1e983a0712a8a40dc61"
+    },
+    {
+      "file": "docs/PROMPT_LOG.md",
+      "sha256": "18e9366ee93cd89e4a886d4bd4eeb0b5848032172f9a03e3350f8532cdda7360"
+    }
+  ]
+}

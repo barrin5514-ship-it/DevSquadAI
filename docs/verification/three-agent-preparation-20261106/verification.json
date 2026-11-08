@@ -1,0 +1,25 @@
+{
+  "projectId": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "name": "Dev Squad Three-Agent Test",
+  "root": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "creationHttp": 201,
+  "uiProjectSelected": true,
+  "ownGitRoot": true,
+  "localSecurityPreserved": true,
+  "sources": [
+    {
+      "file": "AGENTS.md",
+      "hash": "8a0dd395424c7d17d78ce2573530150eeb454609150639a0a79cf69707b8e23c"
+    }
+  ],
+  "instructionsHash": "3f68e8ba89cde2217ade20d0fbc8ee42b1b5d9dc05a4049d2a22e53df40e94bd",
+  "checkpointHash": "6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771",
+  "readOnly": true,
+  "browserErrors": 0,
+  "mutations": [
+    "/api/console/studio/project-connections/inspect",
+    "/api/console/studio/project-connections/confirm"
+  ],
+  "modelTurns": 0,
+  "persistedAfterRefresh": true
+}

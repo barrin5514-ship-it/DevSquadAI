@@ -1,0 +1,10 @@
+{
+  "baselineBackup": "backup-1793981339722-dd8fb64f-3655-451d-92a9-1e9679544515.sqlite",
+  "existingRowsCompared": 411,
+  "tablesChecked": 63,
+  "excluded": [
+    "team_runtime_lease (authorized backend PID replacement)"
+  ],
+  "existingRowChanges": [],
+  "existingRowsPreserved": true
+}

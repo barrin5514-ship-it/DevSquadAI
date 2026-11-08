@@ -1,0 +1,44 @@
+{
+  "sessionId": "9e17abb3-8e65-4c35-8bb4-c33908264db4",
+  "projectId": "479acbbc-9cf1-410c-a276-b45ec2159ed6",
+  "status": "paused",
+  "builderCompleted": true,
+  "checkpoint": "e3c2d205f4f35621d61941abfa25b61325832ae1652ebcb17f4707dacf0274d2",
+  "currentFingerprint": "e3c2d205f4f35621d61941abfa25b61325832ae1652ebcb17f4707dacf0274d2",
+  "executions": [
+    {
+      "agent": "codex-personal",
+      "phase": "builder",
+      "status": "completed"
+    }
+  ],
+  "newProjectLocks": 0,
+  "allLocks": [
+    {
+      "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+    }
+  ],
+  "active": 0,
+  "processObservation": {
+    "verified": true,
+    "originalProcessStillPresent": false,
+    "originalDescendantsStillPresent": 0,
+    "closeObserved": true,
+    "exitCode": 0
+  },
+  "independentTestsRecorded": false,
+  "reviewRecorded": false,
+  "counterFingerprints": [
+    {
+      "id": "c25dcd14-322c-4004-9ef4-412584640600",
+      "fingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785"
+    },
+    {
+      "id": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+      "fingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "quickCheck": {
+    "quick_check": "ok"
+  }
+}

@@ -14,7 +14,9 @@ export function independentRoles(roles) {
 
 export function assertIndependentPhase(studio, job, phase, agent) {
   if (job.state.executionMode === 'builder-only' || phase === 'builder') return;
-  const builders = studio.detail(job.id).events
+  const events=studio.detail(job.id).events;
+  const boundary=events.findLastIndex(e=>e.kind==='followup_origin');
+  const builders = events.slice(boundary+1)
     .filter(e => ['build_saved', 'builder_only_saved'].includes(e.kind)).map(e => e.agent);
   if (phase === 'tester' && [...builders, job.state.roles.builder].some(a => workerFamily(a) === workerFamily(agent)))
     throw new ApiError(409, 'The Tester cannot independently test work built by the same worker or model family.');

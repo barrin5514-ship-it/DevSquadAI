@@ -1,0 +1,29 @@
+{
+  "inactive": true,
+  "approvedBy": null,
+  "approvedAt": null,
+  "expiresAt": null,
+  "projectId": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+  "chatId": "b1e11259-d5f7-427e-b004-c66d9a818fe3",
+  "rootHash": "4879bd1428128e4558727545002672aa8a23885575e216eb7c81160af37727fa",
+  "databaseHash": "a4235accb37c68514951667a2495c9da87674d9b1b31adffe0c184fe6affa4a8",
+  "goalHash": "7e58ed7dca02d3bb947d9dc2c37352b813bbd312e3c698e4b52fdd1434982801",
+  "roles": {
+    "builder": "deepseek",
+    "tester": "codex-personal",
+    "reviewer": "claude-code"
+  },
+  "requestId": null,
+  "paid": {
+    "model": "deepseek-flash",
+    "capUSD": 0.02,
+    "maxOutput": 4096,
+    "inputBytes": 24000
+  },
+  "maxCalls": 3,
+  "perRole": 1,
+  "timeoutMs": 300000,
+  "maxOutputBytes": 32768,
+  "noRetry": true,
+  "noFallback": true
+}

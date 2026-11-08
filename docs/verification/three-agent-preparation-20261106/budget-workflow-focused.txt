@@ -1,0 +1,114 @@
+✔ local mock project runs without consuming API budgets, call grants, round caps or messenger setup (882.039ms)
+✔ different problems allow more than three rounds and more than one call to each agent (1534.4425ms)
+✔ same failing test three consecutive times pauses and records a durable stuck alert (1085.6609ms)
+✔ worker patch cannot escape the selected project or read/write credentials (505.5968ms)
+✔ a builder cannot review its own step and no owner acceptance is granted (427.0866ms)
+✔ duplicate Run and simultaneous chats cannot dispatch twice or share a folder lock (625.0256ms)
+✔ file changes and earlier contents remain in history; changed reviewed files cannot be accepted (704.7638ms)
+✔ unknown native outcome keeps folder locked instead of allowing overlapping work (550.5635ms)
+✔ a recurring test pauses on its third consecutive failure even if other failures differ (1035.2297ms)
+✔ hard-linked files cannot redirect a worker write outside its selected folder (427.2371ms)
+✔ a prior Run request ID stays deduplicated after the same chat is resumed (543.737ms)
+✔ retired demo grant files cannot authorize or block the new project workflow (462.3136ms)
+✔ same known worker problem on three owner-requested continuations shows the stuck alert (976.417ms)
+✔ a known Tester protocol failure preserves phase and saved Builder files; resume never reruns Builder (878.6315ms)
+✔ legacy incomplete logs recover the actual failed Tester phase without rewriting their history (799.1496ms)
+✔ resume rejects stale task versions, changed checkpoints and changed saved files before dispatch (676.2777ms)
+✔ confirmed Codex quota hands the saved Tester step to School exactly once without rerunning Builder (891.1719ms)
+✔ both exhausted profiles pause without ping-pong or fallback; unknown outcome never switches (1347.3895ms)
+✔ a Codex profile cannot review work authored by the other Codex profile (422.5718ms)
+✔ closing a known failed run preserves evidence; unresolved folder locks cannot be closed away (1276.6602ms)
+✔ native login preflight failure pauses before any Builder charge; resumption remains Builder (535.9919ms)
+✔ legacy locks with no PID are explicitly blocked; reading recovery never removes them (519.6692ms)
+✔ active same-identity worker and unverified descendants prevent reconciliation (477.6065ms)
+✔ unknown termination, wrong scope/version and modified checkpoint fail closed (519.3459ms)
+✔ safe reconciliation releases only its own lock once and retains pending Tester (513.2403ms)
+✔ DeepSeek stream drops hidden reasoning, requires DONE and preserves final usage (0.7111ms)
+✔ actual native file monitoring records create/change/delete but excludes private files (1277.9014ms)
+✔ real HTTP SSE replays durable IDs after reconnect and cleans up listeners (933.2688ms)
+✔ Windows records real process identity and observes termination of its own fixture only (2533.5643ms)
+✔ Send dispatch has no budget, output cap or expiry gate; actual token/cost usage persists once (564.9805ms)
+✔ interrupted or crashed API requests retain unknown usage, never invented zero cost (427.7546ms)
+✔ known provider usage is retained even when final application JSON is invalid (591.5819ms)
+✔ historical DeepSeek usage remains visible and new worker reports cannot double-count it (579.1298ms)
+✔ A: Personal usage limit hands the same Tester checkpoint to School, then independent review and owner gate (832.7767ms)
+✔ B: both Codex accounts unavailable cannot assign the Reviewer as Tester (689.9097ms)
+✔ C: prepaid approval never permits DeepSeek Builder to become its own Tester (1294.3112ms)
+✔ D: all remaining providers unavailable pauses safely with a durable reason and intact files (733.5262ms)
+✔ E: partial response is diagnostic only; fallback receives the last saved Builder files (990.3237ms)
+✔ F: unknown previous outcome retains the folder lock and prevents every alternative (807.4259ms)
+✔ G: a recovered Personal account does not steal a successful School turn; duplicate Run stays deduplicated (788.0115ms)
+✔ H: another Codex profile never establishes independent review; unapproved workers are not tried (585.3823ms)
+✔ missing native login can hand off in preflight without skipping or repeating the Builder stage (767.1089ms)
+✔ task settings reject stale versions, review-complete edits, foreign folders and expired paid approvals (857.5934ms)
+✔ budget dispatch is bounded, duplicate-proof and retains unknown reservations; stale prices/balance stop before fetch (761.7216ms)
+✔ real DeepSeek adapter path selects generateBound with approved output limit; no actual provider request (683.2777ms)
+✔ confirmed auth, outage, connection and safely terminated timeout errors can hand off; sandbox failures cannot (4983.5703ms)
+✔ price/balance freshness, scope and concurrent lifetime reservations are enforced before dispatch (539.3304ms)
+✔ unknown remote completion retains the folder even if the local process is confirmed stopped (576.2199ms)
+✔ fallback API requires the dashboard capability and records task-only preapproval without starting work (638.5557ms)
+✔ P0: every allowed and denied fallback retains an explicit safe decision (2057.2936ms)
+✔ P0: disabled policy and unknown outcome record why switching was forbidden (1002.7097ms)
+✔ P0: bounded run approval cannot be broadened by a fallback policy (439.1422ms)
+✔ a reused PID is never killed or treated as the original worker termination (41.1616ms)
+✔ Codex structured schema is passed explicitly; UTF-8 replies survive arbitrary chunk boundaries (7.1394ms)
+✔ rejected native responses preserve sanitized protocol evidence without response text or retries (10.1652ms)
+✔ an unsupported profile cannot silently dispatch Claude instead (0.5651ms)
+✔ native timeout distinguishes confirmed tree termination from unknown outcome without retries (47.732ms)
+✔ OS launch failure is a known failure, never a phantom active worker (4.7743ms)
+✔ three-minute inactivity guard pauses once; real output renews the idle deadline (161.5292ms)
+✔ profile home is used for both login check and worker spawn; nonzero stderr is categorized and never saved raw (30.6764ms)
+✔ rotate and assignments persist per project; card order does not reassign workers (714.5944ms)
+✔ wrong project, stale versions, invalid order, unknown workers and self-review fail closed (768.4115ms)
+✔ concurrent saves have one winner and stale repetition cannot overwrite it (425.5394ms)
+✔ active reassignment queues without interrupting or changing the current worker and applies after Stop/resume (723.8424ms)
+✔ all prior file authors remain ineligible to review, including a tester who wrote tests (610.0311ms)
+✔ role API retains dashboard capability and exact session scope without provider dispatch (613.0373ms)
+✔ team paid terms require explicit matching model and positive bounded limits; no clock before approval (455.4784ms)
+✔ bounded paid team uses the existing atomic phase slot and no fallback (706.4152ms)
+✔ task lifetime reservation cannot be duplicated, rearmed or released after unknown outcome (570.3294ms)
+✔ conservative cost, output and input bounds reject before a paid dispatch (2573.2427ms)
+✔ stale pricing or balance cannot dispatch; no automatic refresh (1204.2648ms)
+✔ recovery rejects an older completed execution when a later test process owns the same request (738.1447ms)
+✔ new execution binds project/session/profile/checkpoint and sanitizes lifecycle errors (492.8908ms)
+✔ restart marks active executions interrupted and retains locks and latest checkpoint (508.4065ms)
+✔ remote unknown outcome cannot borrow native process evidence for recovery (516.2867ms)
+✔ unknown test-runner outcome retains its own execution and preserves Builder files (807.127ms)
+✔ a historical locked project does not block another folder; independent review remains owner-pending (1483.1076ms)
+✔ test command detection supports existing npm Node scripts and blocks unsupported frameworks, hooks and shell syntax (576.5078ms)
+✔ missing tests and malformed package metadata are blocked rather than counted as passes (503.1655ms)
+✔ test evidence reports failures, skipped counts, framework and revision without claiming browser globals exist (756.9443ms)
+✔ all-skipped output is evidence of no exercised behavior, never a successful build (463.1267ms)
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (6887.8722ms)
+✔ owner cancellation is explained separately from a failed test (1.8936ms)
+ℹ tests 83
+ℹ suites 0
+ℹ pass 82
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75027.5108
+
+✖ failing tests:
+
+test at tests\studio-worker-recovery.test.js:17:1
+✖ real Windows isolated fixture timeout and owner Stop record identity and confirmed tree termination (6887.8722ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  Error: Isolated test process termination is unknown; the folder remains locked.
+      at async TestContext.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/tests/studio-worker-recovery.test.js:17:412)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Isolated test process termination is unknown; the folder remains locked.
+        at finish (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-workers.js:49:697)
+        at Timeout.<anonymous> (file:///C:/Users/barri/OneDrive/Desktop/Next%20Chapter%20Projects/DevSquadAI/src/services/studio-workers.js:50:557)
+        at listOnTimeout (node:internal/timers:635:17)
+        at process.processTimers (node:internal/timers:571:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }

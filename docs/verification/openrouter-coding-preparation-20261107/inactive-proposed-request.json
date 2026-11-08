@@ -1,0 +1,31 @@
+{
+  "active": false,
+  "authorization": "PENDING — no generation permitted",
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "timeoutMs": 60000,
+  "maximumRequests": 1,
+  "retries": 0,
+  "body": {
+    "model": "cohere/north-mini-code:free",
+    "messages": [
+      {
+        "role": "system",
+        "content": "Return concise JSON only with explanation, edgeCase, code, and tests (exactly two brief test suggestions). No Markdown fences, tools, or claims of executed tests."
+      },
+      {
+        "role": "user",
+        "content": "Review function calculateTotal(prices) { return prices.reduce((sum, price) => sum + price, 0); } Explain it briefly, identify an invalid-input edge case, return a corrected function accepting only an array of finite numbers and rejecting invalid inputs, and suggest two meaningful tests."
+      }
+    ],
+    "stream": false,
+    "max_tokens": 500,
+    "provider": {
+      "allow_fallbacks": false,
+      "max_price": {
+        "prompt": 0,
+        "completion": 0,
+        "request": 0
+      }
+    }
+  }
+}

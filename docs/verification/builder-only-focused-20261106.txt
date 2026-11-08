@@ -1,0 +1,25 @@
+✔ diagnostic observes graceful root and descendant exit without force (12.0641ms)
+✔ diagnostic timeout records forced result and verifies every captured identity (94.4162ms)
+✔ parent exit does not conceal an orphaned descendant (1.297ms)
+✔ failed termination and unknown observation never report clean exit (337.6169ms)
+✔ unrelated or reused processes are never signalled (2.421ms)
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (6423.1484ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (5540.8185ms)
+✔ requested review corrections pause without a fourth call (6220.101ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (11987.4011ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (3816.7001ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (3420.642ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (3632.1262ms)
+✔ Builder-only selection requires separate approval and no future role assignments (4623.6846ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (9.5282ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (3083.4951ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (5922.316ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (5612.8654ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 68746.858

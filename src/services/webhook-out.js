@@ -49,7 +49,17 @@ export class WebhookOut {
   this.team.safe(payload);const raw=JSON.stringify(payload);if(Buffer.byteLength(raw)>8000)throw new ApiError(400,'Cleaned report is too large');
   this.attempted.add(key);return this.post(raw,signal);
  }
- async post(raw,signal){
+ async sendStudioHandoff(payload,{signal}={}){
+  if(!this.enabled||!this.url)return {status:'disabled'};
+  if(!payload||typeof payload.handoffId!=='string'||!/^[A-Za-z0-9_-]{8,120}$/.test(payload.handoffId))throw new ApiError(400,'Invalid Studio handoff identity');
+  if(!['builder','tester'].includes(payload.phase)||!['tester','reviewer'].includes(payload.nextPhase)||!/^[a-f0-9]{64}$/.test(payload.checkpointHash||'')||payload.testEvidenceHash!==null&&!/^[a-f0-9]{64}$/.test(payload.testEvidenceHash||''))throw new ApiError(400,'Invalid Studio handoff checkpoint evidence');
+  const key='studio-handoff:'+payload.handoffId;
+  if(this.attempted.has(key))return {status:'already_attempted'};
+  const cleaned={event:'studio_checkpoint_handoff',handoffId:payload.handoffId,projectId:payload.projectId,chatId:payload.chatId,requestId:payload.requestId,phase:payload.phase,nextPhase:payload.nextPhase,checkpointHash:payload.checkpointHash,testEvidenceHash:payload.testEvidenceHash||null,executionId:payload.executionId||null,createdAt:payload.createdAt};
+  this.team.safe(cleaned);const raw=JSON.stringify(cleaned);if(Buffer.byteLength(raw)>8000)throw new ApiError(400,'Studio handoff payload is too large');
+  this.attempted.add(key);return this.post(raw,signal);
+}
+async post(raw,signal){
   if(signal?.aborted)return {status:'stopped'};
   const abort=new AbortController(),stop=()=>abort.abort();signal?.addEventListener('abort',stop,{once:true});const timer=setTimeout(stop,this.timeoutMs);
   try{const response=await this.fetch(this.url,{method:'POST',headers:{'Content-Type':'application/json'},body:raw,signal:abort.signal,redirect:'error'});await response.body?.cancel();return {status:response.ok?'delivered':'failed',httpStatus:response.status};}

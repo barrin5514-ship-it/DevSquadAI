@@ -1,0 +1,27 @@
+{
+  "taskStatus": "paused",
+  "taskId": "99273d3f-9164-4727-8b73-b59a5fc83e6e",
+  "projectId": "7d913bbc-9f16-4a5a-abf8-e0202b04a3dd",
+  "actualRoles": {
+    "builder": "codex-personal",
+    "tester": "codex-school",
+    "reviewer": "claude-code"
+  },
+  "files": [],
+  "executions": [
+    {
+      "id": "d060f948-32fe-4bb2-bf13-4a9ce9e39d5d",
+      "agent": "codex-personal",
+      "phase": "builder",
+      "status": "failed"
+    }
+  ],
+  "activeRuns": 0,
+  "taskLock": false,
+  "workerInspectionVerified": true,
+  "recordedWorkerStillPresent": false,
+  "originalCounterLockPreserved": true,
+  "originalCounterFingerprint": "76ce5a26ce603064a14a266dede55595dd80011dbc981b1a0e77f6a6a7c2d785",
+  "paidReservations": 0,
+  "ownerAccepted": false
+}

@@ -1,0 +1,17 @@
+{
+  "regularDashboard": "http://127.0.0.1:3000/team",
+  "httpStatus": 200,
+  "readOnly": true,
+  "selectedProject": "c25dcd14-322c-4004-9ef4-412584640600",
+  "selectedChat": "fc00a59b-c31e-4b93-b448-35ebbc0de048",
+  "status": "paused",
+  "recovery": {
+    "needed": true,
+    "available": false,
+    "executionId": null,
+    "reason": "This older attempt has no recorded PID or process identity. Safe termination cannot be established; the lock must remain."
+  },
+  "executions": 0,
+  "browserErrors": [],
+  "providerRequests": 0
+}

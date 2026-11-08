@@ -1,0 +1,28 @@
+{
+  "mainApp": true,
+  "httpStatus": 200,
+  "readOnly": true,
+  "providerRequests": 0,
+  "budgetConfigured": false,
+  "dialogVisible": true,
+  "browserErrors": [],
+  "policy": {
+    "enabled": true,
+    "legacy": true,
+    "allowedWorkers": [
+      "codex-personal",
+      "codex-school"
+    ]
+  },
+  "preserved": {
+    "projects": 13,
+    "chats": 14,
+    "maxEvent": 93,
+    "locks": [
+      {
+        "chat_id": "fc00a59b-c31e-4b93-b448-35ebbc0de048"
+      }
+    ],
+    "budgets": 0
+  }
+}

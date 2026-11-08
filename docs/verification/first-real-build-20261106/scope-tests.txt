@@ -1,0 +1,21 @@
+✔ one bound native run completes exactly three mock calls and preserves owner acceptance (662.8738ms)
+✔ failed tests cannot dispatch a second Builder, and completed execution evidence is not overwritten (712.2858ms)
+✔ requested review corrections pause without a fourth call (690.2455ms)
+✔ expired, wrong-project, wrong-folder and mismatched-role approvals cannot arm (1513.0954ms)
+✔ scope is single-use, cannot be rearmed, and rejects another request or altered goal/database (443.5928ms)
+✔ concurrent reservations consume one phase slot and never replenish unknown attempts (461.9679ms)
+✔ dispatch rechecks expiry and role identity, without silently reaching paid fallback (456.6775ms)
+✔ Builder-only selection requires separate approval and no future role assignments (551.424ms)
+✔ Builder-only preflight checks only the approved Builder, never future logins (1.2503ms)
+✔ Builder-only consumption is atomic; disallowed phases, tampering and expired scopes cannot dispatch (472.9638ms)
+✔ Builder-only failed or unknown calls preserve evidence, forbid fallback and retain unknown locks (1265.7437ms)
+✔ completed Builder-only state cannot dispatch after a database reopen (534.8216ms)
+✔ Builder-only rejects wrong session project database root and approval mutation (453.4019ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8800.5658

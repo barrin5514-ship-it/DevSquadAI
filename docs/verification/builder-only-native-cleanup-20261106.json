@@ -1,0 +1,127 @@
+{
+  "results": [
+    {
+      "fixture": "trusted parent/child EOF fixture",
+      "rootIdentity": {
+        "pid": 32004,
+        "parent": 27624,
+        "birth": "2026-11-06T19:20:14.7329210Z"
+      },
+      "descendants": [
+        {
+          "pid": 40668,
+          "parent": 32004,
+          "birth": "2026-11-06T19:20:14.7677380Z"
+        },
+        {
+          "pid": 35160,
+          "parent": 32004,
+          "birth": "2026-11-06T19:20:14.9485630Z"
+        },
+        {
+          "pid": 33644,
+          "parent": 35160,
+          "birth": "2026-11-06T19:20:15.0156820Z"
+        }
+      ],
+      "exit": 0,
+      "signal": null,
+      "closeObserved": true,
+      "spawnFailed": false,
+      "callbackError": false,
+      "elapsedMs": 3854,
+      "timeoutMs": 5000,
+      "timedOut": false,
+      "outputLimit": false,
+      "gracefulRequested": true,
+      "forcedTermination": false,
+      "terminationResults": [],
+      "processChecks": [
+        {
+          "pid": 32004,
+          "birth": "2026-11-06T19:20:14.7329210Z",
+          "verified": true,
+          "exited": true
+        },
+        {
+          "pid": 40668,
+          "birth": "2026-11-06T19:20:14.7677380Z",
+          "verified": true,
+          "exited": true
+        },
+        {
+          "pid": 35160,
+          "birth": "2026-11-06T19:20:14.9485630Z",
+          "verified": true,
+          "exited": true
+        },
+        {
+          "pid": 33644,
+          "birth": "2026-11-06T19:20:15.0156820Z",
+          "verified": true,
+          "exited": true
+        }
+      ],
+      "terminationVerified": true,
+      "cleanup": "graceful-verified"
+    },
+    {
+      "fixture": "trusted timeout fixture",
+      "rootIdentity": {
+        "pid": 30580,
+        "parent": 27624,
+        "birth": "2026-11-06T19:20:18.5853980Z"
+      },
+      "descendants": [
+        {
+          "pid": 32568,
+          "parent": 30580,
+          "birth": "2026-11-06T19:20:18.6195830Z"
+        }
+      ],
+      "exit": 1,
+      "signal": null,
+      "closeObserved": true,
+      "spawnFailed": false,
+      "callbackError": false,
+      "elapsedMs": 8121,
+      "timeoutMs": 5000,
+      "timedOut": true,
+      "outputLimit": false,
+      "gracefulRequested": true,
+      "forcedTermination": true,
+      "terminationResults": [
+        {
+          "pid": 32568,
+          "birth": "2026-11-06T19:20:18.6195830Z",
+          "status": 0,
+          "errorCode": null
+        },
+        {
+          "pid": 30580,
+          "birth": "2026-11-06T19:20:18.5853980Z",
+          "status": 0,
+          "errorCode": null
+        }
+      ],
+      "processChecks": [
+        {
+          "pid": 30580,
+          "birth": "2026-11-06T19:20:18.5853980Z",
+          "verified": true,
+          "exited": true
+        },
+        {
+          "pid": 32568,
+          "birth": "2026-11-06T19:20:18.6195830Z",
+          "verified": true,
+          "exited": true
+        }
+      ],
+      "terminationVerified": true,
+      "cleanup": "forced-verified"
+    }
+  ],
+  "unrelatedSentinelUntouched": true,
+  "modelInvocations": 0
+}

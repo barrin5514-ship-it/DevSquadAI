@@ -1,0 +1,1 @@
+{"checks":[{"fixture":"trusted parent/child EOF fixture","cleanup":"graceful-verified","descendants":3,"elapsedMs":3854},{"fixture":"trusted timeout fixture","cleanup":"forced-verified","descendants":1,"elapsedMs":8121}],"unrelatedSentinelUntouched":true,"modelInvocations":0}

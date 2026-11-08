@@ -1,0 +1,48 @@
+{
+  "checks": [
+    {
+      "name": "Recovered session is still paused, not accepted",
+      "ok": true
+    },
+    {
+      "name": "Dashboard warning no longer says the folder stays locked",
+      "ok": true
+    },
+    {
+      "name": "Dashboard exposes released write access and no needed reconciliation",
+      "ok": true
+    },
+    {
+      "name": "No page JavaScript errors",
+      "ok": true
+    }
+  ],
+  "data": {
+    "status": "paused",
+    "writeAccess": {
+      "status": "released",
+      "executionId": "8dd5a62b-3d80-4842-8fca-99a296c4b650",
+      "requestId": "b8f22c3b-8cd3-4f37-a2ef-694ac794e8f6",
+      "releasedAt": "2026-11-07T21:20:57.263Z",
+      "reason": "startup_verified_write_ended",
+      "unknownOutcome": true,
+      "checkpointHash": "6cf19313407d0e113b8a0cde311addca8d270c0d1ea1c01fe6bda00cab7cb771",
+      "reservation": {
+        "status": "unknown",
+        "reservedUSD": 0.007748
+      },
+      "outcome": "unknown"
+    },
+    "recovery": {
+      "needed": false,
+      "available": false,
+      "reason": "No unresolved folder lock."
+    },
+    "alert": "The previous worker outcome is unknown. No verified checkpoint was accepted. Write access was released after the writer was verified gone; no retry was started.",
+    "notice": "Worker outcome is unknown. No verified checkpoint was saved. Write access was released; no retry was started.\n\nView details\nDismiss warning",
+    "noticeHidden": false,
+    "statusText": "Outcome Unknown",
+    "sendDisabled": false
+  },
+  "errors": []
+}

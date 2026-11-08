@@ -6,9 +6,11 @@ const finishReasons=new Set(['stop','length','tool_calls','function_call','conte
 export function deepseekStream(onProgress=()=>{}){
  let pending='',text='',usage=null,finish=null,model=null,done=false,bytes=0,last=0,failedCheck=null;
  const decoder=new StringDecoder('utf8');
- const fail=(check,message)=>{failedCheck=check;throw Error(message);};
+ const fail=(check,message)=>{failedCheck=check;const error=Error(message);error.code=check;throw error;};
+ const ANSWER_LIMIT=512000,RAW_LIMIT=2000000;
+ let answerBytes=0,rawBytes=0;
  return {
-  metadata(){return {failedCheck,completionObserved:done,finishReason:finishReasons.has(finish)?finish:finish===null?null:'unrecognized',usageReported:usage!==null};},
+  metadata(){return {failedCheck,completionObserved:done,finishReason:finishReasons.has(finish)?finish:finish===null?null:'unrecognized',usageReported:usage!==null,visibleAnswerBytes:answerBytes,rawStreamBytes:rawBytes,limits:{answer:ANSWER_LIMIT,raw:RAW_LIMIT}};},
   observedUsage(expectedModel){
    if(model!==expectedModel||!usage)return null;
    const count=n=>Number.isSafeInteger(n)&&n>=0?n:null;
@@ -16,7 +18,7 @@ export function deepseekStream(onProgress=()=>{}){
    return Object.values(observed).some(n=>n!==null)?observed:null;
   },
   write(value){
-   bytes+=value.length;if(bytes>512000)fail('body_limit','Stream exceeded response bound');
+   rawBytes+=value.length;if(rawBytes>RAW_LIMIT)fail('body_limit','Raw stream exceeded its bounded safety limit');
    pending+=decoder.write(value);const lines=pending.split('\n');pending=lines.pop();
    for(const line of lines){
     if(!line.startsWith('data:'))continue;
@@ -25,7 +27,10 @@ export function deepseekStream(onProgress=()=>{}){
     if(data.error)fail('stream_error','Provider stream error');
     if(data.model)model=data.model;if(data.usage)usage=data.usage;
     const choice=data.choices?.[0];if(choice?.delta?.tool_calls)fail('unexpected_tools','Unexpected tool activity');
-    if(typeof choice?.delta?.content==='string')text+=choice.delta.content;
+    if(typeof choice?.delta?.content==='string'){
+     answerBytes+=Buffer.byteLength(choice.delta.content,'utf8');if(answerBytes>ANSWER_LIMIT)fail('answer_limit','Visible answer exceeded its bounded response limit');
+     text+=choice.delta.content;
+    }
     if(choice?.finish_reason)finish=choice.finish_reason;
     if(text.length-last>=128){last=text.length;onProgress({progress:'Received '+text.length+' visible-answer characters; waiting for the complete response.',receivedCharacters:text.length});}
    }

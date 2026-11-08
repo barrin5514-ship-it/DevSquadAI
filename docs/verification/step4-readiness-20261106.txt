@@ -1,0 +1,25 @@
+✔ observer accepts only a real PID and inherits no API/profile credentials (2.2689ms)
+✔ read-only Windows observer captures the real parent/child instances and confirms their disappearance (1406.8836ms)
+✔ compiled observer cache is bound to its source and binary and refuses tampering (244.1842ms)
+✔ failed observer preparation returns a sanitized unknown result instead of a verified empty tree (2.0702ms)
+✔ a reused PID is never killed or treated as the original worker termination (21.3824ms)
+✔ Codex structured schema is passed explicitly; UTF-8 replies survive arbitrary chunk boundaries (20.0769ms)
+✔ rejected native responses preserve sanitized protocol evidence without response text or retries (3.9599ms)
+✔ an unsupported profile cannot silently dispatch Claude instead (0.5673ms)
+✔ native timeout distinguishes confirmed tree termination from unknown outcome without retries (34.8509ms)
+✔ OS launch failure is a known failure, never a phantom active worker (4.5242ms)
+✔ three-minute inactivity guard pauses once; real output renews the idle deadline (137.0223ms)
+✔ profile home is used for both login check and worker spawn; nonzero stderr is categorized and never saved raw (3.4238ms)
+✔ saved output strips credentials and absolute local paths without corrupting structure (0.894ms)
+✔ output is scoped to the exact chat and preserves recorded/mocked test evidence (0.246ms)
+✔ actual TAP names, duration and failures are parsed without inventing test execution (0.7422ms)
+✔ runner records real command metadata only after sandbox proof, binds tested copy, and fails stale source (25.5564ms)
+✔ failed isolation proof never records or runs the test command (14.2557ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2305.3964

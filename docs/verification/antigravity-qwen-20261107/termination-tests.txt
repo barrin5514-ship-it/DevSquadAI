@@ -1,0 +1,24 @@
+✔ observer accepts only a real PID and inherits no API/profile credentials (1.9865ms)
+✔ read-only Windows observer captures the real parent/child instances and confirms their disappearance (1632.9181ms)
+✔ compiled observer cache is bound to its source and binary and refuses tampering (363.5948ms)
+✔ failed observer preparation returns a sanitized unknown result instead of a verified empty tree (0.6017ms)
+✔ legacy locks with no PID are explicitly blocked; reading recovery never removes them (618.7491ms)
+✔ active same-identity worker and unverified descendants prevent reconciliation (546.3711ms)
+✔ unknown termination, wrong scope/version and modified checkpoint fail closed (546.0628ms)
+✔ safe reconciliation releases only its own lock once and retains pending Tester (572.7585ms)
+✔ DeepSeek stream drops hidden reasoning, requires DONE and preserves final usage (0.8574ms)
+✔ actual native file monitoring records create/change/delete but excludes private files (1316.9588ms)
+✔ real HTTP SSE replays durable IDs after reconnect and cleans up listeners (776.2818ms)
+✔ Windows records real process identity and observes termination of its own fixture only (1693.2843ms)
+✔ Send dispatch has no budget, output cap or expiry gate; actual token/cost usage persists once (548.4493ms)
+✔ interrupted or crashed API requests retain unknown usage, never invented zero cost (614.0893ms)
+✔ known provider usage is retained even when final application JSON is invalid (582.8289ms)
+✔ historical DeepSeek usage remains visible and new worker reports cannot double-count it (526.8455ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11156.3748

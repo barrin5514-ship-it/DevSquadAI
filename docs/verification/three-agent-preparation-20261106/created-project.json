@@ -1,0 +1,17 @@
+{
+  "project": {
+    "id": "aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+    "name": "Dev Squad Three-Agent Test",
+    "description": "Expense Tracker preparation: DeepSeek Builder, Codex Personal Tester, Claude Code Reviewer. No live execution authorized.",
+    "workspaceHidden": false,
+    "workspaceVersion": 0,
+    "folder": "C:\\Users\\barri\\OneDrive\\Desktop\\Next Chapter Projects\\DevSquadAI\\workspaces\\aceea0a7-7c8b-4b32-9371-cf94a029a6ee",
+    "source": "created",
+    "agentChangesAllowed": false,
+    "accessVersion": 0,
+    "defaultLayout": "conversation",
+    "repositoryURL": null
+  },
+  "creationHttp": 201,
+  "modelTurns": 0
+}

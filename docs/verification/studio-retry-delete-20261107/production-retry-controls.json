@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "name": "Recovered chat has Retry/Edit/Copy on its sent prompt",
+      "ok": true
+    },
+    {
+      "name": "Recovered chat is paused with released write access and no lock warning",
+      "ok": true
+    },
+    {
+      "name": "No page errors",
+      "ok": true
+    }
+  ],
+  "counts": {
+    "retry": 1,
+    "edit": 1,
+    "copy": 1,
+    "status": "paused",
+    "writeAccess": "released",
+    "lock": false,
+    "notice": "Worker outcome is unknown. No verified checkpoint was saved. Write access was released; no retry was started.\n\nView details\nDismiss warning"
+  },
+  "errors": []
+}

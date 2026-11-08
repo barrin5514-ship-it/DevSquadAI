@@ -20,13 +20,20 @@ export function demoCliArguments(agent){
  else args.push('Read the JSON packet on stdin. Return only JSON {"report":"...","files":[],"review":{...}}. Include review only in the review phase: copy reviewBinding, add decision approved or changes_requested, summary, and findings (array of strings); reviewerExecutedTests must remain false. No tools. Review the supplied test evidence; never claim you ran it.');
  return args;
 }
-export function parseDemoCli(agent,raw){
- if(Buffer.byteLength(raw)>32768)deny('Worker output exceeded 32 KiB');let text,usage;
+export function claudeTerminalLimit(result){
+ if(result?.type!=='result')return null;
+ if(result.stop_reason==='max_tokens')return 'response_truncated';
+ if(result.subtype==='error_max_turns')return 'session_limit';
+ return null;
+}
+
+export function parseDemoCli(agent,raw,maxOutputBytes=65536){
+ if(Buffer.byteLength(raw)>maxOutputBytes)deny('Worker output exceeded its approved output limit');let text,usage;
  if(agent==='codex'){
   const events=raw.trim().split(/\r?\n/).map(line=>JSON.parse(line));
   if(events.some(e=>e.type==='error'||e.type==='turn.failed'||e.item&&e.item.type!=='agent_message'&&e.item.type!=='reasoning'))deny('CLI reported an error or unexpected tool activity');
   const finish=events.findLast(e=>e.type==='turn.completed');if(!finish)deny('Codex response is incomplete');text=events.findLast(e=>e.type==='item.completed'&&e.item?.type==='agent_message')?.item.text;usage=finish.usage;
- }else{const result=JSON.parse(raw);if(result.type!=='result'||result.subtype!=='success'||result.is_error!==false)deny('Claude response is incomplete');text=result.result;usage=result.usage;}
+ }else{const result=JSON.parse(raw),limit=claudeTerminalLimit(result);if(limit)throw Object.assign(Error('Native response reached its output or turn limit; no complete artifact was accepted.'),{code:limit});if(result.type!=='result'||result.subtype!=='success'||result.is_error!==false)deny('Claude response is incomplete');text=result.result;usage=result.usage;}
  const data=JSON.parse(text);if(!data||!['files,report','files,report,review'].includes(Object.keys(data).sort().join(','))||typeof data.report!=='string'||!data.report.trim()||data.report.length>6000||!Array.isArray(data.files))deny('Worker result does not match the demo contract');
  // Preserve only numeric usage, never raw CLI metadata or account identifiers.
  const safeUsage=Object.fromEntries(Object.entries(usage||{}).filter(([key,n])=>/^(?:input_tokens|output_tokens|cached_input_tokens|cache_creation_input_tokens|cache_read_input_tokens)$/.test(key)&&Number.isSafeInteger(n)&&n>=0));
@@ -84,7 +91,7 @@ export class DemoWorkers {
    if(signal?.aborted)deny('Worker stopped before dispatch');
    if(phase==='tester'){testEvidence=await this.boundary.test({cwd:repo.root,command:[process.execPath,'--test','--test-concurrency=1','tests/todo.test.js'],timeoutMs:15000,maxOutputBytes:32768,signal,revisionHash:digest(fs.readFileSync(path.join(repo.root,'src/todo.js')))});this.team.safe(testEvidence);packet.testResults=[...state.testResults,testEvidence];this.db.prepare('UPDATE demo_worker_attempts SET evidence=? WHERE job_id=? AND role=? AND worker=?').run(JSON.stringify({testEvidence}),binding.job_id,phase,worker);this.team.demoReviews.tests(binding.job_id,worker,testEvidence);save({testResults:packet.testResults,currentStep:'Independent tests recorded; tester is inspecting the actual results'});}
    if(worker==='deepseek')receipt=await this.paidConnector.generateBound(binding.job_id,demoBody,digest(JSON.stringify(demoBody)),signal);
-   else{const agent=worker==='claude-code'?'claude':'codex';const result=await this.boundary.launch({agent,args:demoCliArguments(agent),stdin:JSON.stringify(packet),cwd:repo.root,timeoutMs:90000,maxOutputBytes:32768,signal});if(result.exit!==0)throw {code:result.failureCode||'worker_error',stopped:result.stopped===true};receipt=result.receipt||parseDemoCli(agent,result.stdout);}
+   else{const agent=worker==='claude-code'?'claude':'codex';const result=await this.boundary.launch({agent,args:demoCliArguments(agent),stdin:JSON.stringify(packet),cwd:repo.root,timeoutMs:90000,maxOutputBytes:65536,signal});if(result.exit!==0)throw {code:result.failureCode||'worker_error',stopped:result.stopped===true};receipt=result.receipt||parseDemoCli(agent,result.stdout,65536);}
    this.team.safe(receipt);if(signal?.aborted)deny('Stopped output is not applied');
    const changed=phase==='builder'?repo.write(receipt.files):null;if(phase!=='builder'&&receipt.files.length)deny('Tester and reviewer cannot change demo files in this pilot');
    if(changed){this.db.prepare('UPDATE demo_worker_attempts SET evidence=? WHERE job_id=? AND role=? AND worker=?').run(JSON.stringify({changed}),binding.job_id,phase,worker);this.team.demoReviews.artifact(binding.job_id,worker,receipt.files);}

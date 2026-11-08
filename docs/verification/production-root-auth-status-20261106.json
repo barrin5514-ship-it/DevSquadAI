@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "id": "codex-personal",
+      "label": "Personal",
+      "ok": true,
+      "method": "ChatGPT native login"
+    },
+    {
+      "id": "codex-school",
+      "label": "School",
+      "ok": true,
+      "method": "ChatGPT native login"
+    }
+  ],
+  "distinctHomes": true,
+  "usageAvailability": "UNKNOWN; no inference or usage endpoint called",
+  "modelTurns": 0
+}
