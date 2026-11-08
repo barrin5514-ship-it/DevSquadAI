@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 76
+- Number of handoffs: 77
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -138,3 +138,5 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-08 | | Owner | Codex | Locate the current active Demo Two and remove only confirmed stray Builder text files. | Found unique active demo2 project889fc13d, created10:02 Eastern. Full inventory, revisions and filesystem events contain no .txt files; deleted nothing and made no source repair. Playwright-controlled Chrome refreshed its actual Files panel and verified index.html visible; all7 file hashes and2 attachments unchanged. Focused27/27; full754/754. Backup verified; backend restarted to19624,health200. Root cause of reported strays remains unverified. Details: docs/CURRENT_DEMO_TWO_CLEANUP_20261108.md. | |
 
 | 2026-11-08 | | Owner | Codex | Trace and repair the unknown Claude Reviewer outcome in the current Demo Two Reset rehearsal. | Confirmed 65,720 stdout bytes exceeded 64 KiB verbose capture. Claude Reviewer now uses final JSON at the same cap, with one Reviewer-only continuation and no corrections or fallback. Focused64/64, full760/760. Backup and restart to18960 healthy. One Chrome Retry Reviewer stage reached Awaiting Owner, approved with two optional notes. Same files and 4/4 evidence preserved. Details in docs/REVIEWER_OUTCOME_REPAIR_20261108.md. | |
+
+| 2026-11-08 | | Owner | Codex | Prove Dev Squad media vision before building the image/video spec step. | Ten offline boundary captures confirmed the existing workers receive text only. Synthetic PNG and MP4 stored with verified hashes. FFmpeg extracted six frames from the 12-second clip. Zero live vision passes or provider calls. Stopped at Phase 0. Details in docs/MEDIA_CAPABILITY_SPIKE_20261108.md. | |
