@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 73
+- Number of handoffs: 74
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -132,3 +132,5 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-07 | 22:55 ET | Owner | Codex | Investigate the Codex stdin notice and intermittent Tester failures without overlapping DeepSeek. | No stdin launch bug reproduced: full packet plus EOF delivered in real local Windows pipe fixtures. Three live Personal failures occurred after turn start; exact upstream cause unknown. School explicitly reported exhausted credits. Sweep fallback was disabled. Misleading stderr-first display is in DeepSeek-owned project-studio.js and was not edited. Focused 18/18; no live requests, production changes, full suite or restart. | |
 
 | 2026-11-08 | 00:07 ET | Owner | Codex | Systematic full demo workflow debugging with simulated providers. | Fixed completed-truncation reservation settlement, missing Builder artifact advancing to testing, and startup stderr hiding actual errors. Each reproduced red before patch. Windows demo-workers27/27; focused19/19; final full734/734 after correcting two empty Builder role fixtures without changing assertions. Chrome one-Send simulation: two actual local tests, Awaiting Owner, no extra approval or page error. No live Dev Squad calls, production data changes, restart, commit or push. Details: docs/WORKFLOW_SYSTEMATIC_DEBUG_20261107.md. | |
+
+| 2026-11-08 | | Owner | Codex | Repair attachment loss on project-files refresh and inspect stray Builder text files in the specified Demo Two. | Reproduced with a 143,116-byte PNG in Playwright-controlled Chrome; mount repaint preserves pending thumbnail/name/size/Remove through two automatic filesystem/SSE refresh cycles. Remove, reattach, Save and reload passed without AI. Focused34/34; full754/754. Specified Demo Two was already soft-deleted and contains no .txt files/revisions: deleted nothing, index.html preserved. Backup verified; backend34652 healthy,22 migrations,zero active chats. Details: docs/ATTACHMENT_REFRESH_REPAIR_20261108.md. | |

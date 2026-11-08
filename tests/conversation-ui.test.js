@@ -22,6 +22,20 @@ class Element {
  querySelector(selector){return all(this).find(n=>selector==='nav'?n.tagName==='nav':selector[0]==='.'&&n.className?.split(' ').includes(selector.slice(1)))||null;}
 }
 const all=n=>[n,...n.children.flatMap(all)];
+test('project-files refresh redraw preserves pending image thumbnail, filename, size and remove control',async()=>{
+ const f=fixture(),attach=all(f.main).find(n=>n.id==='conversation-attachment');
+ attach.files=[{name:'refresh.png',size:132000,type:'image/png'}];await attach.onchange();
+ for(let cycle=0;cycle<2;cycle++){
+  vm.runInContext('main.replaceChildren();window.workspaceConversation.mount(state,main,sidebar)',f.context);
+  assert.match(f.main.textContent,/refresh\.png/);
+  assert.match(f.main.textContent,/129 KB/);
+  assert.equal(all(f.main).filter(n=>n.className==='attachment-thumb').length,1);
+  assert.equal(all(f.main).filter(n=>n.className==='attachment-remove').length,1);
+ }
+ await all(f.main).find(n=>n.className==='attachment-remove').onclick();
+ vm.runInContext('main.replaceChildren();window.workspaceConversation.mount(state,main,sidebar)',f.context);
+ assert.doesNotMatch(f.main.textContent,/refresh\.png/);assert.equal(f.calls.length,0);
+});
 function fixture({status='ready',empty=false,events=[],hasReview=false,readOnly=false,teamAvailable=false,statePatch={},detailPatch={}}={}){
  const body=new Element('body'),main=new Element('main'),sidebar=new Element('aside'),nav=new Element('nav'),bottom=new Element('div');bottom.className='sidebar-bottom';sidebar.append(nav,bottom);body.append(main,sidebar);const nodes=new Map();
  const document={body,createElement:t=>new Element(t),createTextNode:text=>{const node=new Element("#text");node.text=text;return node;},querySelectorAll:()=>[],getElementById:id=>all(body).find(n=>n.id===id)||nodes.get(id)||null};for(const id of ['refresh','guide-button','close-guide','notice'])nodes.set(id,new Element('div'));
