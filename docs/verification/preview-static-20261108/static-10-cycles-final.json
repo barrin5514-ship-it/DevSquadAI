@@ -1,0 +1,72 @@
+[
+    {
+        "cycle":  1,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58797",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  2,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58799",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  3,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58801",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  4,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58803",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  5,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58805",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  6,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58807",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  7,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58809",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  8,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58811",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  9,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58813",
+        "status":  200,
+        "renders":  true
+    },
+    {
+        "cycle":  10,
+        "state":  "ready",
+        "url":  "http://127.0.0.1:58815",
+        "status":  200,
+        "renders":  true
+    }
+]
