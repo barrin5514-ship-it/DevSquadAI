@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 85
+- Number of handoffs: 86
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -149,3 +149,4 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-08 | | Owner | Codex | Diagnose demo 3’s apparent write-access pause and make the real blocker actionable. | Confirmed held write access and a completed DeepSeek reply that failed JSON parsing. Paused card shows the cause and same-chat Retry Builder stage. Focused 57/57, full 775/775, real Chrome verified with a disposable simulated run and a read-only demo 3 check. PID 23048 healthy. | |
 | 2026-11-08 | | Owner | Codex | Trace two invalid Builder replies and restore Retry after reattaching a photo in demo 3. | Both replies completed with stop and failed JSON parsing. Raw syntax was unavailable. The duplicate reference was the only checkpoint change. Fixed same-chat Retry and verified the bottom control in Chrome. Focused 86/86, full serial 777/777, PID 12868 healthy. Zero live provider calls. | |
 | 2026-11-09 | | Owner | Codex | Save failure evidence and add a bounded repair council with independent verification. | Focused 132/132, final council tests 12/12, full serial 789/789. Chrome showed one simulated Send, the agreed repair, two passing local tests, and Awaiting Owner after independent review. PID 3392 healthy after a verified backup. Zero live provider calls. | |
+| 2026-11-09 | | Owner | Codex | Recover the paused Tester, explain checkpoint differences and live output, and widen safe availability fallback. | Confirmed stale availability flags skipped Personal before dispatch and a prior Builder checkpoint was mislabelled. Final focused 65/65 and full serial 795/795. Chrome proved the simulated role swap, file comparison and Nemotron fallback, then confirmed the enabled Retry on the untouched owner chat. PID 37676 healthy. Zero live provider calls. | |

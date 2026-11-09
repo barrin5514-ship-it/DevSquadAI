@@ -22,6 +22,36 @@ function reattachedMediaMatches(repo,j,events){
  if(!prior||prior.path===media.path||prior.kind!==media.kind||prior.hash!==media.hash)return false;
  return repo.fingerprint(media.path)===j.state.failure.checkpointHash;
 }
+function failureCheckpoint(studio,j,phase,events){
+ const failure=j.state.failure;
+ if(!failure?.checkpointHash)return null;
+ // Older runs could stamp a pre-dispatch Tester failure onto the saved Builder.
+ if(phase==='tester'&&!failure.checkpointFiles&&(failure.code==='provider_unavailable'||failure.connectionCleared)){
+  const boundary=events.findLastIndex(e=>e.kind==='run_requested'&&e.content.requestId===j.request_id);
+  const eventsInAttempt=boundary<0?[]:events.slice(boundary+1);
+  const checkpoint=eventsInAttempt.findLast(e=>e.kind==='build_saved')?.content.teamCheckpointHash;
+  const executions=studio.executions.list(j.id).filter(e=>e.request_id===j.request_id&&!e.phase.startsWith('council_'));
+  if(checkpoint&&checkpoint===j.state.teamCheckpointHash&&executions.length===1&&executions[0].phase==='builder'&&
+   executions[0].checkpoint_hash===failure.checkpointHash&&eventsInAttempt.some(e=>e.kind==='files_saved'))return checkpoint;
+ }
+ return failure.checkpointHash;
+}
+
+function changedCheckpoint(studio,j,current,expected,latest){
+ const stored=j.state.failure?.checkpointFiles;
+ const complete=Array.isArray(stored)&&hashText(JSON.stringify(stored))===expected;
+ const saved=new Map(complete?stored:latest);
+ const actual=new Map(current),paths=complete?[...new Set([...saved.keys(),...actual.keys()])]:[...saved.keys()];
+ const changedFiles=paths.sort().filter(path=>saved.get(path)!==actual.get(path)).map(path=>{
+  const before=saved.get(path)||null,after=actual.get(path)||null;
+  const row=before&&studio.db.prepare('SELECT id FROM studio_revisions WHERE chat_id=? AND relative_path=? AND next_hash=? ORDER BY rowid DESC LIMIT 1').get(j.id,path,before);
+  return {path,before,after,change:!before?'added':!after?'removed':'modified',revisionId:row?.id||null};
+ });
+ const names=changedFiles.slice(0,8).map(file=>file.path+' ('+file.change+')');
+ const summary=names.length?names.join(', ')+(changedFiles.length>8?' and '+(changedFiles.length-8)+' more':''):'the earlier record has no file list to identify the difference';
+ return {available:false,reason:'The project changed after the failed step. Review these files before retrying: '+summary+'.',changedFiles,complete};
+}
+
 // A resume never guesses that a model finished. It checks saved file hashes and
 // resumes the failed phase, rather than silently sending paid work back to Builder.
 export function resumePlan(studio,j){
@@ -29,5 +59,5 @@ export function resumePlan(studio,j){
  if(!['paused','stopped'].includes(j.status))return {available:false,reason:'No paused step needs resuming.'};
  const events=studio.db.prepare('SELECT kind,agent,content FROM studio_events WHERE chat_id=? ORDER BY id').all(j.id).map(e=>({...e,content:JSON.parse(e.content)}));let phase=j.state.failure?.phase||j.state.phase,agent=j.state.failure?.agent||j.state.roles[phase],legacy=false;
  if(!j.state.failure&&events.some(e=>e.kind==='error'&&/Work paused: incomplete/.test(e.content.alert||''))){const index=events.findLastIndex(e=>e.kind==='worker_started');let prior='builder';for(const e of events.slice(0,index))if(['builder','tester','reviewer'].includes(e.content.phase))prior=e.content.phase;if(index>=0&&j.state.roles[prior]===events[index].agent){phase=prior;agent=events[index].agent;legacy=true;}}
- try{const repo=studio.root(j.project_id);if(j.state.pinnedRoot&&repo.root!==j.state.pinnedRoot)throw Error('The selected project root changed.');const latest=new Map();for(const r of studio.db.prepare('SELECT relative_path,next_hash FROM studio_revisions WHERE chat_id=? ORDER BY rowid').all(j.id))latest.set(r.relative_path,r.next_hash);for(const [name,hash]of latest){const file=repo.resolve(name);if(!fs.existsSync(file)||hashText(fs.readFileSync(file,'utf8'))!==hash)throw Error('A saved file changed after this task. Inspect it before resuming.');}const checkpointHash=repo.fingerprint();if(j.state.failure?.checkpointHash&&j.state.failure.checkpointHash!==checkpointHash&&!(phase==='builder'&&reattachedMediaMatches(repo,j,events)))throw Error('The project changed after the failed step. Inspect it before resuming.');const missingEvidence=phase==='reviewer'&&(!j.state.tests?.executed||!j.state.tests.passed||j.state.tests.testedRevisionHash!==checkpointHash);if(missingEvidence){phase='tester';agent=j.state.roles.tester;legacy=false;}const savedTests=phase==='tester'&&!!savedPackageTests(studio,j,repo);return {available:true,phase,agent,checkpointHash,legacy,savedTests,savedFiles:latest.size,reason:savedTests?'Retry the unchanged independent test files with the local runner. Only the Reviewer may be called if the tests pass.':missingEvidence?'The Reviewer has no passing tests for the current checkpoint. Resume will rerun the Tester stage first.':legacy?'Codex response was rejected before tests ran. The old log did not retain the format details. Saved Builder files are unchanged.':j.state.failure?.message||'Resume the saved unfinished phase. No completed Builder step will be repeated.'};}catch(e){return {available:false,reason:e.message};}
+ try{const repo=studio.root(j.project_id);if(j.state.pinnedRoot&&repo.root!==j.state.pinnedRoot)throw Error('The selected project root changed.');const latest=new Map();for(const r of studio.db.prepare('SELECT relative_path,next_hash FROM studio_revisions WHERE chat_id=? ORDER BY rowid').all(j.id))latest.set(r.relative_path,r.next_hash);const current=repo.fileHashes(),actual=new Map(current),checkpointHash=hashText(JSON.stringify(current)),expected=failureCheckpoint(studio,j,phase,events);if([...latest].some(([name,hash])=>actual.get(name)!==hash)||expected&&expected!==checkpointHash&&!(phase==='builder'&&reattachedMediaMatches(repo,j,events)))return {...changedCheckpoint(studio,j,current,expected,latest),phase};const missingEvidence=phase==='reviewer'&&(!j.state.tests?.executed||!j.state.tests.passed||j.state.tests.testedRevisionHash!==checkpointHash);if(missingEvidence){phase='tester';agent=j.state.roles.tester;legacy=false;}const savedTests=phase==='tester'&&!!savedPackageTests(studio,j,repo);return {available:true,phase,agent,checkpointHash,legacy,savedTests,savedFiles:latest.size,reason:savedTests?'Retry the unchanged independent test files with the local runner. Only the Reviewer may be called if the tests pass.':missingEvidence?'The Reviewer has no passing tests for the current checkpoint. Resume will rerun the Tester stage first.':legacy?'Codex response was rejected before tests ran. The old log did not retain the format details. Saved Builder files are unchanged.':j.state.failure?.message||'Resume the saved unfinished phase. No completed Builder step will be repeated.'};}catch(e){return {available:false,reason:e.message};}
 }

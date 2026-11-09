@@ -175,3 +175,19 @@ test('the bottom of a paused chat offers current stage retry after the latest ed
  assert.match(bottom.textContent,/project changed/);
  assert.ok(!bottom.children.some(n=>n.tagName==='button'));
 });
+
+test('live events explain actions and setbacks before technical detail',()=>{
+ const f=fixture();
+ const plain=f.context.window.workspaceConversation.plainEvent;
+ const line=(kind,content={},agent='codex-personal')=>plain({kind,agent,content});
+ assert.match(line('worker_started',{activePhase:'tester'}),/Codex.*preparing independent tests/i);
+ assert.match(line('worker_report',{phase:'tester'}),/tests have not run/i);
+ assert.match(line('handoff_local',{phase:'builder',nextPhase:'tester'}),/saved files.*tester/i);
+ assert.match(line('test_results',{tests:{executed:true,passed:false}}),/tests ran.*failed/i);
+ assert.match(line('runner_missing'),/could not run.*no pass/i);
+ assert.match(line('repair_council_started'),/asking.*agents.*why/i);
+ assert.match(line('repair_council_result',{outcome:'advice_only'}),/advice.*nothing was applied/i);
+ assert.match(line('error',{failure:{agent:'codex-school',phase:'tester',code:'provider_unavailable'}}),/School.*could not.*retry/i);
+ assert.match(line('error',{failure:{agent:'deepseek',phase:'builder',code:'body_limit'},writeAccess:{unknownOutcome:true}}),/could not confirm.*completion/i);
+ assert.match(line('error',{failure:{agent:'deepseek',phase:'builder',code:'worker_error',message:'DeepSeek final answer is not valid JSON.'}}),/reply.*could not read.*no project files/i);
+});

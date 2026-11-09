@@ -9,21 +9,23 @@ import {StudioWorkers,tapTests} from '../../src/services/studio-workers.js';
 import {ProjectFiles,hashText} from '../../src/services/project-files.js';
 import {cliEnvironment} from '../../src/services/cli-hello.js';
 
-export async function workflowFixture(t,{mode='normal',fallback=true,mediaOptions,council=null}={}){
+export async function workflowFixture(t,{mode='normal',fallback=true,mediaOptions,council=null,recovery=null}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'workflow-http-')),calls=[],packets=[],providerBodies=[],councilProviderBodies=[];
  let real,entered,release,testerTurns=0,reviewerTurns=0;const blocked=new Promise(r=>release=r),started=new Promise(r=>entered=r);
  const implementation='export function add(a,b){return a+b;}';
  const testSource="import {test} from 'node:test';import assert from 'node:assert/strict';import {add} from '../app.mjs';test('integers',()=>assert.equal(add(2,3),5));test('negative and zero',()=>assert.equal(add(-1,1),0));";
- const workers={nemotron:{status:()=>({ok:true}),refresh:async()=>({ok:true})},preflight:async()=>null,availability:async id=>({ok:council?id!==council.absent:id==='codex-personal'}),call:async(agent,packet,folder,signal,e)=>{
+ const workers={nemotron:{status:()=>({ok:true}),refresh:async()=>({ok:true})},preflight:async()=>null,availability:async id=>({ok:recovery?recovery.available?.includes(id)===true:council?id!==council.absent:id==='codex-personal'}),call:async(agent,packet,folder,signal,e)=>{
   calls.push({agent,phase:packet.phase});packets.push(packet);
   if(packet.phase.startsWith('council_'))return agent==='deepseek'?real.call(agent,packet,folder,signal,e):council.reply(agent,packet,e);
   if(packet.phase==='builder'){
    if(mode==='wait'){entered();await blocked;}
+   if(recovery?.skipTester)s.change(packet.chatId,'running',{fallbackUnavailable:[recovery.roles.tester]},'fixture_cached_availability');
    if(mode==='empty')return {report:'SIMULATED missing implementation',files:[]};
    if(agent==='deepseek')return real.call(agent,packet,folder,signal,e);
    return {report:'SIMULATED fallback Builder',files:[{path:'app.mjs',content:implementation}]};
   }
   if(packet.phase==='tester'){
+   if(recovery?.unavailable?.includes(agent))throw {code:'usage_limit',stopped:true};
    if(mode==='tester-once'&&testerTurns++===0)throw {code:'incomplete',stopped:true};
    if(mode==='tester-credit')throw {code:'usage_limit',stopped:true,diagnostics:{reason:'usage_limit',stderr:'Reading additional input from stdin...\n',stdout:'Your workspace is out of credits.'}};
    return {report:'SIMULATED independent Tester',files:[{path:'test/add.test.mjs',content:testSource}]};
@@ -36,7 +38,7 @@ export async function workflowFixture(t,{mode='normal',fallback=true,mediaOption
   const count=Number(/# tests (\d+)/.exec(stdout)?.[1]||0),failed=Number(/# fail (\d+)/.exec(stdout)?.[1]||0);
   return {executed:true,passed:exit===0&&count>0&&failed===0,count,failed,summary:'Actual local fixture Node tests',backend:'node-permission-fixture',revisionHash:new ProjectFiles(folder).fingerprint(),outputHash:hashText(stdout),names:tapTests(stdout)};
  }};
- const config=loadConfig({DATABASE_PATH:path.join(root,'db.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backup'),DEEPSEEK_API_KEY:'LOCAL_FIXTURE',DEEPSEEK_MODEL:'deepseek-flash',DEEPSEEK_INPUT_USD_PER_MILLION:'0.3',DEEPSEEK_OUTPUT_USD_PER_MILLION:'1.2'});
+ const config=loadConfig({DATABASE_PATH:path.join(root,'db.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backup'),DEEPSEEK_API_KEY:recovery?.paid===false?'':'LOCAL_FIXTURE',DEEPSEEK_MODEL:'deepseek-flash',DEEPSEEK_INPUT_USD_PER_MILLION:'0.3',DEEPSEEK_OUTPUT_USD_PER_MILLION:'1.2'});
  const app=createApp(config,{studioOptions:{workers,mediaOptions},fetchImpl:async(url,o)=>{
   if(url!=='https://api.deepseek.com/chat/completions'||o.method!=='POST')throw Error('Unexpected simulated provider request');
   const frame=x=>'data: '+JSON.stringify(x)+'\n\n',length=mode==='length';
@@ -52,8 +54,8 @@ export async function workflowFixture(t,{mode='normal',fallback=true,mediaOption
   return new Response(frame({model:'deepseek-flash',choices:[{delta:{content:mode==='builder-json'||mode==='builder-json-once'&&providerBodies.length===1?'not valid JSON':JSON.stringify(value)},finish_reason:length?'length':'stop'}],usage:{prompt_tokens:30,completion_tokens:length?8192:40,total_tokens:length?8222:70}})+(mode==='interrupted'?'':'data: [DONE]\n\n'));
  }});
  real=new StudioWorkers(app.team);const s=app.team.studio,project=s.project({name:'SIMULATED one-Send workflow'});
- s.roleManager.update(project.id,{version:0,roles:{builder:'deepseek',tester:council?.tester||(council?'codex-personal':'nemotron'),reviewer:'claude-code'}});
- const chat=s.create(project.id,'Build the fixture add utility and independent tests');s.failover.configure(chat.id,{version:chat.version,approvedBy:'owner',enabled:fallback,allowedWorkers:['codex-personal','deepseek','nemotron','claude-code']});
+ s.roleManager.update(project.id,{version:0,roles:recovery?.roles||{builder:'deepseek',tester:council?.tester||(council?'codex-personal':'nemotron'),reviewer:'claude-code'}});
+ const chat=s.create(project.id,'Build the fixture add utility and independent tests');s.failover.configure(chat.id,{version:chat.version,approvedBy:'owner',enabled:fallback,allowedWorkers:recovery?.allowed||['codex-personal','deepseek','nemotron','claude-code']});
  const server=app.app.listen(0,'127.0.0.1');await once(server,'listening');const origin='http://127.0.0.1:'+server.address().port,base=origin+'/api/console',token=(await(await fetch(base+'/session')).json()).data.token;
  t.after(async()=>{release();await s.close();app.team.messenger.close();app.team.preview.close();app.team.fileActions.close();server.closeAllConnections();await new Promise(r=>server.close(r));app.db.close();fs.rmSync(root,{recursive:true,force:true});});
  const post=async(route,body)=>{const response=await fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,'X-Dashboard-Token':token},body:JSON.stringify(body)});return {status:response.status,...await response.json()};};
