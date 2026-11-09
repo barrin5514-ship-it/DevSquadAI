@@ -6,10 +6,10 @@ export class StudioUsage {
  start(chat,executionId,model){const e=this.studio.executions.get(executionId);if(e.chat_id!==chat||!['deepseek',nemotronId].includes(e.agent)||e.agent===nemotronId&&model!==nemotronModel)throw Error('API request does not belong to this execution');if(this.db.prepare("SELECT 1 FROM studio_events WHERE chat_id=? AND kind='api_request_started' AND json_extract(content,'$.executionId')=?").get(chat,executionId))throw Error('This execution already dispatched; duplicate request prevented');this.studio.event(chat,'api_request_started',{executionId,model,startedAt:new Date().toISOString()},e.agent);}
  record(chat,executionId,model,usage=null,outcome='unknown',reportedCost=null){
   const execution=this.studio.executions.get(executionId);
-  if(execution.chat_id!==chat||!['deepseek',nemotronId].includes(execution.agent)||execution.agent===nemotronId&&model!==nemotronModel)throw Error('Usage does not belong to this DeepSeek execution');
+  if(execution.chat_id!==chat||!['deepseek',nemotronId].includes(execution.agent)&&!execution.phase.startsWith('council_')||execution.agent===nemotronId&&model!==nemotronModel)throw Error('Usage does not belong to this DeepSeek execution');
   const previous=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='api_usage' AND json_extract(content,'$.executionId')=?").get(chat,executionId);
   if(previous)return JSON.parse(previous.content);
-  const number=n=>Number.isSafeInteger(n)&&n>=0?n:null,p=execution.agent===nemotronId?{inputPrice:0,outputPrice:0}:this.studio.team.paid.settings;
+  const number=n=>Number.isSafeInteger(n)&&n>=0?n:null,p=execution.agent===nemotronId?{inputPrice:0,outputPrice:0}:execution.agent==='deepseek'?this.studio.team.paid.settings:null;
   const input=number(usage?.input),output=number(usage?.output),total=number(usage?.total);
   const ratesKnown=execution.agent===nemotronId||[p?.inputPrice,p?.outputPrice].every(n=>Number.isFinite(n)&&n>0);
   const content={executionId,model,outcome,providerReportedCostUSD:Number.isFinite(reportedCost)&&reportedCost>=0?reportedCost:null,input,output,total,reasoning:number(usage?.reasoning),source:input!==null||output!==null?'provider_reported':'unknown',estimatedCostUSD:input!==null&&output!==null&&ratesKnown?(input*p.inputPrice+output*p.outputPrice)/1e6:null,inputUSDPerMillion:ratesKnown?p.inputPrice:null,outputUSDPerMillion:ratesKnown?p.outputPrice:null,costNote:'Calculated from recorded tokens and configured rates; not a provider invoice. Unknown usage is not zero.'};

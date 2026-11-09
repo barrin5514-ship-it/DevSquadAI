@@ -10,9 +10,11 @@ const sha=x=>createHash('sha256').update(x).digest('hex');
 const fileHash=file=>{const h=createHash('sha256'),fd=fs.openSync(file,'r'),chunk=Buffer.alloc(512000);try{let n;while((n=fs.readSync(fd,chunk,0,chunk.length,null)))h.update(chunk.subarray(0,n));return h.digest('hex');}finally{fs.closeSync(fd);}};
 // One TOML table avoids treating quotes around :root as literal path characters.
 // MXC is selected explicitly: never fall back to a broader legacy sandbox.
-export function isolationArgs(root){
+export function isolationArgs(root,{readOnly=false}={}){
  const runtime=JSON.stringify(path.dirname(process.execPath).replaceAll('\\','/'));
- return ['--include-managed-config','--permission-profile','devsquad_demo','-C',root,'-c',`permissions={devsquad_demo={extends=":workspace",filesystem={":root"="deny",":minimal"="read",":tmpdir"="deny",":slash_tmp"="deny",${runtime}="read"},network={enabled=false}}}`,'-c','windows.sandbox="mxc"'];
+ const base=readOnly?':read-only':':workspace';
+ const workspace=readOnly?',":workspace_roots"={"."="read",".env"="deny"}':'';
+ return ['--include-managed-config','--permission-profile','devsquad_demo','-C',root,'-c',`permissions={devsquad_demo={extends="${base}",filesystem={":root"="deny",":minimal"="read",":tmpdir"="deny",":slash_tmp"="deny",${runtime}="read"${workspace}},network={enabled=false}}}`,'-c','windows.sandbox="mxc"'];
 }
 export function isolationFingerprint(root,exe){return sha(JSON.stringify({version:isolationVersion,root:fs.realpathSync(root),exe:fs.realpathSync(exe),binary:fileHash(exe),node:process.version,args:isolationArgs(root)}));}
 export class NativeDemoBoundary {

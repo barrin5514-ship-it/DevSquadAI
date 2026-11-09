@@ -9,6 +9,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import {spawn,spawnSync} from 'node:child_process';
 import {cliEnvironment} from './cli-hello.js';
+import {replyEvidence} from './studio-failure-evidence.js';
 import {demoCliArguments,parseDemoCli,claudeTerminalLimit} from './demo-workers.js';
 
 // This is a transport, NOT a security sandbox. A verified isolated boundary
@@ -19,11 +20,12 @@ export class DemoCliTransport {
   this.authCheck=authCheck||(async(agent,exe,cwd,env,profile)=>{let r;try{r=await promisify(execFile)(exe,agent==='codex'?[...(profile?profileAuthArgs:[]),'login','status']:['auth','status','--json'],{cwd,env,encoding:'utf8',timeout:12000,maxBuffer:64000,windowsHide:true});}catch(e){if(e.killed)throw {code:'auth_timeout',stopped:true};return false;}if(agent==='codex')return /logged in using chatgpt/i.test(String(r.stdout||'')+String(r.stderr||''));try{const a=JSON.parse(r.stdout);return a.loggedIn===true&&a.authMethod==='claude.ai'&&['pro','max','team','enterprise'].includes(a.subscriptionType);}catch{return false;}});
   this.killTree=killTree||((child)=>{if(process.platform==='win32')return spawnSync(path.join(process.env.SystemRoot||'C:\\Windows','System32','taskkill.exe'),['/PID',String(child.pid),'/T','/F'],{windowsHide:true,timeout:5000,stdio:'ignore'}).status===0;child.kill('SIGKILL');return true;});
  }
- async run(agent,packet,cwd,{signal,timeoutMs=90000,maxOutputBytes=65536,codexIsolation=null,instruction=null,outputSchema=null,onEvent=()=>{},streamProgress=false,profile=null,inactivityMs=180000,redactionSecrets=[]}={}){
+ async run(agent,packet,cwd,{signal,timeoutMs=90000,maxOutputBytes=65536,codexIsolation=null,instruction=null,outputSchema=null,onEvent=()=>{},onFailure,onReply,streamProgress=false,profile=null,inactivityMs=180000,redactionSecrets=[]}={}){
   const exe=this.executables[agent];if(!['codex','claude'].includes(agent)||!exe||!path.isAbsolute(exe)||!exe.endsWith('.exe')||!fs.existsSync(exe)||Buffer.byteLength(JSON.stringify(packet))>24000)throw Error('Native worker configuration is invalid');
   // Reviews need one bounded final answer, not duplicate partial-message envelopes.
   // Keep the same byte cap and native login; other worker phases still stream progress.
-  const streamEvents=streamProgress&&!(agent==='claude'&&packet.phase==='reviewer');
+  const council=packet.phase?.startsWith('council_');
+  const streamEvents=streamProgress&&!(agent==='claude'&&(packet.phase==='reviewer'||council));
   if(signal?.aborted)throw {code:'owner_stop',stopped:true};
   const env=cliEnvironment();if(agent==='codex'&&profile){env.CODEX_HOME=profile.home;}onEvent({status:'starting',profile:profile?.label||null,preflightProfileHash:profile?createHash('sha256').update(profile.home).digest('hex'):null,progress:'Checking the selected native login; no model request yet.'});if(!await this.authCheck(agent,exe,cwd,env,profile))throw {code:'auth_expired',stopped:true};
   if(signal?.aborted)throw {code:'owner_stop',stopped:true};
@@ -41,7 +43,7 @@ export class DemoCliTransport {
      return failure(nativeLimit,nativeLimit==='response_truncated'?'output_limit':'session_limit',closeObserved,'parsing',code);
     }
     if(code!==0){const preview=nativeDiagnostics({raw,stderr,secrets:redactionSecrets});const f=nativeFailure(preview.stdout+'\n'+preview.stderr);return failure(f.code,f.reason,closeObserved,f.stage||'execution',code);}
-    try{const errorRecords=raw.trim().split(/\r?\n/).flatMap(line=>{try{const e=JSON.parse(line);return e.type==='error'||e.type==='turn.failed'||e.is_error===true?[e]:[];}catch{return [];}});if(errorRecords.length){const preview=nativeDiagnostics({raw,stderr,secrets:redactionSecrets});const f=nativeFailure(preview.stdout+'\n'+preview.stderr);return failure(f.code,f.reason,closeObserved,f.stage||'execution',code);}let finalRaw=raw;if(agent==='claude'&&streamEvents){const records=raw.trim().split(/\r?\n/).filter(Boolean).map(line=>JSON.parse(line));finalRaw=JSON.stringify(records.findLast(x=>x.type==='result'));}resolve(parseDemoCli(agent,finalRaw,maxOutputBytes));}catch(error){const reason=error instanceof SyntaxError?'json_syntax':/tool activity/.test(error.message)?'unexpected_tool_activity':/incomplete/.test(error.message)?'missing_terminal_result':'invalid_contract';return failure('incomplete',reason,closeObserved,'parsing',code);}
+    try{const errorRecords=raw.trim().split(/\r?\n/).flatMap(line=>{try{const e=JSON.parse(line);return e.type==='error'||e.type==='turn.failed'||e.is_error===true?[e]:[];}catch{return [];}});if(errorRecords.length){const preview=nativeDiagnostics({raw,stderr,secrets:redactionSecrets});const f=nativeFailure(preview.stdout+'\n'+preview.stderr);return failure(f.code,f.reason,closeObserved,f.stage||'execution',code);}let finalRaw=raw;if(agent==='claude'&&streamEvents){const records=raw.trim().split(/\r?\n/).filter(Boolean).map(line=>JSON.parse(line));finalRaw=JSON.stringify(records.findLast(x=>x.type==='result'));}resolve(parseDemoCli(agent,finalRaw,maxOutputBytes,{singleFinal:council,onFailure:(text,error,usage)=>onFailure?.({...replyEvidence(text,'native_final_reply',error),usage}),onReply}));}catch(error){const reason=error instanceof SyntaxError?'json_syntax':/tool activity/.test(error.message)?'unexpected_tool_activity':/incomplete/.test(error.message)?'missing_terminal_result':'invalid_contract';return failure('incomplete',reason,closeObserved,'parsing',code);}
    };
    // A kill request alone is not proof that all descendants stopped. Unknown
    // timeout/cancellation outcomes pause the job instead of triggering failover.

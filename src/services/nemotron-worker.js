@@ -1,3 +1,4 @@
+import {replyEvidence} from './studio-failure-evidence.js';
 import fs from 'node:fs';
 import {ProviderAdapter} from '../providers/adapter.js';
 import {modelHealth,recordHealth} from './provider-health.js';
@@ -67,8 +68,12 @@ export class NemotronWorker {
    try{result=adapter.parseGeneration(data);}catch(e){if(mismatch)e.code='model_mismatch';throw e;}
    if(mismatch)throw failure('model_mismatch','OpenRouter reported a different model; response rejected.',{usage:result.usage});
    if(typeof data.usage?.cost==='number'&&data.usage.cost!==0)throw failure('paid_response','Free endpoint reported a nonzero cost; stopped.',{usage:result.usage});
-   const value=JSON.parse(result.text);
-   if(!validWorkerResponse(value,packet))throw failure('invalid_response','Nemotron returned an invalid role-specific result.',{usage:result.usage});
+   let value;
+   try{
+    value=JSON.parse(result.text);
+    if(!validWorkerResponse(value,packet))throw failure('invalid_response','Nemotron returned an invalid role-specific result.',{usage:result.usage});
+   }catch(error){execution.onFailure?.(replyEvidence(result.text,'nemotron_final_reply',error));throw error;}
+   execution.onReply?.(result.text);
    this.team.safe(value);execution.usage.record(execution.chatId,execution.executionId,nemotronModel,result.usage,'response_received',data.usage?.cost);
    recordHealth(this.team.config,p,nemotronModel,{capabilityProbe:{checkedAt:new Date().toISOString(),httpStatus:result.diagnostics.httpStatus,complete:true,source:'Bounded project worker response',phase:packet.phase}});
    return {...value,usage:result.usage,model:data.model,httpStatus:result.diagnostics.httpStatus};

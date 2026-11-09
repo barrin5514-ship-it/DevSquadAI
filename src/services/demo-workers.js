@@ -27,16 +27,30 @@ export function claudeTerminalLimit(result){
  return null;
 }
 
-export function parseDemoCli(agent,raw,maxOutputBytes=65536){
- if(Buffer.byteLength(raw)>maxOutputBytes)deny('Worker output exceeded its approved output limit');let text,usage;
+export function completedCliReply(agent,raw,{singleFinal=false}={}){
+ let text,usage;
  if(agent==='codex'){
   const events=raw.trim().split(/\r?\n/).map(line=>JSON.parse(line));
   if(events.some(e=>e.type==='error'||e.type==='turn.failed'||e.item&&e.item.type!=='agent_message'&&e.item.type!=='reasoning'))deny('CLI reported an error or unexpected tool activity');
-  const finish=events.findLast(e=>e.type==='turn.completed');if(!finish)deny('Codex response is incomplete');text=events.findLast(e=>e.type==='item.completed'&&e.item?.type==='agent_message')?.item.text;usage=finish.usage;
+  const finish=events.findLast(e=>e.type==='turn.completed');if(!finish)deny('Codex response is incomplete');
+  const messages=events.filter(e=>e.type==='item.completed'&&e.item?.type==='agent_message');
+  if(singleFinal&&messages.length!==1)deny('Council requires exactly one final agent message');
+  text=messages.at(-1)?.item.text;usage=finish.usage;
  }else{const result=JSON.parse(raw),limit=claudeTerminalLimit(result);if(limit)throw Object.assign(Error('Native response reached its output or turn limit; no complete artifact was accepted.'),{code:limit});if(result.type!=='result'||result.subtype!=='success'||result.is_error!==false)deny('Claude response is incomplete');text=result.result;usage=result.usage;}
- const data=JSON.parse(text);if(!data||!['files,report','files,report,review'].includes(Object.keys(data).sort().join(','))||typeof data.report!=='string'||!data.report.trim()||data.report.length>6000||!Array.isArray(data.files))deny('Worker result does not match the demo contract');
- // Preserve only numeric usage, never raw CLI metadata or account identifiers.
+ return {text,usage};
+}
+
+export function parseDemoCli(agent,raw,maxOutputBytes=65536,{singleFinal=false,onFailure,onReply}={}){
+ if(Buffer.byteLength(raw)>maxOutputBytes)deny('Worker output exceeded its approved output limit');
+ const {text,usage}=completedCliReply(agent,raw,{singleFinal});
  const safeUsage=Object.fromEntries(Object.entries(usage||{}).filter(([key,n])=>/^(?:input_tokens|output_tokens|cached_input_tokens|cache_creation_input_tokens|cache_read_input_tokens)$/.test(key)&&Number.isSafeInteger(n)&&n>=0));
+ let data;
+ try{
+  data=JSON.parse(text);
+  if(!data||!['files,report','files,report,review'].includes(Object.keys(data).sort().join(','))||typeof data.report!=='string'||!data.report.trim()||data.report.length>6000||!Array.isArray(data.files))deny('Worker result does not match the demo contract');
+ }catch(error){onFailure?.(text,error,safeUsage);throw error;}
+ onReply?.(text);
+ // Preserve only numeric usage, never raw CLI metadata or account identifiers.
  return {...data,usage:safeUsage};
 }
 
