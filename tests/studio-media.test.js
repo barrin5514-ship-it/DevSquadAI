@@ -127,3 +127,28 @@ test('free Nemotron vision request uses one image part and the declared strict s
  assert.equal(image.type,'image_url');assert.equal(image.image_url.url,'data:image/png;base64,'+png.toString('base64'));
  assert.equal(done.events.find(e=>e.kind==='media_spec_saved').content.quotaAfter.remaining,46);
 });
+
+test('a media Builder JSON failure keeps write authorization distinct and same-chat Retry reuses the saved spec',async t=>{
+ let reads=0;
+ const f=await workflowFixture(t,{mode:'builder-json-once',fallback:false,mediaOptions:{
+  frames:simulatedFrames,nemotron:async({call})=>{reads++;return call({},async()=>({reply:answer}));}
+ }});
+ mediaSend(f);
+ const before=f.s.root(f.project.id).fingerprint(),paused=await f.run();
+ assert.equal(paused.status,'paused');assert.equal(paused.state.phase,'builder');
+ assert.equal(paused.state.writeAccess.status,'released');assert.equal(paused.resume.available,true);
+ assert.equal(f.s.root(f.project.id).fingerprint(),before);
+ assert.ok(paused.events.some(e=>e.kind==='run_requested'&&e.content.writeAccess?.status==='held'));
+ const saved=paused.events.find(e=>e.kind==='media_spec_saved');
+ const worker=paused.executions.find(e=>e.phase==='builder');
+ assert.ok(saved);assert.equal(worker.evidence.deepseekResponse.failedCheck,'answer_json');
+ assert.equal(worker.evidence.deepseekResponse.completionObserved,true);
+ const retry=await f.post('/studio/chats/'+f.chat.id+'/retry',{requestId:randomUUID(),expectedVersion:paused.version,mode:'resume'});
+ assert.equal(retry.status,202);await f.s.wait(f.chat.id);
+ const done=f.s.detail(f.chat.id);
+ assert.equal(done.status,'awaiting_owner');assert.equal(done.id,paused.id);
+ assert.equal(done.state.retryOf,paused.request_id);assert.equal(reads,1);
+ assert.equal(f.providerBodies.length,2);assert.equal(f.packets[0].mediaSpec.text,f.packets[1].mediaSpec.text);
+ assert.equal(done.events.find(e=>e.kind==='media_spec_reused').content.originCheckpointHash,saved.content.checkpointHash);
+ assert.deepEqual(f.calls.map(c=>c.phase),['builder','builder','tester','reviewer']);
+});

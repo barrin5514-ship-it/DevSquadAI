@@ -135,3 +135,23 @@ test('Send of a new tiny task after a failed attempt dispatches it through same-
  assert.equal(f.calls[1].body.mode,'resume');
  assert.ok(f.calls.every(c=>!c.route.endsWith('/run')&&!c.route.endsWith('/sessions')));
 });
+
+test('completed DeepSeek reply failure explains the JSON error and offers same-chat Builder retry on the paused card',async()=>{
+ const f=fixture({status:'paused',events:[{id:1,kind:'workspace_write_acquired',content:{writeAccess:{status:'held'}}}]});
+ f.context.value={id:'c',status:'paused',version:12,request_id:'demo-request',state:{phase:'builder',roles:{builder:'deepseek'},runApproval:{mode:'team-send'},writeAccess:{status:'released'},failure:{phase:'builder',agent:'deepseek',code:'worker_error'},alert:'DeepSeek final answer is not valid JSON.'},resume:{available:true,phase:'builder'},events:[],executions:[{request_id:'demo-request',agent:'deepseek',phase:'builder',status:'failed',evidence:{deepseekResponse:{failedCheck:'answer_json',completionObserved:true}}}]};
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ const notice=f.main.querySelector('.chat-notice');
+ assert.equal(notice.hidden,false);
+ assert.match(notice.textContent,/DeepSeek returned an invalid JSON reply/);
+ assert.match(f.main.textContent,/Write access active for this step/);
+ const retry=notice.children.find(n=>n.tagName==='button'&&n.textContent==='Retry Builder stage');
+ assert.ok(retry);
+ assert.equal(f.calls.length,0);
+ await retry.onclick();
+ assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/retry']);
+ assert.equal(f.calls[0].body.expectedVersion,12);
+ assert.equal(f.calls[0].body.mode,'resume');
+ f.context.value.request_id='different-request';
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ assert.doesNotMatch(notice.textContent,/invalid JSON reply|Retry Builder stage/);
+});

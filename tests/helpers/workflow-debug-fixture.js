@@ -41,7 +41,7 @@ export async function workflowFixture(t,{mode='normal',fallback=true,mediaOption
   if(mode==='rate')return Response.json({error:{message:'LOCAL rate limit'}},{status:429});
   const frame=x=>'data: '+JSON.stringify(x)+'\n\n',length=mode==='length';
   const value={report:'SIMULATED DeepSeek Builder',files:[{path:'app.mjs',content:implementation}]};
-  return new Response(frame({model:'deepseek-flash',choices:[{delta:{content:JSON.stringify(value)},finish_reason:length?'length':'stop'}],usage:{prompt_tokens:30,completion_tokens:length?8192:40,total_tokens:length?8222:70}})+(mode==='interrupted'?'':'data: [DONE]\n\n'));
+  return new Response(frame({model:'deepseek-flash',choices:[{delta:{content:mode==='builder-json-once'&&providerBodies.length===1?'not valid JSON':JSON.stringify(value)},finish_reason:length?'length':'stop'}],usage:{prompt_tokens:30,completion_tokens:length?8192:40,total_tokens:length?8222:70}})+(mode==='interrupted'?'':'data: [DONE]\n\n'));
  }});
  real=new StudioWorkers(app.team);const s=app.team.studio,project=s.project({name:'SIMULATED one-Send workflow'});
  s.roleManager.update(project.id,{version:0,roles:{builder:'deepseek',tester:'nemotron',reviewer:'claude-code'}});
