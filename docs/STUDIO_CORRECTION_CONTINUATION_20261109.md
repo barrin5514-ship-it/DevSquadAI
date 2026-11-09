@@ -1,0 +1,31 @@
+# Continue correcting from saved findings
+
+## What stopped the live run
+
+Demo Three project `7c4d3f9e-2fde-432f-b596-d2dab868f251`, chat `a725f4e8-899d-4a29-925c-5876f40df749`, is paused on request `893572ea-e640-4527-a34d-796e7cf0e9f2`. The latest event is the old correction pause at event `7390`, after the third correction and a failed independent test with one recorded finding. Read-only inspection found the saved test checkpoint matches the current files and found no workspace lock. The new recovery planner returns an available Builder retry for the same chat and checkpoint. The run was left untouched.
+
+## Gates traced
+
+| Location | Previous behavior | Current behavior |
+| --- | --- | --- |
+| `project-studio.js` Tester and Reviewer result handling, and `startCorrection` | Three Builder corrections per team run | Each actionable failed test or review finding can open a new correction. Count is recorded in the timeline. |
+| `project-studio.js` repeated problem tracking | Three consecutive matching test or review findings paused work | Two matching findings lead to a fresh council diagnosis when authorized, or a change in the Builder's approach using the current files and evidence. A separate alert for repeated worker errors on manual retries remains. |
+| `project-studio.js` failure after council implementation | Any failed tests after a council repair paused before another repair | Failed tests become fresh evidence for another council cycle. |
+| `studio-repair-council.js` eligibility and dispatch | Two rounds per Send, and no diagnosis after three corrections | Council rounds use the latest saved evidence and the prior plan or disagreement. Matching diagnoses from at least two provider families and Reviewer synthesis still gate implementation. Round and execution identity still prevent duplicate reservations. An unknown result remains advice-only and never leads to another discussion or a repair automatically. |
+| `studio-run-scope.js` scoped worker dispatch | Per-attempt anti-replay and a separate council expiry tied to the original Send | Each authorized correction has a fresh request bound to the task, project, database and checkpoint and carries the existing per-turn limits and fallback policy. Council checks use that turn's authorization. Explicitly restricted Builder-only or Reviewer-only scopes still authorize only the requested work. |
+
+The owner can Stop, inspect saved evidence, and Retry. The provider fallback order and account limits, worker timeouts and output limits, file and checkpoint guards, independent test evidence, independent review, and final owner acceptance are still required. A confirmed availability failure exhausts the eligible fallback pool once and preserves the latest findings. Unknown outcomes preserve their recorded status and reservations. There is no local spending gate in this flow.
+
+## Regression coverage
+
+The pre-fix tests reproduced the stop at correction three, the unchanged Builder instruction for a repeat finding, the missing correction-four Stop and Resume path, and legacy Retry selecting Tester. The council fixtures reproduced the two-round stop and skipping diagnosis after three historical corrections. A later fixture caught an unknown council call being replayed on disagreement and now verifies it stays unknown without a repeat or a repair.
+
+Tests updated from the previous policy include **repeated identical Tester failures stop at the existing repeated-problem bound instead of looping**, **same failing test three consecutive times pauses and records a durable stuck alert**, **a recurring test pauses on its third consecutive failure even if other failures differ**, **two unsuccessful council correction rounds never start a third**, **council correction still cannot reach owner review with failed independent tests**, **exhausted correction budget records failure without opening a council**, and **three conflicting diagnoses and synthesis attempt pause with no changes applied**. The new cases retain independent evidence and agreement assertions while exercising continuation. Tests also check availability exhaustion, the zero-cost rejected provider reservation, and owner Stop during correction four.
+
+The focused serial run passed 117/117. Playwright drove real Chrome against a disposable database with simulated providers. One Send recorded corrections 1 through 5 and four council discussions. The final files passed two independent Node tests, the simulated Reviewer approved, and the chat reached `awaiting_owner`. The correction lines remained visible after reload, including their technical details. Chrome reported no page errors. No live providers were contacted.
+
+The first full suite passed 803/805. **Retired demo grant files cannot authorize or block the new project workflow** timed out before its assertions when an unrelated fixture tried to run Git initialization. Its preserved journal recorded `ETIMEDOUT`, `SIGTERM`, and a 10-second requested timeout. The test now skips project creation because it only examines retired approval settings. **Retrying a saved package loader failure runs the same independent files and dispatches only the Reviewer** used a stub to pause the old correction path and incorrectly marked a loader failure as executed assertions. It now uses the actual runner contract for a loader failure and retains its checkpoint, execution count, and Reviewer-only assertions. Both fixtures and the added timeline assertions passed a three-test focused rerun.
+
+The final Windows serial suite passed 805/805 and exited with code 0. After a verified SQLite backup, the regular backend restarted from PID 8568 to 13296. Both health and the dashboard returned HTTP 200. SQLite integrity was `ok`, all 22 migrations were present, and all 67 application tables matched before and after restart.
+
+Read-only Chrome on the regular dashboard confirmed the existing Demo Three chat is still paused at version 223, with the same request and one saved Tester finding. **Retry Builder stage** was visible and enabled, and the retired warning wording was absent. No browser writes or agent calls occurred. Refresh the same chat and click **Retry Builder stage** at the bottom of the conversation. It uses the saved files and finding for correction four.

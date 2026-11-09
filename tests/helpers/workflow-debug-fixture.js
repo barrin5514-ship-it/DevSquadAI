@@ -36,7 +36,8 @@ export async function workflowFixture(t,{mode='normal',fallback=true,mediaOption
   // Only our hand-written fixture tests run here, with no credentials or network.
   let stdout,exit=0;try{stdout=execFileSync(process.execPath,['--permission','--allow-fs-read='+folder,'--test','--test-reporter=tap','--test-isolation=none','--test-concurrency=1',...testFiles],{cwd:folder,env:cliEnvironment(),encoding:'utf8',timeout:5000,maxBuffer:64000,windowsHide:true});}catch(e){exit=e.status??1;stdout=String(e.stdout||'');}
   const count=Number(/# tests (\d+)/.exec(stdout)?.[1]||0),failed=Number(/# fail (\d+)/.exec(stdout)?.[1]||0);
-  return {executed:true,passed:exit===0&&count>0&&failed===0,count,failed,summary:'Actual local fixture Node tests',backend:'node-permission-fixture',revisionHash:new ProjectFiles(folder).fingerprint(),outputHash:hashText(stdout),names:tapTests(stdout)};
+  const names=tapTests(stdout);
+  return {executed:true,passed:exit===0&&count>0&&failed===0,count,failed,failures:names.filter(test=>!test.passed).map(test=>test.name),summary:'Actual local fixture Node tests',backend:'node-permission-fixture',revisionHash:new ProjectFiles(folder).fingerprint(),outputHash:hashText(stdout),names};
  }};
  const config=loadConfig({DATABASE_PATH:path.join(root,'db.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backup'),DEEPSEEK_API_KEY:recovery?.paid===false?'':'LOCAL_FIXTURE',DEEPSEEK_MODEL:'deepseek-flash',DEEPSEEK_INPUT_USD_PER_MILLION:'0.3',DEEPSEEK_OUTPUT_USD_PER_MILLION:'1.2'});
  const app=createApp(config,{studioOptions:{workers,mediaOptions},fetchImpl:async(url,o)=>{
@@ -50,8 +51,10 @@ export async function workflowFixture(t,{mode='normal',fallback=true,mediaOption
   }
   providerBodies.push(body);
   if(mode==='rate')return Response.json({error:{message:'LOCAL rate limit'}},{status:429});
-  const value={report:'SIMULATED DeepSeek Builder',files:[{path:'app.mjs',content:council?.implementation??implementation}]};
-  return new Response(frame({model:'deepseek-flash',choices:[{delta:{content:mode==='builder-json'||mode==='builder-json-once'&&providerBodies.length===1?'not valid JSON':JSON.stringify(value)},finish_reason:length?'length':'stop'}],usage:{prompt_tokens:30,completion_tokens:length?8192:40,total_tokens:length?8222:70}})+(mode==='interrupted'?'':'data: [DONE]\n\n'));
+  if(council?.unavailableAfter&&providerBodies.length>council.unavailableAfter)return Response.json({error:{message:'LOCAL rate limit'}},{status:429});
+  const source=typeof council?.implementation==='function'?council.implementation(providerBodies.length):council?.implementation;
+  const value={report:'SIMULATED DeepSeek Builder',files:[{path:'app.mjs',content:source??implementation}]};
+  return new Response(frame({model:'deepseek-flash',choices:[{delta:{content:mode==='builder-json'||mode==='builder-json-once'&&providerBodies.length===1||mode==='builder-json-four'&&providerBodies.length<=4?'not valid JSON':JSON.stringify(value)},finish_reason:length?'length':'stop'}],usage:{prompt_tokens:30,completion_tokens:length?8192:40,total_tokens:length?8222:70}})+(mode==='interrupted'?'':'data: [DONE]\n\n'));
  }});
  real=new StudioWorkers(app.team);const s=app.team.studio,project=s.project({name:'SIMULATED one-Send workflow'});
  s.roleManager.update(project.id,{version:0,roles:recovery?.roles||{builder:'deepseek',tester:council?.tester||(council?'codex-personal':'nemotron'),reviewer:'claude-code'}});

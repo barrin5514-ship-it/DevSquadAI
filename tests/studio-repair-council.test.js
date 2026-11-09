@@ -5,8 +5,9 @@ import {parseDemoCli} from '../src/services/demo-workers.js';
 import {workflowFixture} from './helpers/workflow-debug-fixture.js';
 
 const report=body=>({report:JSON.stringify(body),files:[],review:null,usage:{input_tokens:17,output_tokens:12}});
-export function simulatedCouncil({absent=null,disagree=false,implementation}={}){
+export function simulatedCouncil({absent=null,disagreeFirst=false,implementation}={}){
  return {absent,implementation,reply(agent,packet){
+  const disagree=disagreeFirst&&!packet.failure.priorDiscussion;
   if(packet.phase==='council_synthesis'){
    const selected=packet.diagnoses.filter(d=>d.causeKey==='invalid-json');
    return report({causeKey:'invalid-json',fixKey:'return-valid-json',supports:selected.map(d=>d.executionId),plan:'Return a complete JSON object with the requested file list.',why:'The selected diagnoses traced the problem to the completed reply.'});
@@ -45,16 +46,18 @@ test('council agrees on a correction, Builder implements it, and only independen
  assert.equal(j.executions.find(e=>e.id===implemented.content.executionId).status,'completed');
 });
 
-test('three conflicting diagnoses and synthesis attempt pause with no changes applied',async t=>{
- const f=await workflowFixture(t,{mode:'builder-json-once',council:simulatedCouncil({disagree:true})});
- const j=await f.run(),[round]=rounds(j);
- assert.equal(j.status,'paused');
+test('a council disagreement is saved and a new discussion can agree without applying the disputed repair',async t=>{
+ const f=await workflowFixture(t,{mode:'builder-json-once',council:simulatedCouncil({disagreeFirst:true})});
+ const j=await f.run(),[round,next]=rounds(j);
+ assert.equal(j.status,'awaiting_owner');
  assert.equal(round.content.outcome,'disagreement');
  assert.equal(round.content.diagnoses.length,3);
  assert.ok(round.content.synthesis.executionId);
- assert.equal(councilCalls(f).length,4);
- assert.equal(f.providerBodies.length,1);
- assert.equal(j.revisions.length,0);
+ assert.equal(next.content.outcome,'agreed');
+ assert.equal(councilCalls(f).length,8);
+ assert.equal(f.providerBodies.length,2);
+ assert.equal(j.events.filter(e=>e.kind==='repair_council_implementation').length,1);
+ assert.ok(f.packets.some(p=>p.failure?.priorDiscussion?.diagnoses.length===3));
 });
 
 test('council records an absent provider and can agree with two',async t=>{
@@ -66,24 +69,28 @@ test('council records an absent provider and can agree with two',async t=>{
  assert.equal(councilCalls(f).length,3);
 });
 
-test('two unsuccessful council correction rounds never start a third',async t=>{
- const f=await workflowFixture(t,{mode:'builder-json',fallback:false,council:simulatedCouncil()});
+test('council cycles continue beyond two rounds with fresh evidence',async t=>{
+ const f=await workflowFixture(t,{mode:'builder-json-four',fallback:false,council:simulatedCouncil()});
  const j=await f.run();
- assert.equal(j.status,'paused');
- assert.equal(rounds(j).length,2);
- assert.equal(councilCalls(f).length,8);
- assert.equal(j.state.corrections,2);
- assert.equal(f.providerBodies.length,3);
- assert.equal(j.revisions.length,0);
+ assert.equal(j.status,'awaiting_owner');
+ assert.deepEqual(rounds(j).map(e=>e.content.round),[1,2,3,4]);
+ assert.equal(new Set(rounds(j).map(e=>e.content.executionId)).size,4);
+ assert.equal(councilCalls(f).length,16);
+ assert.equal(j.state.corrections,4);
+ assert.equal(f.providerBodies.length,5);
+ assert.equal(j.state.tests.passed,true);
 });
 
-test('council correction still cannot reach owner review with failed independent tests',async t=>{
- const f=await workflowFixture(t,{mode:'builder-json-once',fallback:false,council:simulatedCouncil({implementation:'export function add(){return 999;}'})});
+test('failed tests after a council repair prompt a new diagnosis before owner review',async t=>{
+ const council=simulatedCouncil({implementation:attempt=>attempt===2?'export function add(){return 999;}':undefined});
+ const f=await workflowFixture(t,{mode:'builder-json-once',fallback:false,council});
  const j=await f.run();
- assert.equal(j.status,'paused');
- assert.ok(j.events.some(e=>e.kind==='test_results'&&!e.content.tests?.passed));
- assert.ok(!f.calls.some(c=>c.phase==='reviewer'));
- assert.ok(!j.events.some(e=>e.kind==='ready_for_owner'));
+ assert.equal(j.status,'awaiting_owner');
+ const results=j.events.filter(e=>e.kind==='test_results');
+ assert.deepEqual(results.map(e=>e.content.tests.passed),[false,true]);
+ assert.equal(rounds(j).length,2);
+ assert.equal(f.packets.findLast(p=>p.phase==='council_diagnosis').failure.stage,'tester');
+ assert.equal(f.calls.filter(c=>c.phase==='reviewer').length,1);
 });
 
 test('text-only happy path does not start a council',async t=>{
@@ -104,16 +111,16 @@ test('review rejection is retained and only a fresh independent review can clear
  assert.deepEqual(f.calls.filter(c=>['builder','tester','reviewer'].includes(c.phase)).map(c=>c.phase),['builder','tester','reviewer','builder','tester','reviewer']);
 });
 
-test('exhausted correction budget records failure without opening a council',async t=>{
+test('three historical corrections do not block a fresh council cycle',async t=>{
  const f=await workflowFixture(t,{mode:'builder-json-once',fallback:false,council:simulatedCouncil()});
  f.s.change(f.chat.id,'ready',{corrections:3},'fixture_correction_history');
  const proposal=f.s.runScope.sendProposal(f.chat.id);
  Object.assign(f.body,{expectedVersion:proposal.version,proposalHash:proposal.hash});
  const j=await f.run();
- assert.equal(j.status,'paused');
- assert.equal(rounds(j).length,0);
- assert.equal(councilCalls(f).length,0);
- assert.ok(j.events.some(e=>e.kind==='repair_council_result'&&e.content.summary.includes('budget is exhausted')));
+ assert.equal(j.status,'awaiting_owner');
+ assert.equal(j.state.corrections,4);
+ assert.equal(rounds(j).length,1);
+ assert.equal(councilCalls(f).length,4);
 });
 
 test('unknown API outcome gets advice only and preserves the original reservation',async t=>{
@@ -127,8 +134,23 @@ test('unknown API outcome gets advice only and preserves the original reservatio
  assert.equal(f.app.db.prepare('SELECT status FROM studio_api_reservations WHERE execution_id=?').get(execution.id).status,'unknown');
 });
 
+test('an unknown council call is retained and never replayed in a later discussion',async t=>{
+ const council=simulatedCouncil({disagreeFirst:true}),reply=council.reply;
+ council.reply=(agent,packet)=>{
+  if(agent==='codex-personal'&&!packet.failure.priorDiscussion)throw {code:'timeout',stopped:false,unknownOutcome:true};
+  return reply(agent,packet);
+ };
+ const f=await workflowFixture(t,{mode:'builder-json-once',council,fallback:false});
+ const j=await f.run();
+ assert.equal(j.status,'paused');
+ assert.equal(rounds(j).length,1);
+ assert.equal(rounds(j)[0].content.outcome,'advice_only');
+ assert.equal(j.executions.find(e=>e.phase==='council_diagnosis'&&e.agent==='codex-personal').status,'unknown');
+ assert.equal(f.providerBodies.length,1);
+});
+
 test('a second malformed Builder reply offers an eligible fallback without dispatching it',async t=>{
- const council={...simulatedCouncil({disagree:true}),tester:'nemotron'};
+ const council={...simulatedCouncil({absent:'claude-code'}),tester:'nemotron'};
  const f=await workflowFixture(t,{mode:'builder-json',council});
  const first=await f.run();
  assert.equal(first.status,'paused');
@@ -140,6 +162,22 @@ test('a second malformed Builder reply offers an eligible fallback without dispa
  assert.equal(offer.content.agent,'codex-personal');
  assert.equal(f.calls.filter(c=>c.phase==='builder').length,2);
  assert.equal(j.revisions.length,0);
+});
+
+test('availability exhaustion during a correction pauses with the latest finding and checkpoint',async t=>{
+ const council={...simulatedCouncil({implementation:'export function add(){return 999;}'}),unavailableAfter:1};
+ const f=await workflowFixture(t,{council,recovery:{roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'},allowed:[],available:[]}});
+ const j=await f.run();
+ assert.equal(j.status,'paused');
+ assert.match(j.state.alert,/No available independent worker/i);
+ assert.equal(j.state.corrections,1);
+ assert.deepEqual(j.state.problems,['integers','negative and zero']);
+ assert.equal(j.resume.checkpointHash,f.s.root(f.project.id).fingerprint());
+ assert.equal(j.state.failure.code,'rate_limit');
+ assert.equal(f.providerBodies.length,2);
+ assert.equal(councilCalls(f).length,0);
+ const reservation=f.app.db.prepare('SELECT status,reserved_usd FROM studio_api_reservations WHERE execution_id=?').get(j.executions.findLast(e=>e.phase==='builder').id);
+ assert.deepEqual({...reservation},{status:'rejected',reserved_usd:0});
 });
 
 test('failure text caps UTF-8 and removes credential values and hidden reasoning before storage',()=>{

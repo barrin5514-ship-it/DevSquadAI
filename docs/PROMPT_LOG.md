@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 87
+- Number of handoffs: 88
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -151,3 +151,4 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-09 | | Owner | Codex | Save failure evidence and add a bounded repair council with independent verification. | Focused 132/132, final council tests 12/12, full serial 789/789. Chrome showed one simulated Send, the agreed repair, two passing local tests, and Awaiting Owner after independent review. PID 3392 healthy after a verified backup. Zero live provider calls. | |
 | 2026-11-09 | | Owner | Codex | Recover the paused Tester, explain checkpoint differences and live output, and widen safe availability fallback. | Confirmed stale availability flags skipped Personal before dispatch and a prior Builder checkpoint was mislabelled. Final focused 65/65 and full serial 795/795. Chrome proved the simulated role swap, file comparison and Nemotron fallback, then confirmed the enabled Retry on the untouched owner chat. PID 37676 healthy. Zero live provider calls. | |
 | 2026-11-09 | | Owner | Codex | Move project management to one Projects dropdown in the Workspace sidebar. | Chrome verified create, switch, edit, and canceling clone and bulk deletion in a disposable database. Both old links reopened the dropdown. Focused 74/74 and full serial 800/800 with clean exit. Regular backend PID 8568 healthy after a verified backup. Zero provider calls. | |
+| 2026-11-09 | | Owner | Codex | Remove the correction and council round limits and recover the paused Demo Three run. | Focused 117/117, follow-up 3/3, full serial 805/805 with clean exit. Chrome verified five simulated corrections and Awaiting Owner, then confirmed the enabled Retry in the untouched owner chat. PID 13296 healthy after verified backup. Zero live provider calls. | |

@@ -53,14 +53,13 @@ test('invalid nested package config records a project-relative path and does not
 test('retrying a saved package loader failure runs the same independent files and dispatches only the Reviewer',async t=>{
  const f=await workflowFixture(t,{fallback:false});
  const runTests=f.s.workers.tests.bind(f.s.workers),repo=f.s.root(f.project.id);
- f.s.startCorrection=()=>false;
  let runs=0;
  f.s.workers.tests=async(folder,signal,emit,options)=>{
   runs++;
   if(runs!==1)return runTests(folder,signal,emit,options);
   const revisionHash=repo.fingerprint();
   emit({kind:'execution_finished',content:{revisionHash,exit:1,stdout:"not ok 1 - test/add.test.mjs\n  code: 'ERR_INVALID_PACKAGE_CONFIG'\n"}});
-  return {executed:true,passed:false,count:1,failed:1,summary:'Failed to load package config',failures:['test/add.test.mjs'],revisionHash};
+  return {executed:false,passed:false,count:0,failed:0,summary:'Failed to load package config',failures:['test/add.test.mjs'],revisionHash};
  };
  const first=await f.run();
  assert.equal(first.status,'paused');
