@@ -152,3 +152,37 @@ test('a media Builder JSON failure keeps write authorization distinct and same-c
  assert.equal(done.events.find(e=>e.kind==='media_spec_reused').content.originCheckpointHash,saved.content.checkpointHash);
  assert.deepEqual(f.calls.map(c=>c.phase),['builder','builder','tester','reviewer']);
 });
+
+test('reattaching the same media to a paused Builder preserves Retry without overlooking project edits',async t=>{
+ let reads=0;
+ const f=await workflowFixture(t,{mode:'builder-json-once',fallback:false,mediaOptions:{
+  frames:simulatedFrames,nemotron:async({call})=>{reads++;return call({},async()=>({reply:answer}));}
+ }});
+ mediaSend(f);
+ const paused=await f.run(),repo=f.s.root(f.project.id),original=f.body.message.attachments[0];
+ assert.equal(paused.status,'paused');
+ mediaSend(f);
+ const duplicate=f.body.message.attachments[0];
+ assert.notEqual(duplicate.path,original.path);
+ assert.equal(duplicate.hash,original.hash);
+ const message=await f.post('/studio/chats/'+f.chat.id+'/messages',f.body.message);
+ assert.equal(message.status,201);
+ const afterEdit=f.s.detail(f.chat.id);
+ assert.notEqual(repo.fingerprint(),paused.state.failure.checkpointHash);
+ assert.equal(afterEdit.resume.available,true);
+ assert.equal(afterEdit.resume.checkpointHash,repo.fingerprint());
+ const retry=()=>f.post('/studio/chats/'+f.chat.id+'/retry',{requestId:randomUUID(),expectedVersion:afterEdit.version,mode:'resume'});
+ const changed=repo.resolve('owner-edit.html');
+ fs.writeFileSync(changed,'<h1>Changed since the checkpoint</h1>');
+ const blocked=await retry();
+ assert.equal(blocked.status,409);
+ assert.match(JSON.stringify(blocked),/project changed after the failed step/i);
+ assert.equal(f.providerBodies.length,1);
+ fs.unlinkSync(changed);
+ assert.equal((await retry()).status,202);await f.s.wait(f.chat.id);
+ const done=f.s.detail(f.chat.id);
+ assert.equal(done.status,'awaiting_owner');assert.equal(done.state.retryOf,paused.request_id);
+ assert.equal(reads,1);assert.equal(f.providerBodies.length,2);
+ assert.ok(done.events.some(e=>e.kind==='media_spec_reused'));
+ assert.deepEqual(f.calls.map(c=>c.phase),['builder','builder','tester','reviewer']);
+});

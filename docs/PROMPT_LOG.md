@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 83
+- Number of handoffs: 84
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -147,3 +147,4 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-08 | | Owner | Codex | Run one owner-authorized full release check, then release and run a single live media build if green. | Windows serial suite 770/770, exit 0. Verified backup and backend PID 4392, HTTP 200, application data preserved. Live proof recorded separately after the push. | |
 | 2026-11-08 | | Owner | Codex | Trace VisionTest’s package loader failure and enable a same-stage Retry of its saved independent tests. | MXC reproduced denied access to the hub manifest. Local test-copy boundary fixed, saved tests replayed 6/6, focused 68/68, full 773/773. Backend PID 27412 healthy. The one live continuation is recorded separately after push. | |
 | 2026-11-08 | | Owner | Codex | Diagnose demo 3’s apparent write-access pause and make the real blocker actionable. | Confirmed held write access and a completed DeepSeek reply that failed JSON parsing. Paused card shows the cause and same-chat Retry Builder stage. Focused 57/57, full 775/775, real Chrome verified with a disposable simulated run and a read-only demo 3 check. PID 23048 healthy. | |
+| 2026-11-08 | | Owner | Codex | Trace two invalid Builder replies and restore Retry after reattaching a photo in demo 3. | Both replies completed with stop and failed JSON parsing. Raw syntax was unavailable. The duplicate reference was the only checkpoint change. Fixed same-chat Retry and verified the bottom control in Chrome. Focused 86/86, full serial 777/777, PID 12868 healthy. Zero live provider calls. | |

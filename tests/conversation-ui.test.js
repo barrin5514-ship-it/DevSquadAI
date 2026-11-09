@@ -155,3 +155,23 @@ test('completed DeepSeek reply failure explains the JSON error and offers same-c
  vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
  assert.doesNotMatch(notice.textContent,/invalid JSON reply|Retry Builder stage/);
 });
+
+test('the bottom of a paused chat offers current stage retry after the latest edit was saved without dispatch',async()=>{
+ const events=[{id:1,kind:'message',content:{text:'Original prompt'}},{id:2,kind:'run_requested',content:{}},{id:3,kind:'message',content:{text:'Edited prompt'}}];
+ const f=fixture({status:'paused',events});
+ f.context.value={id:'c',status:'paused',version:17,state:{phase:'builder',roles:{builder:'deepseek'},runApproval:{mode:'team-send'}},resume:{available:true,phase:'builder'},events};
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ const bottom=f.main.querySelector('.chat-live-activity');
+ const retry=bottom.children.find(n=>n.tagName==='button'&&n.textContent==='Retry Builder stage');
+ assert.ok(retry);
+ assert.equal(f.calls.length,0);
+ await retry.onclick();
+ assert.deepEqual(f.calls.map(c=>c.route),['/studio/chats/c/retry']);
+ assert.equal(f.calls[0].body.expectedVersion,17);
+ assert.equal(f.calls[0].body.mode,'resume');
+ assert.equal(f.calls[0].body.sourceEventId,undefined);
+ f.context.value.resume={available:false,reason:'The project changed after the failed step.'};
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ assert.match(bottom.textContent,/project changed/);
+ assert.ok(!bottom.children.some(n=>n.tagName==='button'));
+});
