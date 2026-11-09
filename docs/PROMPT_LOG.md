@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 81
+- Number of handoffs: 82
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -145,3 +145,4 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-08 | | Owner | Codex | Build the media spec stage with Nemotron and Codex Personal fallback. | Chrome verified live image and sampled-video specs, fallback and cache reuse. Development roles were simulated. Focused 57/57. Full Windows host 769/770 due to the existing timeout and Stop fixture. Restart, commit and push held. See MEDIA_SPEC_BUILD_20261108.md. | |
 | 2026-11-08 | | Owner | Codex | Recheck the Windows recovery test, release media-spec, then run one live VisionTest build if green. | Recovery 12/12; full Windows serial 769/770; pre-media Studio comparison 134/134. Termination verification failed only in the full candidate run. Release and live build held. | |
 | 2026-11-08 | | Owner | Codex | Run one owner-authorized full release check, then release and run a single live media build if green. | Windows serial suite 770/770, exit 0. Verified backup and backend PID 4392, HTTP 200, application data preserved. Live proof recorded separately after the push. | |
+| 2026-11-08 | | Owner | Codex | Trace VisionTest’s package loader failure and enable a same-stage Retry of its saved independent tests. | MXC reproduced denied access to the hub manifest. Local test-copy boundary fixed, saved tests replayed 6/6, focused 68/68, full 773/773. Backend PID 27412 healthy. The one live continuation is recorded separately after push. | |

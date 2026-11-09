@@ -12,7 +12,7 @@ export class StudioRunScope {
  inputHash(j){return hashText(JSON.stringify({goal:j.state.goal,context:conversationContext(this.s,j.id),problems:j.state.problems,...(j.state.mediaInput?{mediaInput:j.state.mediaInput}:{})}));}
  termsHash(terms){
   const {settings,policy}=this.s.team.paid,c=this.s.team.config;
-  return hashText(JSON.stringify({paid:terms.paid,free:terms.free,maxCalls:terms.maxCalls,perRole:terms.perRole,timeoutMs:terms.timeoutMs,maxOutputBytes:terms.maxOutputBytes,limits:c.studioTimeouts,...(terms.reviewOnly?{reviewOnly:true}:{}),...(terms.free?{freeKey:keyFingerprint(c.ai.providers.find(p=>p.id==='openrouter')?.key)}:{}),...(terms.paid?{model:settings.model,base:settings.base,key:keyFingerprint(settings.key),prices:[settings.inputPrice,settings.outputPrice],budgets:[policy.requestLimit,policy.dailyLimit,policy.totalLimit]}:{})}));
+  return hashText(JSON.stringify({paid:terms.paid,free:terms.free,maxCalls:terms.maxCalls,perRole:terms.perRole,timeoutMs:terms.timeoutMs,maxOutputBytes:terms.maxOutputBytes,limits:c.studioTimeouts,...(terms.reviewOnly?{reviewOnly:true}:{}),...(terms.savedTestsOnly?{savedTestsOnly:true}:{}),...(terms.free?{freeKey:keyFingerprint(c.ai.providers.find(p=>p.id==='openrouter')?.key)}:{}),...(terms.paid?{model:settings.model,base:settings.base,key:keyFingerprint(settings.key),prices:[settings.inputPrice,settings.outputPrice],budgets:[policy.requestLimit,policy.dailyLimit,policy.totalLimit]}:{})}));
  }
  preview(id){
   const s=this.s,j=s.get(id),root=s.root(j.project_id),project=s.team.store.project(j.project_id),roles=j.state.roles,agents=Object.values(roles),settings=s.team.paid.settings;

@@ -1,9 +1,25 @@
 import fs from 'node:fs';
+import path from 'node:path';
+
+export const packageConfigError='ERR_INVALID_PACKAGE_CONFIG';
+export const isPackageConfigError=text=>/(?:\bcode:\s*['"]ERR_INVALID_PACKAGE_CONFIG['"]|Error \[ERR_INVALID_PACKAGE_CONFIG\])/.test(text);
+
+// Keep a project-relative filename separate from the raw, path-redacted TAP output.
+export function packageConfigFailure(repo,stdout,stderr){
+ const output=stdout+'\n'+stderr;
+ if(!isPackageConfigError(output))return null;
+ const match=/(Cannot read|Invalid) package config ([^\r\n]*?package\.json)(?:: ([^'\r\n]+))?/i.exec(output);
+ const file=match?.[2].replace(/\\\\/g,'\\').replace(/^\\\\\?\\/,'');
+ const relative=file&&path.isAbsolute(file)?path.relative(repo.root,file).split(path.sep).join('/'):null;
+ const inside=relative&&repo.list().includes(relative)?relative:null;
+ const detail=match?.[3]?.trim()||(match?.[1]==='Invalid'?'Node reported an invalid package configuration.':'Node could not read the package configuration.');
+ return {code:packageConfigError,path:inside,detail:detail.slice(0,180)};
+}
 // A package script is a declaration, never permission to launch a shell.
 // Only the installed Node runner has an approved isolated adapter today.
 export function testPlan(repo,{testFiles=null}={}){
  const files=repo.list(),tests=files.filter(p=>/\.test\.[cm]?js$/.test(p));let pkg={};
- if(files.includes('package.json')){try{if(fs.statSync(repo.resolve('package.json')).size>64000)throw Error();pkg=JSON.parse(fs.readFileSync(repo.resolve('package.json'),'utf8'));if(!pkg||Array.isArray(pkg)||typeof pkg!=='object')throw Error();}catch{return {blocked:'package.json is invalid; no test command was executed.'};}}
+ if(files.includes('package.json')){try{if(fs.statSync(repo.resolve('package.json')).size>64000)throw Error();pkg=JSON.parse(fs.readFileSync(repo.resolve('package.json'),'utf8'));if(!pkg||Array.isArray(pkg)||typeof pkg!=='object')throw Error();}catch{const detail='Expected a valid JSON object no larger than 64 KB.';return {blocked:'package.json is invalid. '+detail,packageConfigFailure:{code:packageConfigError,path:'package.json',detail}};}}
  const script=pkg.scripts?.test;
  if(script!==undefined){
   if(typeof script!=='string'||script.length>2000)return {blocked:'The test script is invalid; no command was executed.'};
