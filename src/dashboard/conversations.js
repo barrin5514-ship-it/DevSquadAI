@@ -77,7 +77,7 @@
  function globalNavigation(s,sidebar){
   if(window.workspaceNavigation)return window.workspaceNavigation.mount(s,sidebar,{newSession:()=>newSession(s)});
   document.getElementById('workspace-session-nav')?.remove();const nav=el('div','session-navigation');nav.id='workspace-session-nav';
-  add(nav,button('＋ New Session',()=>newSession(s),'primary new-session'),button('Sessions',()=>{if(!document.getElementById('workspace-sessions')){s.view='demo';draw();}const list=document.getElementById('workspace-sessions');if(list?.parentElement?.tagName==='DETAILS')list.parentElement.open=true;list?.focus();},'quiet'),button('Workspaces',()=>go('projects'),'quiet'));
+  add(nav,button('＋ New Session',()=>newSession(s),'primary new-session'),button('Sessions',()=>{if(!document.getElementById('workspace-sessions')){s.view='demo';draw();}const list=document.getElementById('workspace-sessions');if(list?.parentElement?.tagName==='DETAILS')list.parentElement.open=true;list?.focus();},'quiet'),button('Workspaces',()=>showProjects(),'quiet'));
   sidebar.insertBefore(nav,sidebar.querySelector('nav'));
  }
  function navigation(s,sidebar){cleanup();globalNavigation(s,sidebar);if(window.workspaceNavigation)return;

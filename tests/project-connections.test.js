@@ -4,6 +4,25 @@ import {hashText} from '../src/services/project-files.js';
 function fixture(t,extra={}){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'project-connections-')),source=path.join(dir,'existing');fs.mkdirSync(source);fs.writeFileSync(path.join(source,'package.json'),'{"name":"fixture-app","description":"A local test"}');fs.writeFileSync(path.join(source,'main.mjs'),'export const add=(a,b)=>a+b;');fs.writeFileSync(path.join(source,'.env'),'FAKE_PRIVATE_FILE');let calls=0;const r=createApp(loadConfig({DATABASE_PATH:path.join(dir,'data/main.sqlite'),WORKSPACE_DIR:path.join(dir,'managed'),BACKUP_DIR:path.join(dir,'backups')}),{fetchImpl:async()=>{calls++;throw Error('No providers');},studioOptions:{schedule:()=>{}},...extra});t.after(async()=>{r.team.preview.close();await r.team.studio.close();r.team.messenger.close();r.db.close();fs.rmSync(dir,{recursive:true,force:true});});return {dir,source,r,manager:r.team.projectConnections,get calls(){return calls;}};}
 const inspect=(f,rest={})=>f.manager.inspect({kind:'folder',name:'Existing fixture',folder:f.source,...rest});
 const confirm=(f,r)=>f.manager.confirm({receipt:r.receipt,confirmed:true});
+test('sidebar settings save the name and layout without granting file access or changing the folder',async t=>{
+ const f=fixture(t),{project}=await confirm(f,inspect(f)),chat=f.r.team.studio.session(project.id,{});
+ const server=f.r.app.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(ok=>server.close(ok)));
+ const origin='http://127.0.0.1:'+server.address().port,base=origin+'/api/console';
+ const oldPage=await fetch(origin+'/team/projects',{redirect:'manual'});
+ assert.equal(oldPage.status,302);assert.equal(oldPage.headers.get('location'),'/team#projects');
+ const token=(await(await fetch(base+'/session')).json()).data.token;
+ const body={name:'Renamed fixture',description:'Updated settings',defaultLayout:'preview',version:project.settingsVersion};
+ const post=(data,cap=token)=>fetch(base+'/studio/projects/'+project.id+'/settings',{method:'POST',headers:{'content-type':'application/json','x-dashboard-token':cap},body:JSON.stringify(data)});
+ assert.equal((await post(body,'wrong')).status,403);
+ assert.equal((await post({...body,agentChangesAllowed:true})).status,400);
+ const result=await post(body);assert.equal(result.status,200);
+ const saved=(await result.json()).data;
+ assert.equal(saved.name,'Renamed fixture');assert.equal(saved.description,'Updated settings');assert.equal(saved.defaultLayout,'preview');
+ assert.equal(saved.folder,project.folder);assert.equal(saved.agentChangesAllowed,false);
+ assert.equal(f.r.team.studio.get(chat.id).project_id,project.id);
+ assert.equal((await post(body)).status,409);
+ assert.equal(f.calls,0);
+});
 function contentHash(root){const rows=[];function visit(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())visit(p);else if(e.isFile())rows.push([path.relative(root,p),fs.readFileSync(p).toString('base64')]);}}visit(root);return hashText(JSON.stringify(rows.sort()));}
 test('existing folder inspection/confirmation registers in place without changing any source or private files',async t=>{const f=fixture(t),before=contentHash(f.source),receipt=inspect(f);assert.ok(receipt.detected.entries.some(e=>e.path==='main.mjs'));assert.ok(!JSON.stringify(receipt).includes('.env'));assert.equal(receipt.detected.package.name,'fixture-app');const {project}=await confirm(f,receipt);assert.equal(project.folder,fs.realpathSync(f.source));assert.equal(f.r.team.studio.root(project.id).root,fs.realpathSync(f.source));assert.equal(project.agentChangesAllowed,false);assert.equal(contentHash(f.source),before);assert.equal(f.calls,0);});
 test('registration does not authorize Run; explicit ID/version-bound owner enablement is independent of execution',async t=>{const f=fixture(t),{project}=await confirm(f,inspect(f));assert.throws(()=>f.r.team.studio.start(project.id,{task:'Do not execute',requestId:'denied'}),/read-only/);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_chats').get().n,0);assert.throws(()=>f.manager.access(project.id,{enabled:true,version:0,approvedBy:'someone'}),/owner/);const access=f.manager.access(project.id,{enabled:true,version:0,approvedBy:'owner'});assert.equal(access.agentChangesAllowed,true);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_chats').get().n,0);assert.throws(()=>f.manager.access(project.id,{enabled:false,version:0,approvedBy:'owner'}),/changed/);f.manager.access(project.id,{enabled:false,version:1,approvedBy:'owner'});assert.throws(()=>f.r.team.studio.apply('missing','deepseek',[],''));assert.equal(f.calls,0);});

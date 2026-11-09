@@ -139,7 +139,19 @@ body.studio-app{--studio-base:#0c0e17;--studio-panel:#11141f;--studio-line:#2c30
 /* Project workflow: keep the accepted studio palette and one sidebar scroller. */
 .studio-app .sidebar>.project-navigation{flex:1 1 0;min-height:0;overflow:auto;overflow-x:hidden;scrollbar-width:thin;overscroll-behavior:contain}
 .project-navigation-head{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#11141d;padding:10px 3px 6px;z-index:2}
-.project-navigation-head h2{font-size:12px;margin:0;font-weight:600;color:#bbc4db}
+.project-navigation-head .projects-toggle{display:flex;align-items:center;gap:5px;flex:1;min-width:0;min-height:30px;padding:3px 4px;background:transparent;border-color:transparent;font-size:12px;font-weight:600;text-align:left}
+.projects-toggle-arrow{flex:none;width:12px;color:var(--muted)}
+.projects-toggle-current{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px;font-weight:400}
+.project-dropdown-content[hidden],.sidebar-project-bulk[hidden],.projects-toggle-current[hidden],.project-select[hidden]{display:none}
+.sidebar-project-toolbar{padding:0 4px 6px}
+.sidebar-project-toolbar .field{margin:4px 0;gap:3px}
+.sidebar-project-toolbar input[type=search]{padding:4px 6px;font-size:11px}
+.sidebar-project-toolbar .quiet,.sidebar-project-bulk .danger{padding:3px 6px;font-size:11px}
+.sidebar-project-bulk .check{align-items:center;margin:4px 0}
+.sidebar-project-footer{display:flex;flex-wrap:wrap;column-gap:8px;padding:0 4px}
+.sidebar-project-footer .text-button{padding:6px 0}
+.navigation-project-row[data-selecting=true]{grid-template-columns:19px 20px minmax(0,1fr)25px}
+.navigation-project-row .project-select{margin:0 2px;width:15px;height:15px}
 .studio-app .project-add{font-size:20px;padding:0;width:27px;height:27px;min-height:0;background:transparent;border-color:transparent}
 .navigation-project{border-top:1px solid #242b3b;padding:5px 0}
 .navigation-project-row{display:grid;grid-template-columns:20px minmax(0,1fr)25px;align-items:center;gap:1px;border-radius:5px}

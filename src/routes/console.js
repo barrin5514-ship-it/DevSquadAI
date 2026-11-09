@@ -88,6 +88,7 @@ export function consoleRoutes(team,service){
  r.post('/studio/project-connections/confirm',async(req,res)=>send(res,await team.projectConnections.confirm(req.body),201));
  r.get('/studio/project-connections/clones/:id',(req,res)=>send(res,team.projectConnections.job(req.params.id)));
  r.post('/studio/projects/:id/access',(req,res)=>send(res,team.projectConnections.access(req.params.id,req.body)));
+ r.post('/studio/projects/:id/settings',(req,res)=>send(res,team.projectConnections.edit(req.params.id,req.body)));
  r.post('/studio/projects/:id/chats',(req,res)=>{team.fields(req.body,['task']);send(res,team.studio.create(req.params.id,req.body.task),201);});
  r.post('/studio/projects/:id/sessions',(req,res)=>send(res,team.studio.session(req.params.id,req.body),201));
  r.post('/studio/chats/:id/messages',(req,res)=>send(res,team.studio.message(req.params.id,req.body),201));

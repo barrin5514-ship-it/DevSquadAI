@@ -20,8 +20,28 @@ function fixture({readonly=false,saved='{}'}={}){
  const controls=context.window.workspaceControls,explorer=context.window.workspaceFileExplorer,navigation=context.window.workspaceNavigation;
  return {body,sidebar,main,s,project,tree,context,controls,explorer,navigation,inputs,calls,clipboard,storage,listeners,button:label=>all(body).find(n=>n.tagName==='BUTTON'&&n.textContent===label),menuLabels:()=>all(body).filter(n=>n.attrs.role==='menuitem').map(n=>n.textContent)};
 }
+test('the Projects dropdown can collapse and keeps the selected project identifiable',()=>{
+ const f=fixture();f.navigation.mount(f.s,f.sidebar);
+ const toggle=all(f.sidebar).find(n=>n.id==='projects-toggle'),list=all(f.sidebar).find(n=>n.id==='project-dropdown-content');
+ assert.equal(toggle.attrs['aria-expanded'],'true');
+ toggle.onclick();
+ assert.equal(toggle.attrs['aria-expanded'],'false');
+ assert.equal(list.hidden,true);
+ assert.match(toggle.textContent,/MOCK Project P/);
+ f.navigation.mount(f.s,f.sidebar);
+ assert.equal(all(f.sidebar).find(n=>n.id==='project-dropdown-content').hidden,true);
+ f.navigation.expand();f.navigation.mount(f.s,f.sidebar);
+ assert.equal(all(f.sidebar).find(n=>n.id==='project-dropdown-content').hidden,false);
+});
 test('project sidebar persists across secondary pages, restores actual IDs and excludes removed projects without losing history',async()=>{const f=fixture();f.navigation.mount(f.s,f.sidebar);await tick();assert.match(f.sidebar.textContent,/MOCK Project P/);assert.match(f.sidebar.textContent,/MOCK Project Q/);assert.doesNotMatch(f.sidebar.textContent,/MOCK Removed/);assert.match(f.sidebar.textContent,/Saved P conversation/);assert.doesNotMatch(f.sidebar.textContent,/Saved Q conversation/);f.s.view='settings';f.navigation.mount(f.s,f.sidebar);assert.equal(all(f.sidebar).filter(n=>n.id==='workspace-sidebar-scroll').length,1);f.s.studioProject=null;f.s.studioChat=null;f.navigation.restore(f.s);assert.equal(f.s.studioProject,'p');assert.equal(f.s.studioChat,'c');assert.equal(f.s.data.studio.projects.length,3);});
 test('project plus menu has the three existing setup workflows; keyboard arrows and Escape work',()=>{const f=fixture();f.navigation.mount(f.s,f.sidebar);const plus=all(f.sidebar).find(n=>n.attrs['aria-label']==='Add Project options');plus.onclick();assert.deepEqual(f.menuLabels(),['Create New Project','Open Existing Folder','Clone GitHub Repository']);const menu=all(f.body).find(n=>n.attrs.role==='menu');menu.onkeydown({key:'ArrowDown',preventDefault(){}});assert.equal(f.context.document.activeElement.textContent,'Open Existing Folder');menu.onkeydown({key:'Escape',preventDefault(){}});assert.equal(f.menuLabels().length,0);assert.equal(f.context.document.activeElement,plus);});
+test('a project row menu exposes edit, access and single-project deletion in the sidebar',()=>{
+ const f=fixture({readonly:true});f.project.accessVersion=0;
+ f.navigation.mount(f.s,f.sidebar);
+ const menu=all(f.sidebar).find(n=>n.attrs['aria-label']==='Options for MOCK Project P');
+ menu.onclick({preventDefault(){},stopPropagation(){}});
+ for(const label of ['Open Project','Edit project','Enable agent changes','Delete Project','Remove Project From Workspace'])assert.ok(f.menuLabels().includes(label));
+});
 test('read-only root menu excludes file creation and rename while copy/details/refresh remain available',()=>{const f=fixture({readonly:true});f.explorer.mount(f.main,f.project,{value:f.tree});const menu=all(f.main).find(n=>n.attrs['aria-label']==='Project root file actions');menu.onclick({preventDefault(){},stopPropagation(){}});assert.ok(!f.menuLabels().includes('New File'));assert.ok(!f.menuLabels().includes('Rename'));assert.ok(f.menuLabels().includes('Copy Absolute Path'));assert.ok(f.menuLabels().includes('View File Details'));assert.match(f.main.textContent,/Read-only/);});
 test('file search retains ancestor folders, opens selected text via the existing viewer and never treats images as text',async()=>{const f=fixture(),opened=[];f.explorer.mount(f.main,f.project,{value:f.tree,onOpen:async p=>opened.push(p)});const image=all(f.main).find(n=>n.attrs['aria-label']==='Open file photo.png');assert.equal(image.disabled,true);const input=f.inputs['Find files by name'];input.value='add.mjs';input.oninput();assert.match(f.main.textContent,/src/);assert.doesNotMatch(f.main.textContent,/photo.png/);const file=all(f.main).find(n=>n.attrs['aria-label']==='Open file src/add.mjs');await file.onclick();assert.deepEqual(opened,['src/add.mjs']);assert.equal(f.calls.filter(c=>c.route.includes('/run')).length,0);});
 test('file creation requires an inspect/confirm roundtrip and changing the path removes the old confirmation',async()=>{const f=fixture();f.explorer.operation(f.project,'create_file');f.inputs['Relative path'].value='src/new.mjs';await f.button('Inspect file action').onclick();assert.equal(f.calls[0].body.target,'src/new.mjs');assert.ok(f.button('Create empty file'));assert.equal(f.calls.filter(c=>c.route.endsWith('/confirm')).length,0);f.inputs['Relative path'].value='src/different.mjs';f.inputs['Relative path'].oninput();assert.equal(f.button('Create empty file'),undefined);assert.equal(f.calls.filter(c=>c.route.includes('/run')).length,0);});
