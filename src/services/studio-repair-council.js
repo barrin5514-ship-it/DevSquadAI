@@ -43,6 +43,12 @@ export class StudioRepairCouncil {
   return this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='repair_council_started' AND json_extract(content,'$.runId')=? ORDER BY id").all(chat,runId).map(row=>JSON.parse(row.content));
  }
 
+ plan(job){
+  if(!job.state.runApproval?.council)return null;
+  const row=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='repair_council_result' AND json_extract(content,'$.correctionRequestId')=?").get(job.id,job.request_id);
+  return row?JSON.parse(row.content).synthesis.plan.plan:null;
+ }
+
  implementation(job,executionId,agent){
   const linked=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='repair_council_result' AND json_extract(content,'$.correctionRequestId')=?").get(job.id,job.request_id);
   if(!linked)return;
@@ -137,16 +143,11 @@ export class StudioRepairCouncil {
   const previousPlan=previous?JSON.parse(previous.content).synthesis.plan:null;
   const adviceOnly=execution.evidence.remoteOutcomeUnknown===true||['unknown','interrupted'].includes(execution.status)||!!s.lock(job.id)||job.state.writeAccess?.status==='held';
   if(!adviceOnly&&availabilityFailures.has(job.state.failure?.code))return false;
-  let priorDiscussion=null;
-  for(let number=prior.length+1;;number++){
-   const round={roundId:randomUUID(),runId:terms.runId,round:number,executionId:execution.id,checkpointHash};
-   const result=await this.discuss(job,controller,repo,pack,round,adviceOnly,previousPlan,priorDiscussion);
-   if(typeof result==='boolean')return result;
-   priorDiscussion=result;
-  }
+  const round={roundId:randomUUID(),runId:terms.runId,round:prior.length+1,executionId:execution.id,checkpointHash};
+  return this.discuss(job,controller,repo,pack,round,adviceOnly,previousPlan);
  }
 
- async discuss(job,controller,repo,pack,round,adviceOnly,previousPlan,priorDiscussion){
+ async discuss(job,controller,repo,pack,round,adviceOnly,previousPlan){
   const s=this.s,terms=job.state.runApproval.council,{checkpointHash}=round,execution=s.executions.get(round.executionId);
   s.runScope.check(job,job.request_id,{diagnosticCheckpoint:checkpointHash});
   if(controller.signal.aborted)return false;
@@ -154,9 +155,13 @@ export class StudioRepairCouncil {
   s.event(job.id,'repair_council_started',{...round,summary:'Repair council is reading the saved failure evidence.'},'system');
   const snapshot=repo.snapshot(3500);
   const spec=pack.spec&&this.db.prepare("SELECT id,content FROM studio_events WHERE chat_id=? AND kind='media_spec_saved' AND json_extract(content,'$.attachmentHash')=? ORDER BY id DESC LIMIT 1").get(job.id,pack.spec.attachmentHash);
+  const priorCorrections=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='correction_started' ORDER BY id DESC LIMIT 3").all(job.id).reverse().map(row=>{
+   const c=JSON.parse(row.content),report=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='worker_report' AND json_extract(content,'$.requestId')=? AND json_extract(content,'$.phase')='builder' ORDER BY id DESC LIMIT 1").get(job.id,c.requestId);
+   return {number:c.corrections,checkpointHash:c.checkpointHash,findings:(c.findings||[]).slice(0,3).map(f=>safeCouncilText(s.team,f).slice(0,300)),...(report?{builderReport:safeCouncilText(s.team,JSON.parse(report.content).report).slice(0,500)}:{})};
+  });
   const evidence={...pack,...(spec?{spec:{...pack.spec,eventId:spec.id,specHash:JSON.parse(spec.content).specHash}}:{}),executionId:execution.id,stage:pack.stage||execution.phase,checkpointHash,outcome:execution.status,
    ...(previousPlan?{previousPlan:{causeKey:previousPlan.causeKey,fixKey:previousPlan.fixKey,plan:previousPlan.plan},nextApproach:'Compare the prior plan with the fresh failure. If the same problem remains, propose a different concrete approach.'}:{}),
-   ...(priorDiscussion?{priorDiscussion,reconcile:'Use these prior disagreements to identify an alternative that is supported by the saved evidence.'}:{}),
+   priorCorrections,
    files:snapshot.files.map(f=>({path:f.path,text:safeFailedReply(s.team,f.content).text})),filesOmitted:snapshot.truncated};
   const base={projectId:job.project_id,chatId:job.id,failure:evidence};
   const diagnoses=[],absent=[];
@@ -188,20 +193,13 @@ export class StudioRepairCouncil {
     s.runScope.check(s.get(job.id),job.request_id,{diagnosticCheckpoint:checkpointHash});
     const findings=pack.tests?.failures||pack.review?.findings||[pack.summary||pack.validation?.message||'The previous worker did not produce a usable result.'];
     s.change(job.id,'running',{problems:[...findings,'Repair council plan: '+plan.plan],activePhase:null},'repair_plan_saved');
-    if(s.startCorrection(job.id,checkpointHash,job.state.failure?.phase||job.state.phase)){
-     const correctionRequestId=s.get(job.id).request_id;
-     this.result(job,round,{diagnoses,absent,synthesis,outcome:'agreed',correctionRequestId});
-     return true;
-    }
-   }
-   if(!adviceOnly&&!unknownCall&&replied&&!plan&&repo.fingerprint()===checkpointHash){
-    this.result(job,round,{diagnoses,absent,synthesis,outcome:'disagreement'});
-    return {why:synthesis.why,diagnoses:diagnoses.map(({agent,cause,fix})=>({agent,cause,fix}))};
+    if(s.startCorrection(job.id,checkpointHash,job.state.failure?.phase||job.state.phase,correctionRequestId=>this.result(job,round,{diagnoses,absent,synthesis,outcome:'agreed',correctionRequestId,builder:job.state.roles.builder})))return true;
    }
    const fallback=adviceOnly||unknownCall?null:await this.fallbackOffer(job,execution,repo,controller);
    controller.signal.throwIfAborted();
    this.result(job,round,{diagnoses,absent,synthesis,outcome:adviceOnly||unknownCall?'advice_only':'disagreement',fallback});
-   s.change(job.id,'paused',{currentAgent:null,activePhase:null,alert:unknownCall?'A repair council response could not be confirmed. The findings and checkpoint are saved. No repair or repeat call started.':adviceOnly?job.state.alert:!replied?'The repair council could not obtain usable diagnoses and a response from the required independent workers. Your findings and checkpoint are saved.':'The checkpoint changed during repair diagnosis. Review the saved findings before retrying.'},'repair_council_paused');
+   const alert=unknownCall?'A repair council response could not be confirmed. The findings and checkpoint are saved. No repair or repeat call started.':adviceOnly?job.state.alert:!replied?'The repair council could not obtain usable diagnoses and a response from the required independent workers. Your findings and checkpoint are saved.':!plan?'The squad could not agree on a fix. Your findings and checkpoint are saved.':'The checkpoint changed during repair diagnosis. Review the saved findings before retrying.';
+   s.change(job.id,'paused',{currentAgent:null,activePhase:null,alert},'repair_council_paused');
    return false;
   }catch{
    this.result(job,round,{diagnoses,absent,synthesis,outcome:controller.signal.aborted?'stopped':'blocked'});
@@ -211,8 +209,8 @@ export class StudioRepairCouncil {
  }
 
  result(job,round,value){
-  const parts=value.diagnoses.map(d=>labels[family(d.agent)]+' says '+d.cause);
-  const ending=value.outcome==='agreed'?'Agreed fix: '+value.synthesis.plan.plan:value.outcome==='advice_only'?'Advice only. The previous outcome is still unknown.':'No repair was applied.';
-  this.s.event(job.id,'repair_council_result',{...round,...value,summary:[...parts,ending].join(' · ')},'system');
+  const plan=value.synthesis?.plan,cause=plan&&value.diagnoses.find(d=>plan.supports.includes(d.executionId))?.cause;
+  const summary=value.outcome==='agreed'?'The squad met and agreed on the cause. '+cause+' '+(labels[family(value.builder)]||value.builder)+' will apply this fix: '+plan.plan:value.outcome==='advice_only'?'The squad left advice. A worker outcome is still unknown, so no repair was applied.':value.outcome==='disagreement'?'The squad met but could not agree on a fix it could apply.':'The squad did not apply a repair.';
+  this.s.event(job.id,'repair_council_result',{...round,...value,summary},'system');
  }
 }

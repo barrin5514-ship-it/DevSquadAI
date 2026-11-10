@@ -46,18 +46,59 @@ test('council agrees on a correction, Builder implements it, and only independen
  assert.equal(j.executions.find(e=>e.id===implemented.content.executionId).status,'completed');
 });
 
-test('a council disagreement is saved and a new discussion can agree without applying the disputed repair',async t=>{
+test('a council disagreement pauses with findings and no Builder rewrite',async t=>{
  const f=await workflowFixture(t,{mode:'builder-json-once',council:simulatedCouncil({disagreeFirst:true})});
- const j=await f.run(),[round,next]=rounds(j);
- assert.equal(j.status,'awaiting_owner');
+ const j=await f.run(),[round]=rounds(j);
+ assert.equal(j.status,'paused');
  assert.equal(round.content.outcome,'disagreement');
  assert.equal(round.content.diagnoses.length,3);
  assert.ok(round.content.synthesis.executionId);
- assert.equal(next.content.outcome,'agreed');
- assert.equal(councilCalls(f).length,8);
- assert.equal(f.providerBodies.length,2);
- assert.equal(j.events.filter(e=>e.kind==='repair_council_implementation').length,1);
- assert.ok(f.packets.some(p=>p.failure?.priorDiscussion?.diagnoses.length===3));
+ assert.equal(councilCalls(f).length,4);
+ assert.equal(f.providerBodies.length,1);
+ assert.equal(j.revisions.length,0);
+ assert.match(j.state.alert,/could not agree/i);
+});
+
+test('the first failed independent test convenes the authorized council before the Builder rewrites',async t=>{
+ const f=await workflowFixture(t,{fallback:false,council:simulatedCouncil({implementation:attempt=>attempt===1?'export function add(){return 999;}':undefined})});
+ const j=await f.run();
+ assert.equal(j.status,'awaiting_owner');
+ const failed=j.events.find(e=>e.kind==='test_results'&&!e.content.tests.passed);
+ const convened=j.events.find(e=>e.kind==='repair_council_started');
+ const agreed=j.events.find(e=>e.kind==='repair_council_result'&&e.content.outcome==='agreed');
+ const correction=j.events.find(e=>e.kind==='correction_started');
+ assert.ok(failed.id<convened?.id&&convened.id<agreed?.id&&agreed.id<correction.id);
+ assert.deepEqual(f.calls.map(c=>c.phase),['builder','tester','council_diagnosis','council_diagnosis','council_diagnosis','council_synthesis','builder','tester','reviewer']);
+ const packets=f.packets.filter(p=>p.phase==='council_diagnosis');
+ assert.ok(packets.every(p=>p.failure.stage==='tester'&&p.failure.tests.failures.includes('integers')&&p.failure.files.some(f=>f.path==='app.mjs'&&f.text.includes('999'))));
+ assert.equal(j.state.tests.count,2);assert.equal(j.state.review.decision,'approved');
+});
+
+test('ordinary Send still corrects directly without council permission',async t=>{
+ const f=await workflowFixture(t,{fallback:false,council:simulatedCouncil({implementation:attempt=>attempt===1?'export function add(){return 999;}':undefined})});
+ f.body.repairCouncil=false;
+ const j=await f.run();
+ assert.equal(j.status,'awaiting_owner');assert.equal(councilCalls(f).length,0);
+ assert.equal(j.events.find(e=>e.kind==='correction_started').content.councilEnabled,false);
+ assert.deepEqual(f.calls.map(c=>c.phase),['builder','tester','builder','tester','reviewer']);
+});
+
+test('explicit owner Retry can enable the council without a new chat or rebuilding before diagnosis',async t=>{
+ const f=await workflowFixture(t,{mode:'tester-once',fallback:false,council:simulatedCouncil({implementation:attempt=>attempt===1?'export function add(){return 999;}':undefined})});
+ f.body.repairCouncil=false;
+ const paused=await f.run();
+ assert.equal(paused.status,'paused');assert.equal(paused.resume.phase,'tester');assert.equal(paused.resume.councilAvailable,true);
+ assert.equal(paused.state.runApproval.council,undefined);
+ const route='/studio/chats/'+f.chat.id+'/retry';
+ assert.equal((await f.post(route,{requestId:crypto.randomUUID(),expectedVersion:paused.version-1,mode:'resume',repairCouncil:true})).status,409);
+ assert.equal(f.providerBodies.length,1);
+ assert.equal((await f.post(route,{requestId:crypto.randomUUID(),expectedVersion:paused.version,mode:'resume',repairCouncil:true})).status,202);
+ await f.s.wait(f.chat.id);
+ const j=f.s.detail(f.chat.id);
+ assert.equal(j.status,'awaiting_owner');assert.equal(j.id,paused.id);
+ const stages=f.calls.map(c=>c.phase);
+ assert.equal(stages.filter(phase=>phase==='builder').length,2);
+ assert.ok(stages.lastIndexOf('council_synthesis')<stages.lastIndexOf('builder'));
 });
 
 test('council records an absent provider and can agree with two',async t=>{
@@ -166,16 +207,17 @@ test('a second malformed Builder reply offers an eligible fallback without dispa
 
 test('availability exhaustion during a correction pauses with the latest finding and checkpoint',async t=>{
  const council={...simulatedCouncil({implementation:'export function add(){return 999;}'}),unavailableAfter:1};
- const f=await workflowFixture(t,{council,recovery:{roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'},allowed:[],available:[]}});
+ const f=await workflowFixture(t,{council,recovery:{roles:{builder:'deepseek',tester:'codex-personal',reviewer:'claude-code'},allowed:[],available:['codex-personal','claude-code']}});
  const j=await f.run();
  assert.equal(j.status,'paused');
  assert.match(j.state.alert,/No available independent worker/i);
  assert.equal(j.state.corrections,1);
- assert.deepEqual(j.state.problems,['integers','negative and zero']);
+ assert.deepEqual(j.state.problems.slice(0,2),['integers','negative and zero']);
+ assert.match(j.state.problems[2],/^Repair council plan:/);
  assert.equal(j.resume.checkpointHash,f.s.root(f.project.id).fingerprint());
  assert.equal(j.state.failure.code,'rate_limit');
  assert.equal(f.providerBodies.length,2);
- assert.equal(councilCalls(f).length,0);
+ assert.equal(councilCalls(f).length,4);
  const reservation=f.app.db.prepare('SELECT status,reserved_usd FROM studio_api_reservations WHERE execution_id=?').get(j.executions.findLast(e=>e.phase==='builder').id);
  assert.deepEqual({...reservation},{status:'rejected',reserved_usd:0});
 });

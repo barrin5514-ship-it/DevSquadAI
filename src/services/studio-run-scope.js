@@ -36,13 +36,14 @@ export class StudioRunScope {
   return {...proposal,proposalHash:hashText(JSON.stringify([proposal.projectId,id,proposal.rootHash,proposal.checkpointHash,proposal.inputHash,proposal.termsHash,roles]))};
  }
  // A normal Send binds the displayed configuration before any message or worker is saved.
+ councilFor(j){const policy=this.s.failover.policy(j);return councilTerms(j.state.roles,policy.enabled?policy.allowedWorkers:[]);}
  sendProposal(id,omitPath){
   const s=this.s,j=s.get(id),repo=s.root(j.project_id),project=s.team.store.project(j.project_id);
   const policy=s.failover.policy(j),agents=new Set([...Object.values(j.state.roles),...(policy.enabled?policy.allowedWorkers:[])]);
   const settings=s.team.paid.settings;
   const paid=agents.has('deepseek')?{model:settings.model,maxOutput:8192,inputBytes:24000}:null;
   const free=agents.has(nemotronId)?{model:nemotronModel,maxOutput:2048,timeoutMs:60000}:null;
-  const council=councilTerms(j.state.roles,agents);
+  const council=this.councilFor(j);
   const limits={paid,free,maxCalls:3*agents.size,perRole:1,timeoutMs:300000,maxOutputBytes:65536,...(council?{council}:{})};
   const issues=[];
   if(j.status!=='ready'||j.state.executionMode==='builder-only'||j.state.runApproval||j.state.pendingRoles||s.executions.list(id).filter(e=>e.request_id===j.request_id).length)issues.push('Choose an unused team session with saved assignments.');

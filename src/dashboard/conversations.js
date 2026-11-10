@@ -1,6 +1,6 @@
 // Messages are saved locally first. Only Send can start the existing workers; Save message is local only.
 (() => {
- const drafts=new Map(),scrolls=new Map(),dismissedWarnings=new Set();let pendingScroll=null,activityUpdate=()=>{};
+ const drafts=new Map(),scrolls=new Map(),dismissedWarnings=new Set();let pendingScroll=null,activityUpdate=()=>{},clockUpdate=()=>{};
  try{for(const k of JSON.parse(localStorage.getItem('devsquad.dismissed-warnings.v1')||'[]'))if(typeof k==='string'&&/^[-a-zA-Z0-9_:]{1,240}$/.test(k))dismissedWarnings.add(k);}catch{};
  const key=s=>s.studioProject+':'+(s.studioChat||'new');
  const draft=s=>{const k=key(s);if(!drafts.has(k))drafts.set(k,{text:'',attachments:[],references:[],submissionId:crypto.randomUUID(),minimized:localStorage.getItem('devsquad-composer-minimized')==='true'});return drafts.get(k);};
@@ -12,6 +12,9 @@
  const pauseText=state=>oldCorrection.test(state.alert||'')?'The last attempt paused with saved findings. Retry the Builder stage to continue correcting in this chat.':state.alert;
  function plainFailure(state){
   const f=state.failure||{},who=agentName(f.agent),phase=f.phase||state.phase;
+  if(f.code==='project_context_incomplete'||/selected project context is incomplete|project files exceed the worker input limit/i.test(f.message||''))return 'Paused: The saved files are too large to pass to the '+(phase||'next worker')+'. The next worker was not called.';
+  if(/^The squad could not agree|^The repair council could not obtain|^A repair council response could not be confirmed/.test(state.alert||''))return 'Paused: '+state.alert;
+  if(f.code==='incomplete')return 'Paused: '+who+' did not return a complete reply for the '+(phase||'current')+' step. Your saved files are safe.';
   if(oldCorrection.test(state.alert||''))return pauseText(state);
   if(state.writeAccess?.unknownOutcome||/outcome is unknown/i.test(state.alert||''))return 'Dev Squad could not confirm completion. No new files from that step were accepted. Check the saved details before retrying.';
   if(/invalid JSON|not valid JSON/.test(f.message||''))return who+' sent a reply Dev Squad could not read, so no project files from that step were saved. Retry this step or open the details.';
@@ -25,7 +28,8 @@
   switch(event.kind){
    case 'worker_started': return who+' is '+(actions[c.phase||c.activePhase]||'starting its assigned step')+' now.';
    case 'worker_report': return c.phase==='tester'?who+' sent back the test files. The independent tests have not run yet.':c.phase==='reviewer'?who+' sent back a review. Dev Squad is checking it against the saved work.':who+' sent back its reply. Dev Squad is checking it before continuing.';
-   case 'build_saved': return who+' saved the project files.';
+   case 'build_saved':case 'files_saved': return who+' saved the project files.';
+   case 'filesystem_changed': return 'The project folder changed. Open the details to see which files.';
    case 'handoff_local':case 'handoff_continue':case 'handoff_accepted':case 'handoff_local_fallback': return 'Dev Squad passed the saved files and results to the '+next+'.';
    case 'handoff_created':case 'handoff_sent': return 'Dev Squad is passing the saved work to the '+next+'.';
    case 'handoff_paused':case 'handoff_blocked': return 'Dev Squad could not pass the work to the next agent. Your files are safe. Open the details before retrying.';
@@ -34,16 +38,16 @@
    case 'test_results': return !c.tests?.executed?'The independent tests did not run. No pass was recorded.':c.tests.passed?'The independent tests passed. The results are saved.':'The independent tests ran and failed. The results are saved. Open the details to see what failed.';
    case 'runner_missing':case 'test_evidence_missing': return 'Dev Squad could not run or verify the tests. No pass was recorded. Open the details before retrying.';
    case 'independent_review': return c.decision==='approved'?who+' finished the independent review and found no changes needed.':who+' reviewed the work and requested changes.';
-   case 'correction_started': return 'Correction '+(c.corrections||1)+' — still working on '+(c.findings?.[0]||'the latest saved findings')+'.';
+   case 'correction_started': return 'Correction '+(c.corrections||1)+' — still working on '+(c.findings?.[0]||'the latest saved findings')+'.'+(c.councilEnabled===false?' The repair council is off for this run.':'');
    case 'correction_limit':case 'council_fix_failed':return 'An earlier attempt paused here. Its findings are still saved.';
    case 'repair_council_started': return 'Dev Squad is asking the available agents why this step failed and how to fix it.';
-   case 'repair_council_call': return who+' is checking what went wrong.';
+   case 'repair_council_call': return null;
    case 'repair_council_implementation': return who+' is applying the repair the council agreed on.';
-   case 'repair_council_result': return c.outcome==='advice_only'?'The council left advice. Dev Squad could not verify the previous result, so nothing was applied.':c.outcome==='agreed'?'The council agreed on a fix. '+(c.synthesis?.plan?.plan||'The Builder can apply it now.'):c.outcome==='skipped'?'The earlier run skipped this council discussion.':c.outcome==='disagreement'&&c.synthesis?'The council recorded its differences. No disputed change was applied.':'The council did not establish a fix it could apply. Open the saved advice to see why.';
+   case 'repair_council_result': return c.outcome==='advice_only'?'The council left advice. Dev Squad could not verify the previous result, so nothing was applied.':c.outcome==='agreed'?c.summary||'The council agreed on a fix. '+(c.synthesis?.plan?.plan||'The Builder can apply it now.'):c.outcome==='skipped'?'The earlier run skipped this council discussion.':c.outcome==='disagreement'&&c.synthesis?'The squad could not agree on a fix. No change was applied.':'The council did not establish a fix it could apply. Open the saved advice to see why.';
    case 'fallback_paused':return 'No available agent could independently take over this step. Check Team before retrying.';
    case 'error':case 'preflight_failed':case 'interrupted':return plainFailure(c);
    case 'ready_for_owner':return 'The work, independent tests and review are ready for you to inspect.';
-   case 'worker_lifecycle':return ['waiting','running'].includes(c.status)||(c.lastActivityAt||c.progress)?who+' is still working. Dev Squad is waiting for the finished reply.':null;
+   case 'worker_lifecycle': return c.status==='completed'?who+' finished its turn.':['unknown','interrupted'].includes(c.status)?'Dev Squad could not confirm whether '+who+' finished.':['failed','cancelled','timed_out'].includes(c.status)?who+' did not complete its turn.':null;
    default:return null;
   }
  }
@@ -193,7 +197,7 @@
     if(!composer.isConnected||s.studioChat!==selected.id)return;
     proposal=value;const roleNames=['builder','tester','reviewer'].map(r=>{const id=value.roles[r],model=id==='deepseek'?value.limits?.paid?.model:id==='nemotron'?value.limits?.free?.model:null;return r+' '+agentName(id)+(model?' ('+model+')':'');}).join(' · ');
     const fallback=value.policy.enabled?value.policy.allowedWorkers.map(agentName).join(', ')||'no eligible choices selected':'off';
-    proposalNote.textContent=[value.project+' · '+roleNames+' · fallback '+fallback+'.',...(value.availabilityFallback?['If a worker cannot connect or is out of usage, Dev Squad can try Nemotron, then the other available independent workers.']:[]),...(value.limits?.council?['If a stage fails, Send also allows repair council discussions with '+value.limits.council.voters.map(agentName).join(', ')+'. The council uses fresh evidence when a repair fails again. A repair can use your prepaid or subscription usage.']:[]),...(value.issues.length?value.issues:['Send authorizes this task once. Dev Squad budget and balance figures are display-only; provider account or billing errors are shown unchanged.'])].join(' ');
+    proposalNote.textContent=[value.project+' · '+roleNames+' · fallback '+fallback+'.',...(value.availabilityFallback?['If a worker cannot connect or is out of usage, Dev Squad can try Nemotron, then the other available independent workers.']:[]),...(value.limits?.council?['If a stage fails, Send also allows repair council discussions with '+value.limits.council.voters.map(agentName).join(', ')+'. The squad agrees on a fix before the Builder corrects failed tests or review findings. A repair can use your prepaid or subscription usage.']:[]),...(value.issues.length?value.issues:['Send authorizes this task once. Dev Squad budget and balance figures are display-only; provider account or billing errors are shown unchanged.'])].join(' ');
     send.disabled=!canSend();
    }).catch(e=>{proposalNote.textContent=e.message;});
   }
@@ -201,23 +205,29 @@
   // Stop button keeps its handler and live state; the draft stays untouched.
   const collapsedBar=el('div','composer-collapse-bar');collapsedBar.append(el('span','composer-collapsed-label','Message Dev Squad AI…'));composer.insertBefore(collapsedBar,label);
   applyMinimize=()=>{const collapsed=d.minimized===true;input.hidden=collapsed;input.rows=1;controls.hidden=collapsed;teamArea.hidden=(collapsed&&!teamArea.dataset.inTools)||selected?.state.executionMode==='builder-only';extras.hidden=collapsed;referencePicker.hidden=collapsed;help.hidden=collapsed&&!help.dataset.inTools;collapsedBar.hidden=!collapsed;send.hidden=false;save.hidden=false;if(collapsed)collapsedBar.append(minimize,stop);else controls.append(minimize,stop,save,send);composer.classList.toggle('composer-minimized',collapsed);minimize.textContent=collapsed?'Expand composer':'Minimize composer';minimize.setAttribute('aria-label',collapsed?'Expand composer':'Minimize composer');minimize.title=collapsed?'Expand message box':'Collapse the entire message box';minimize.setAttribute('aria-expanded',String(!collapsed));};applyMinimize();queueMicrotask(grow);
-  function updateActivity(value){if(!value||value.id!==selected?.id||!activity.isConnected)return;activity.replaceChildren();const e=value.executions?.findLast(x=>x.request_id===value.request_id),active=['running','stopping'].includes(value.status),last=e?.evidence.lastActivityAt||e?.evidence.endedAt||e?.evidence.startedAt||e?.created_at;
+  const activeLine=p('','activity-note');activeLine.dataset.liveWorkerStatus='true';
+  function updateClock(value){if(!value||value.id!==selected?.id)return;const text=window.workspaceLive?.activeStatus?.(value);if(text&&activeLine.textContent!==text)activeLine.textContent=text;}
+  function updateActivity(value){if(!value||value.id!==selected?.id||!activity.isConnected)return;activity.replaceChildren();const e=value.executions?.findLast(x=>x.request_id===value.request_id),active=['running','stopping'].includes(value.status);
   const status=document.getElementById('chat-current-status');if(status){status.textContent=statusLabel(value);status.dataset.status=value.status;status.dataset.approval=value.state.executionMode==='builder-only'&&!value.state.runApproval?'required':'none';}
-  if(active){activity.append(p(agentName(value.state.currentAgent||e?.agent)+' is '+(actions[value.state.activePhase||value.state.phase]||'working on this step')+'.','activity-note'));if(last)activity.append(p('Last activity: '+date(last),'hint'));}
+  if(active){activeLine.textContent=window.workspaceLive?.activeStatus?.(value)||agentName(value.state.currentAgent||e?.agent)+' is '+(actions[value.state.activePhase||value.state.phase]||'working on this step')+'.';activity.append(activeLine);}
   if(value.handoff){const h=value.handoff,details=el('details','live-technical');details.append(el('summary','','How the work was passed'),p(h.mode+' · '+h.phase+' → '+h.next_phase+' · '+h.status+(h.detail?.reason?' · '+h.detail.reason:''),'hint'));activity.append(p('Dev Squad recorded the handoff from '+h.phase+' to '+h.next_phase+'.','hint'),details);}
   const retryStage=()=>button(({builder:'Retry Builder stage',tester:'Retry Tester stage',reviewer:'Retry Reviewer stage'}[value.resume.phase]||'Retry saved stage'),async()=>{
    await api('/studio/chats/'+value.id+'/retry',{requestId:crypto.randomUUID(),expectedVersion:value.version,mode:'resume',availabilityFallback:true});
    await refresh();
   },'quiet');
   if(['paused','stopped'].includes(value.status)&&value.state.runApproval?.mode==='team-send'&&value.resume){
+   if(!value.state.runApproval.council&&!value.state.runApproval.reviewOnly){
+    activity.append(p('This run was not set to use the repair council.','hint'));
+    if(value.resume.councilAvailable){const enable=button('Enable council and retry',async()=>{await api('/studio/chats/'+value.id+'/retry',{requestId:crypto.randomUUID(),expectedVersion:value.version,mode:'resume',availabilityFallback:true,repairCouncil:true});await refresh();},'quiet');enable.disabled=!canWrite||!value.resume.available;enable.title=enable.disabled?(canWrite?value.resume.reason:'Enable agent changes for this project before retrying.'):'Retry the saved stage and allow the council to use your prepaid or subscription access if repair is needed.';activity.append(enable);}
+   }
    if(canWrite&&value.resume.available)activity.append(retryStage());
    else {activity.append(p(canWrite?value.resume.reason:'Enable agent changes for this project before retrying.','activity-note'));const compare=checkpointDetails(value.resume,s.studioProject,value.id);if(compare)activity.append(compare);}
   }
   notice.replaceChildren();const {failure,critical,releasedUnknown,historical,visible}=warningState(value),warningKey=value.id+':'+(value.events||[]).findLast(x=>['error','interrupted','stuck'].includes(x.kind))?.id+':'+(failure?.code||'state_alert');
   notice.hidden=(!visible&&!value.resume?.changedFiles)||dismissedWarnings.has(warningKey);if(visible||value.resume?.changedFiles){const badReply=!releasedUnknown&&invalidBuilderReply(value);const label=value.resume?.changedFiles?value.resume.reason:badReply?'DeepSeek sent a reply Dev Squad could not read, so no project files were saved. You can retry the Builder step.':failure?.code==='media_unreadable'?value.state.alert:plainFailure(value.state);notice.append(p(label,'chat-notice-label'),button('View details',()=>{window.workspaceShell?.showTools('chat-recovery-tools');const recovery=main.querySelector('.workflow-recovery');recovery?.focus?.();},'quiet'));const tech=el('details','live-technical');tech.append(el('summary','','Technical details'),p(badReply?'DeepSeek returned an invalid JSON reply.':releasedUnknown?'No verified checkpoint was accepted. '+(value.state.alert||''):pauseText(value.state)||value.resume?.reason||'No further technical details are recorded.','hint'));notice.append(tech);const compare=checkpointDetails(value.resume,s.studioProject,value.id);if(compare)notice.append(compare);if(badReply&&canWrite&&value.resume?.available&&value.resume.phase==='builder'&&value.state.runApproval?.mode==='team-send')notice.append(retryStage());if(!critical)notice.append(button('Dismiss warning',()=>{dismissedWarnings.add(warningKey);try{localStorage.setItem('devsquad.dismissed-warnings.v1',JSON.stringify([...dismissedWarnings].slice(-100)));}catch{}notice.hidden=true;},'quiet dismiss-warning'));}
   stop.hidden=!active;stop.disabled=value.status==='stopping';send.textContent=active?'Queue message':'Send';if(value.state.executionMode==='builder-only')send.disabled=!canWrite||!value.state.runApproval||!!value.executions?.length||Date.parse(value.state.runApproval?.expiresAt)<=Date.now();save.title=active?'Save for the next owner-requested task; do not interrupt or start a worker.':'Save locally; no worker starts.';const seen=new Set([...thread.querySelectorAll('[data-event-id]')].map(x=>String(x.dataset.eventId)));for(const event of value.events||[])if(!seen.has(String(event.id))&&event.kind!=='worker_lifecycle'&&!hiddenMediaEvent(event.kind)){const nearEnd=thread.scrollHeight-thread.scrollTop-thread.clientHeight<60;thread.insertBefore(message(event),activity);if(nearEnd)thread.scrollTop=thread.scrollHeight;}}
-  activityUpdate=updateActivity;queueMicrotask(()=>updateActivity(s.studioDetail));if(!canWrite)main.append(p('Read-only project: '+(project?.readOnlyReason||'you can browse and Save message. Enable agent changes from Projects before Send.'),'project-readonly'));
+  activityUpdate=updateActivity;clockUpdate=updateClock;queueMicrotask(()=>updateActivity(s.studioDetail));if(!canWrite)main.append(p('Read-only project: '+(project?.readOnlyReason||'you can browse and Save message. Enable agent changes from Projects before Send.'),'project-readonly'));
   if(selected?.status==='awaiting_owner')main.append(button('Accept completed work',async()=>{await api('/studio/chats/'+selected.id+'/accept',{});await refresh();},'quiet owner-decision'));
  }
- window.workspaceConversation={plainEvent,plainFailure,pauseText,agentName,statusLabel,warningState,newSession,updateActivity:value=>activityUpdate(value),mount,cleanup,globalNavigation,restoreScroll:()=>pendingScroll?.()};
+ window.workspaceConversation={plainEvent,plainFailure,pauseText,agentName,statusLabel,warningState,newSession,updateActivity:value=>activityUpdate(value),updateClock:value=>clockUpdate(value),mount,cleanup,globalNavigation,restoreScroll:()=>pendingScroll?.()};
 })();

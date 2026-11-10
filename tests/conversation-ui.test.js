@@ -194,3 +194,18 @@ test('live events explain actions and setbacks before technical detail',()=>{
  assert.match(line('error',{failure:{agent:'deepseek',phase:'builder',code:'body_limit'},writeAccess:{unknownOutcome:true}}),/could not confirm.*completion/i);
  assert.match(line('error',{failure:{agent:'deepseek',phase:'builder',code:'worker_error',message:'DeepSeek final answer is not valid JSON.'}}),/reply.*could not read.*no project files/i);
 });
+
+test('a paused pre-council run explains the blocker and makes council Retry an explicit choice',async()=>{
+ const f=fixture({status:'paused'}),events=[];
+ const state={phase:'tester',roles:{tester:'codex-personal'},alert:'Work paused',runApproval:{mode:'team-send'},failure:{agent:'codex-personal',phase:'tester',code:'worker_error',message:'The selected project context is incomplete; reduce the approved task scope before dispatch.'}};
+ f.context.value={id:'c',status:'paused',version:17,state,resume:{available:false,councilAvailable:true,phase:'tester',reason:'The saved project files exceed the worker input limit.'},events};
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ const bottom=f.main.querySelector('.chat-live-activity'),enable=()=>bottom.children.find(n=>n.tagName==='button'&&n.textContent==='Enable council and retry');
+ assert.match(f.main.querySelector('.chat-notice').textContent,/Paused: The saved files are too large/);
+ assert.match(bottom.textContent,/not set to use the repair council/);
+ assert.ok(enable().disabled);assert.equal(f.calls.length,0);
+ f.context.value.resume.available=true;
+ vm.runInContext('window.workspaceConversation.updateActivity(value)',f.context);
+ assert.ok(!enable().disabled);await enable().onclick();
+ assert.equal(f.calls[0].body.repairCouncil,true);assert.equal(f.calls[0].body.expectedVersion,17);
+});

@@ -355,3 +355,4 @@ body.studio-app{--studio-base:#0c0e17;--studio-panel:#11141f;--studio-line:#2c30
 .chat-first .chat-tool-content>.workspace-separator.horizontal:hover,.chat-first .chat-tool-content>.workspace-separator.horizontal:focus-visible{background:#635087}
 /* The preview is a real adjustable surface, not a flex spacer. */
 .chat-first .preview-slot{flex:0 0 auto;flex-shrink:0}
+.chat-first:has(.chat-live-activity > [data-live-worker-status]) .live-agent{display:none}

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import {hashText} from './project-files.js';
 import {cleanOutput} from './workspace-output.js';
 import {ApiError} from '../middleware/errors.js';
+import {isWorkerHeartbeat} from './studio-executions.js';
 
 export class StudioLive {
  constructor(studio){this.studio=studio;this.monitors=new Map();this.clients=new Set();}
@@ -10,7 +11,7 @@ export class StudioLive {
  release(chat){const m=this.monitors.get(chat);if(!m||--m.users>0)return;clearTimeout(m.timer);m.watch?.close();this.monitors.delete(chat);}
  stream(req,res,chat){this.studio.get(chat);const raw=req.headers['last-event-id']||req.query.after||'0';if(!/^\d{1,15}$/.test(String(raw)))throw new ApiError(400,'Invalid event cursor.');if(this.clients.size>=16)throw new ApiError(429,'Too many live workspace connections.');let cursor=Number(raw),closed=false,release=()=>{};res.status(200).set({'Content-Type':'text/event-stream','Cache-Control':'no-store','Connection':'keep-alive','X-Accel-Buffering':'no'});res.flushHeaders();
   const cleanup=()=>{if(closed)return;closed=true;clearInterval(heartbeat);this.studio.bus.off(chat,send);release();this.clients.delete(cleanup);if(!res.writableEnded&&!res.destroyed)res.end();};
-  const send=()=>{if(closed)return;let batch;do{batch=this.studio.db.prepare('SELECT * FROM studio_events WHERE chat_id=? AND id>? ORDER BY id LIMIT 100').all(chat,cursor);for(const row of batch){cursor=row.id;const content=cleanOutput(this.studio.team,JSON.parse(row.content));if(!res.write('id: '+row.id+'\ndata: '+JSON.stringify({...row,content})+'\n\n')){cleanup();res.end();return;}}}while(batch.length===100);};
+  const send=()=>{if(closed)return;let batch;do{batch=this.studio.db.prepare('SELECT * FROM studio_events WHERE chat_id=? AND id>? ORDER BY id LIMIT 100').all(chat,cursor);for(const row of batch){cursor=row.id;const saved=JSON.parse(row.content);if(row.kind==='worker_lifecycle'&&isWorkerHeartbeat(saved))continue;const content=cleanOutput(this.studio.team,saved);if(!res.write('id: '+row.id+'\ndata: '+JSON.stringify({...row,content})+'\n\n')){cleanup();res.end();return;}}}while(batch.length===100);};
   const heartbeat=setInterval(()=>{if(!res.write(': connected\n\n')){cleanup();res.end();}},15000);heartbeat.unref?.();this.clients.add(cleanup);this.studio.bus.on(chat,send);req.on('close',cleanup);res.on('close',cleanup);send();if(!closed)release=this.monitor(chat);
  }
  close(){for(const cleanup of [...this.clients])cleanup();for(const [id,m]of this.monitors){m.users=1;this.release(id);}}

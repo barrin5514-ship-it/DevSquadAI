@@ -7,6 +7,8 @@ import {transaction} from '../middleware/ai-validation.js';
 import {cleanOutput} from './workspace-output.js';
 import {safeFailedReply} from './studio-failure-evidence.js';
 const now=()=>new Date().toISOString(),hash=s=>createHash('sha256').update(s).digest('hex');
+const heartbeatFields=new Set(['executionId','progress','lastActivityAt','receivedCharacters']);
+export const isWorkerHeartbeat=update=>Object.keys(update).length>0&&Object.keys(update).every(key=>heartbeatFields.has(key));
 
 // PID alone is unsafe: Windows can reuse it. Keep its OS creation identity too.
 // Inspection is read-only and fails closed if Windows cannot supply evidence.
@@ -17,7 +19,7 @@ export class StudioExecutions {
  create(job,agent,phase,root,checkpoint){const id=randomUUID(),stamp=now();this.db.prepare('INSERT INTO studio_executions VALUES (?,?,?,?,?,?,?,?,?,?,?)').run(id,job.id,job.request_id,agent,phase,hash(root),checkpoint,'starting',JSON.stringify({projectId:job.project_id,sessionId:job.id,provider:agent.startsWith('codex-')?'codex':agent,profile:agent.startsWith('codex-')?agent:null,stage:phase,checkpointHash:checkpoint,startedAt:stamp}),stamp,stamp);this.studio.event(job.id,'worker_lifecycle',{executionId:id,status:'starting',phase},agent);return id;}
  get(id){const r=this.db.prepare('SELECT * FROM studio_executions WHERE id=?').get(id);if(!r)throw new ApiError(404,'Execution not found');return {...r,evidence:JSON.parse(r.evidence)};}
  list(chat){return this.db.prepare('SELECT id FROM studio_executions WHERE chat_id=? ORDER BY rowid').all(chat).map(r=>this.get(r.id));}
- record(id,update){const r=this.get(id);const content=cleanOutput(this.studio.team,update);this.db.prepare('UPDATE studio_executions SET status=?,evidence=?,updated_at=? WHERE id=?').run(update.status||r.status,JSON.stringify({...r.evidence,...content}),now(),id);this.studio.event(r.chat_id,'worker_lifecycle',{...content,executionId:id},r.agent);}
+ record(id,update){const r=this.get(id);const content=cleanOutput(this.studio.team,update);this.db.prepare('UPDATE studio_executions SET status=?,evidence=?,updated_at=? WHERE id=?').run(update.status||r.status,JSON.stringify({...r.evidence,...content}),now(),id);if(!isWorkerHeartbeat(content))this.studio.event(r.chat_id,'worker_lifecycle',{...content,executionId:id},r.agent);}
  failure(id,{visibleText,validation,...references}){
   const r=this.get(id),prior=r.evidence.failureEvidence||{};
   const evidence={...prior,...cleanOutput(this.studio.team,references),...(validation?{validation}:{}),...(visibleText!==undefined?{reply:safeFailedReply(this.studio.team,visibleText)}:{})};
