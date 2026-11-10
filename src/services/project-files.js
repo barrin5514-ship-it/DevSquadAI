@@ -9,6 +9,28 @@ export class ProjectFiles {
  constructor(root){this.root=fs.realpathSync(root);if(!fs.statSync(this.root).isDirectory())throw new ApiError(400,'Select an existing project folder');}
  resolve(relative){if(typeof relative!=='string'||relative.length>240||relative.includes('\\')||relative.includes(':')||relative.includes('\0')||path.isAbsolute(relative)||relative.split('/').some(x=>!x||x==='..'||x==='.'||privateName(x)||/[. ]$/.test(x)||/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\.|$)/i.test(x)))throw new ApiError(403,'A worker tried to use a private file or leave the selected project');if(fs.realpathSync(this.root)!==this.root||fs.lstatSync(this.root).isSymbolicLink())throw new ApiError(403,'Selected project folder changed');let p=this.root;for(const bit of relative.split('/')){p=path.join(p,bit);try{const stat=fs.lstatSync(p);if(stat.isSymbolicLink()||stat.isFile()&&stat.nlink>1)throw new ApiError(403,'Project links cannot be followed');}catch(error){if(error.code!=='ENOENT')throw error;}}return p;}
  list(){const files=[];const visit=(dir,relative='')=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true})){if(privateName(entry.name)||entry.isSymbolicLink())continue;const rel=relative+entry.name;if(entry.isDirectory())visit(path.join(dir,entry.name),rel+'/');else if(entry.isFile())files.push(rel);if(files.length>10000)throw new ApiError(413,'Project file list is too large; choose a smaller project folder');}};visit(this.root);return files.sort();}
+ // Open and recheck the file identity after resolving all ancestors. Read only
+ // from that handle, with a fixed allocation even if another process appends.
+ read(relative,maxBytes){
+  let fd;
+  try{
+   const file=this.resolve(relative);
+   const before=fs.lstatSync(file,{bigint:true});
+   if(!before.isFile()||before.nlink!==1n)throw new ApiError(403,'Only regular project files can be read.');
+   fd=fs.openSync(file,fs.constants.O_RDONLY|(fs.constants.O_NOFOLLOW||0));
+   const opened=fs.fstatSync(fd,{bigint:true}),current=fs.lstatSync(this.resolve(relative),{bigint:true});
+   if(!opened.isFile()||opened.nlink!==1n||current.nlink!==1n||opened.dev!==before.dev||opened.ino!==before.ino||opened.dev!==current.dev||opened.ino!==current.ino)throw new ApiError(403,'Project file changed while opening.');
+   if(opened.size>BigInt(maxBytes))throw new ApiError(413,'Project file exceeds the safe read limit.');
+   const body=Buffer.alloc(Number(opened.size)+1);
+   let length=0,read;
+   while(length<body.length&&(read=fs.readSync(fd,body,length,body.length-length,null)))length+=read;
+   if(length===body.length)throw new ApiError(409,'Project file changed while reading.');
+   return body.subarray(0,length);
+  }catch(error){
+   if(error.code==='ENOENT'||error.code==='ENOTDIR')throw new ApiError(404,'Project file not found.');
+   throw error;
+  }finally{if(fd!==undefined)fs.closeSync(fd);}
+ }
  snapshot(maxBytes=14000){const result=[];let bytes=0,truncated=false,managed=managedRootState(this.root);for(const file of this.list()){if(file.startsWith('references/'))continue;if(managed&&/^AGENTS(?:\.override)?\.md$/i.test(path.basename(file)))continue;if(!/\.(?:[cm]?js|jsx|tsx?|json|md|txt|html|css|py|go|rs|yml|yaml)$/i.test(file))continue;const p=this.resolve(file);if(fs.statSync(p).size>maxBytes){truncated=true;continue;}const content=fs.readFileSync(p,'utf8');if(bytes+Buffer.byteLength(content)>maxBytes){truncated=true;continue;}bytes+=Buffer.byteLength(content);result.push({path:file,content});}return {files:result,truncated};}
  fileHashes(omitPath){return this.list().filter(p=>p!==omitPath).map(p=>[p,fileHash(this.resolve(p))]);}
  fingerprint(omitPath){return hashText(JSON.stringify(this.fileHashes(omitPath)));}

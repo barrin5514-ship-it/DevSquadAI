@@ -82,3 +82,20 @@ test('project options edit settings and use the separate owner access control',a
  assert.equal(f.calls[1].route,'/studio/projects/a/access');
  assert.equal(f.calls[1].body.approvedBy,'owner');
 });
+
+test('project settings submit the selected test command and allow returning to the default',async()=>{
+ const f=fixture(),project=f.rows[0].project;
+ f.ui.edit(project);
+ const command=f.fields['Test command'];
+ assert.ok(command);
+ assert.equal(command.value,'');
+ command.value='npm test';
+ await f.dialogs.at(-1).actions[0].fn();
+ assert.equal(f.calls[0].body.testCommand,'npm test');
+
+ f.ui.edit({...project,testCommand:'npm test'});
+ assert.equal(f.fields['Test command'].value,'npm test');
+ f.fields['Test command'].value='';
+ await f.dialogs.at(-1).actions[0].fn();
+ assert.equal(f.calls[1].body.testCommand,null);
+});

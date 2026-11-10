@@ -11,6 +11,7 @@ const supported={test:value=>/\.(?:[cm]?js|jsx|tsx?|json|md|txt|html|css|py|go|r
 const limit=128*1024;
 // Read only. Git cannot ask for credentials, run a diff helper, or refresh an index.
 function git(root,args){return execFileSync(gitExecutable,['--no-pager','-c','safe.directory='+root,'-c','core.fsmonitor=false','-c','core.hooksPath='+ (process.platform==='win32'?'NUL':os.devNull),'-c','status.renames=false','-c','core.excludesFile='+(process.platform==='win32'?'NUL':os.devNull),'-c','core.attributesFile='+(process.platform==='win32'?'NUL':os.devNull),...args],{cwd:root,encoding:'utf8',timeout:3000,maxBuffer:512*1024,windowsHide:true,stdio:['ignore','pipe','pipe'],env:{SystemRoot:process.env.SystemRoot||'',PATH:process.env.PATH||'',GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:process.platform==='win32'?'NUL':os.devNull,GIT_TERMINAL_PROMPT:'0',GIT_OPTIONAL_LOCKS:'0',GIT_NO_REPLACE_OBJECTS:'1'}});}
+export {safe as safeWorkspaceContent};
 function safe(studio,value){
  const raw=JSON.stringify(value).replaceAll('\\"','"');studio.team.safe(value);
  if(studio.team.coordinator.configuredSecrets().some(s=>s&&raw.includes(s))||/\b(?:sk-|gsk_|github_pat_|ghp_|hf_|AIza)[A-Za-z0-9_-]{12,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(raw)||/\b(?:password|api[_-]?key|access[_-]?token)\s*["']?\s*[:=]\s*["'][^"']{8,}["']/i.test(raw))throw new ApiError(403,'This content may contain a credential. It was not sent to the dashboard.');

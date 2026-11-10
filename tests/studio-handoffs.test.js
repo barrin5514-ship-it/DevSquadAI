@@ -82,13 +82,15 @@ test('fully local mode completes the same two-build cycle without any Zapier del
  assert.ok(d.handoffs.every(h=>h.status==='local'&&h.mode==='local'));
 });
 
-test('an active writer no longer holds a blocking folder lock',async t=>{
+test('an active writer holds a workspace claim until the run finishes',async t=>{
  let releaseBuilder;
  const f=await fixture(t,{call:async(agent,packet)=>{if(packet.phase==='builder')return new Promise(resolve=>{releaseBuilder=resolve;});if(packet.phase==='tester')return {report:'Fixture independent tests',files:[{path:'test/add.test.mjs',content:'// Fixture test source'}]};return {report:'Fixture review',files:[],review:{...packet.reviewBinding,decision:'approved',summary:'Reviewed',findings:[]}};}});
  const j=f.studio.start(f.project.id,{task:'Hold the writer lock',requestId:crypto.randomUUID()});await new Promise(setImmediate);
- assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,0);
- assert.equal(f.studio.get(j.id).state.writeAccess.status,'held');
- releaseBuilder({report:'Fixture implementation',files:[{path:'src/add.mjs',content:'export const add=(a,b)=>a+b;'}]});
+ try{
+  assert.equal(f.studio.lock(j.id).chat_id,j.id);
+  assert.equal(f.studio.get(j.id).state.writeAccess.status,'held');
+  assert.throws(()=>f.studio.start(f.project.id,{task:'Competing build',requestId:crypto.randomUUID()}),/folder is in use/);
+ }finally{releaseBuilder({report:'Fixture implementation',files:[{path:'src/add.mjs',content:'export const add=(a,b)=>a+b;'}]});}
  await f.studio.wait(j.id);
  assert.equal(f.studio.get(j.id).status,'awaiting_owner');
  assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,0);

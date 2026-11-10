@@ -12,6 +12,43 @@ function fixture(t,{fail=[],unavailable=[],unknown=false,partial=false,preflight
  t.after(async()=>{await studio.close();r.team.messenger.close();r.team.preview.close();r.team.fileActions.close();r.db.close();fs.rmSync(root,{recursive:true,force:true});});
  return {r,studio,project,job,workers,calls,packets,checks,async run(){const j=studio.start(project.id,{chatId:job.id,requestId:crypto.randomUUID()});await new Promise(setImmediate);await studio.wait(j.id);return studio.detail(j.id);}};
 }
+
+for(const confirmedLimit of [false,true])test(confirmedLimit?'DeepSeek confirmed HTTP 429 hands off from the saved Builder checkpoint':'DeepSeek inactivity with unknown usage pauses without any replacement or council call',async t=>{
+ const f=fixture(t),worker=new StudioWorkers(f.r.team,{idleMs:25}),original=f.workers.call;
+ const adapter=f.r.team.paid.adapter(),checkpoint=f.studio.root(f.project.id).fingerprint();
+ let sends=0;
+ adapter.fetch=async(_url,{signal})=>{
+  sends++;
+  if(confirmedLimit)return new Response('{"error":{"message":"fixture rate limit"}}',{status:429});
+  return new Promise((_resolve,reject)=>signal.addEventListener('abort',()=>reject(signal.reason),{once:true}));
+ };
+ f.r.team.paid.adapter=()=>adapter;
+ f.workers.call=(agent,packet,...rest)=>agent==='deepseek'&&packet.phase==='builder'?worker.call(agent,packet,...rest):original(agent,packet,...rest);
+ const proposal=f.studio.runScope.sendProposal(f.job.id);
+ const started=f.studio.start(f.project.id,{chatId:f.job.id,requestId:crypto.randomUUID(),proposalHash:proposal.hash,expectedVersion:proposal.version,availabilityFallback:true,repairCouncil:!confirmedLimit});
+ await new Promise(setImmediate);await f.studio.wait(started.id);
+ const done=f.studio.detail(started.id),reservation=f.r.db.prepare('SELECT * FROM studio_api_reservations WHERE chat_id=?').get(started.id);
+ assert.equal(sends,1);
+ if(confirmedLimit){
+  assert.equal(done.status,'awaiting_owner');
+  assert.equal(f.calls.filter(c=>c.phase==='builder').length,1);
+  assert.equal(done.events.find(e=>e.kind==='provider_switched').content.checkpointHash,checkpoint);
+  assert.equal(reservation.status,'rejected');
+ }else{
+  assert.equal(done.status,'paused');
+  assert.deepEqual(f.calls,[]);
+  assert.equal(f.studio.root(f.project.id).fingerprint(),checkpoint);
+  assert.equal(done.state.failure.code,'inactivity_timeout');
+  assert.equal(done.executions[0].status,'unknown');
+  assert.equal(done.events.find(e=>e.kind==='fallback_decision').content.reason,'outcome_unknown');
+  const usage=done.events.find(e=>e.kind==='api_usage').content;
+  assert.equal(usage.outcome,'unknown');
+  assert.equal(usage.estimatedCostUSD,null);
+  assert.equal(reservation.status,'unknown');
+  assert.equal(reservation.reserved_usd,done.events.find(e=>e.kind==='api_reserved').content.reservedUSD);
+  assert.ok(reservation.reserved_usd>0);
+ }
+});
 test('default policy shows and saves the full chain, exposes quota-unknown statuses, and hands off on simulated Codex usage_limit',async t=>{
  const f=fixture(t),job=f.studio.create(f.project.id,'Default fallback policy fixture'),policy=f.studio.failover.policy(job);
  assert.deepEqual(policy.allowedWorkers,['codex-personal','codex-school','claude-code','deepseek']);assert.equal(policy.enabled,true);assert.equal(policy.default,true);assert.deepEqual(job.state.fallbackPolicy.allowedWorkers,policy.allowedWorkers);
@@ -25,7 +62,13 @@ test('B: both Codex accounts unavailable cannot assign the Reviewer as Tester',a
 test('C: prepaid approval never permits DeepSeek Builder to become its own Tester',async t=>{for(const _legacy of [false,true]){const f=fixture(t,{fail:['codex-personal'],unavailable:['codex-school','claude-code']}),j=await f.run();assert.equal(f.calls.filter(x=>x.agent==='deepseek'&&x.phase==='tester').length,0);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_api_reservations').get().n,0);assert.equal(j.status,'paused');assert.equal(j.state.review,null);}});
 test('D: all remaining providers unavailable pauses safely with a durable reason and intact files',async t=>{const f=fixture(t,{fail:['codex-personal'],unavailable:['codex-school','claude-code']}),j=await f.run();assert.equal(j.status,'paused');assert.ok(j.events.some(e=>e.kind==='fallback_paused'&&/No authorized/.test(e.content.summary)));assert.equal(f.studio.root(f.project.id).snapshot().files.find(x=>x.path==='add.mjs')?.content,'export const add=(a,b)=>a+b;');assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_locks').get().n,0);});
 test('E: partial response is diagnostic only; fallback receives the last saved Builder files',async t=>{const f=fixture(t,{fail:['codex-personal'],partial:true}),j=await f.run();assert.equal(j.status,'awaiting_owner');assert.ok(j.executions[1].evidence.receivedCharacters===17);assert.equal(j.revisions.filter(x=>x.relative_path==='add.mjs').length,1);assert.deepEqual(f.packets[1].files,f.packets[2].files);});
-test('F: unknown previous outcome no longer blocks a new Send in the same project folder',async t=>{const f=fixture(t,{fail:['codex-personal'],unknown:true}),j=await f.run();assert.equal(j.status,'paused');assert.equal(f.calls.length,2);assert.equal(f.checks.length,0);const started=f.studio.start(f.project.id,{task:'Owner supersedes the unknown run',requestId:'overlap'});assert.ok(started);assert.notEqual(started.id,j.id);await new Promise(setImmediate);await f.studio.wait(started.id);assert.ok(f.calls.length>2);assert.ok(!['ready'].includes(f.studio.get(started.id).status));});
+test('an unknown native outcome prevents a competing Send while process termination is unverified',async t=>{
+ const f=fixture(t,{fail:['codex-personal'],unknown:true}),j=await f.run();
+ assert.equal(j.status,'paused');assert.equal(f.calls.length,2);assert.equal(f.checks.length,0);
+ assert.throws(()=>f.studio.start(f.project.id,{task:'Competing run',requestId:'overlap'}),/folder is in use/);
+ assert.equal(f.studio.lock(j.id).chat_id,j.id);
+ assert.equal(f.calls.length,2);
+});
 test('G: a recovered Personal account does not steal a successful School turn; duplicate Run stays deduplicated',async t=>{const f=fixture(t,{fail:['codex-personal']}),j=await f.run(),count=f.calls.length;f.workers.availability=async()=>({ok:true});const replay=f.studio.start(f.project.id,{chatId:j.id,requestId:j.request_id});assert.equal(replay.id,j.id);assert.equal(f.calls.length,count);assert.equal(j.state.roles.tester,'codex-school');});
 test('H: another Codex profile never establishes independent review; unapproved workers are not tried',async t=>{const f=fixture(t,{fail:['codex-personal']});assert.throws(()=>f.studio.roleManager.validate({builder:'codex-personal',tester:'claude-code',reviewer:'codex-school'}),/review/);const job=f.studio.get(f.job.id);f.studio.failover.configure(job.id,{version:job.version,approvedBy:'owner',enabled:true,allowedWorkers:['codex-personal']});const j=await f.run();assert.equal(j.status,'paused');assert.equal(f.calls.length,2);assert.equal(f.checks.length,0);});
 test('missing native login can hand off in preflight without skipping or repeating the Builder stage',async t=>{const f=fixture(t,{preflight:true}),j=await f.run();assert.equal(j.status,'awaiting_owner');assert.deepEqual(f.calls.map(x=>x.agent),['deepseek','codex-school','claude-code']);assert.equal(j.events.filter(e=>e.kind==='build_saved').length,1);});
@@ -35,10 +78,10 @@ test('real DeepSeek adapter path selects generateBound with approved output limi
 
 test('confirmed auth, outage, connection and safely terminated timeout errors can hand off; sandbox failures cannot',async t=>{for(const code of ['auth_expired','connection_error','provider_outage','timeout','inactivity_timeout','response_truncated','output_limit','sandbox_error']){const f=fixture(t,{fail:['codex-personal'],code}),j=await f.run();assert.equal(j.status,code==='sandbox_error'?'paused':'awaiting_owner');assert.equal(f.calls.some(x=>x.agent==='codex-school'),code!=='sandbox_error');}});
 test('funding and lifetime reservations are display-only and never block concurrent paid reservations',async t=>{const f=fixture(t);f.studio.schedule=()=>{};let j=f.studio.start(f.project.id,{chatId:f.job.id,requestId:'concurrent-budget'});j=f.studio.change(j.id,'running',{phase:'tester',roles:{...j.state.roles,tester:'deepseek'}},'fixture');const repo=f.studio.root(f.project.id),ids=[1,2].map(()=>f.studio.executions.create(j,'deepseek','tester',repo.root,repo.fingerprint())),body={model:'deepseek-flash',max_tokens:128,messages:[]};const results=await Promise.allSettled(ids.map(id=>Promise.resolve().then(()=>f.studio.failover.reserve(j.id,id,body))));assert.equal(results.filter(x=>x.status==='fulfilled').length,2);assert.ok(f.studio.failover.budget(j.id).heldUSD>0);f.r.db.prepare("UPDATE deepseek_balance_observation SET checked_at='2000-01-01'").run();f.r.team.paid.ratesValid=()=>false;assert.equal(f.studio.failover.paidReady(j.id).ok,true);assert.equal(f.studio.failover.fundingReady().stale,true);});
-test('unknown remote completion records no blocking folder lock even if the local process is confirmed stopped',async t=>{const f=fixture(t),original=f.workers.call;f.workers.call=async(agent,packet,...args)=>{if(packet.phase==='tester')throw {code:'connection_error',stopped:true,unknownOutcome:true};return original(agent,packet,...args);};const j=await f.run();assert.equal(j.status,'paused');assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,0);assert.equal(f.calls.filter(x=>x.agent==='codex-school').length,0);});
+test('unknown remote completion records no blocking folder lock even if the local process is confirmed stopped',async t=>{const f=fixture(t),original=f.workers.call;f.workers.call=async(agent,packet,...args)=>{if(packet.phase==='tester')throw {code:'connection_error',stopped:true,writeAccessEnded:true,unknownOutcome:true};return original(agent,packet,...args);};const j=await f.run();assert.equal(j.status,'paused');assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,0);assert.equal(f.calls.filter(x=>x.agent==='codex-school').length,0);});
 test('fallback API requires the dashboard capability and records task-only preapproval without starting work',async t=>{const f=fixture(t),server=f.r.app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));t.after(()=>new Promise(resolve=>server.close(resolve)));const base='http://127.0.0.1:'+server.address().port+'/api/console',j=f.studio.get(f.job.id),body={version:j.version,approvedBy:'owner',enabled:false,allowedWorkers:[]},headers={'content-type':'application/json'};assert.equal((await fetch(base+'/studio/chats/'+j.id+'/fallback',{method:'POST',headers,body:JSON.stringify(body)})).status,403);headers['x-dashboard-token']=(await(await fetch(base+'/session')).json()).data.token;assert.equal((await fetch(base+'/studio/chats/'+j.id+'/fallback',{method:'POST',headers,body:JSON.stringify(body)})).status,200);assert.equal(f.calls.length,0);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_api_policy').get().n,0);assert.equal(f.studio.failover.status(j.id).policy.enabled,false);});
 
 test('P0: every allowed and denied fallback retains an explicit safe decision',async t=>{for(const code of ['usage_limit','auth_expired','worker_error']){const f=fixture(t,{fail:['codex-personal'],code}),j=await f.run(),decisions=j.events.filter(e=>e.kind==='fallback_decision');assert.ok(decisions.length);assert.equal(decisions[0].content.allowed,code!=='worker_error');assert.equal(decisions[0].content.reason,code==='worker_error'?'failure_not_eligible':'authorized_available_worker');assert.equal(decisions[0].content.phase,'tester');assert.equal(decisions[0].content.terminationVerified,true);assert.equal(decisions[0].content.from,'codex-personal');if(code!=='worker_error')assert.equal(decisions[0].content.to,'codex-school');}});
-test('P0: disabled policy and unknown outcome record why switching was forbidden',async t=>{for(const unknown of [false,true]){const f=fixture(t,{fail:['codex-personal'],unknown});if(!unknown){const j=f.studio.get(f.job.id);f.studio.failover.configure(j.id,{version:j.version,approvedBy:'owner',enabled:false,allowedWorkers:[]});}const j=await f.run(),d=j.events.find(e=>e.kind==='fallback_decision');assert.equal(d.content.reason,unknown?'outcome_unknown':'task_policy_disabled');assert.equal(d.content.allowed,false);assert.equal(f.calls.length,2);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,0);}});
+test('P0: disabled policy and unknown outcome record why switching was forbidden',async t=>{for(const unknown of [false,true]){const f=fixture(t,{fail:['codex-personal'],unknown});if(!unknown){const j=f.studio.get(f.job.id);f.studio.failover.configure(j.id,{version:j.version,approvedBy:'owner',enabled:false,allowedWorkers:[]});}const j=await f.run(),d=j.events.find(e=>e.kind==='fallback_decision');assert.equal(d.content.reason,unknown?'outcome_unknown':'task_policy_disabled');assert.equal(d.content.allowed,false);assert.equal(f.calls.length,2);assert.equal(f.r.db.prepare('SELECT count(*) n FROM studio_locks WHERE chat_id=?').get(j.id).n,unknown?1:0);}});
 
 test('P0: bounded run approval cannot be broadened by a fallback policy',async t=>{const f=fixture(t);f.studio.change(f.job.id,'running',{runApproval:{id:'LOCAL IMMUTABLE APPROVAL'}},'local_fixture');const j=f.studio.get(f.job.id),allowed=await f.studio.failover.tryNext(j,'codex-personal','builder',{code:'usage_limit',stopped:true});assert.equal(allowed,false);assert.equal(f.studio.failover.lastDecision(j.id).reason,'bounded_run_disallows_fallback');assert.equal(f.calls.length,0);assert.deepEqual(f.studio.get(j.id).state.roles,j.state.roles);});

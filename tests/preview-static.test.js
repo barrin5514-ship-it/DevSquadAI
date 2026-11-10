@@ -44,3 +44,33 @@ test('a project without index.html reports a clear static-preview error', async 
  const f = fixture(t), other = f.studio.project({name:'No static entry'});
  await assert.rejects(() => f.preview.authorizeStatic(other.id, hub), /no index\.html/i);
 });
+
+test('static preview blocks directory junctions and hard links to files outside the project', async t => {
+ const f = fixture(t), root = f.studio.root(f.project.id).root;
+ const outside = fs.mkdtempSync(path.join(path.dirname(root), 'preview-decoy-'));
+ const decoy = path.join(outside, 'decoy.txt');
+ fs.writeFileSync(decoy, 'OUTSIDE PROJECT');
+ fs.symlinkSync(outside, path.join(root, 'junction'), process.platform === 'win32' ? 'junction' : 'dir');
+ fs.linkSync(decoy, path.join(root, 'linked.txt'));
+ const value = await f.preview.authorizeStatic(f.project.id, hub);
+ const session = f.preview.current(f.project.id, value.generation);
+ const results = await Promise.all([get(session, '/junction/decoy.txt'), get(session, '/linked.txt'), get(session)]);
+ assert.deepEqual(results.map(result => result.status), [403, 403, 200]);
+ assert.ok(results.every(result => !result.text.includes('OUTSIDE PROJECT')));
+});
+
+test('refresh checks the current static entry and keeps a working static preview ready', async t => {
+ const f = fixture(t), value = await f.preview.authorizeStatic(f.project.id, hub);
+ const session = f.preview.current(f.project.id, value.generation);
+ await f.preview.probe(session);
+ assert.equal(f.preview.status(f.project.id).state, 'ready');
+ assert.equal((await get(session)).status, 200);
+ const index = path.join(f.studio.root(f.project.id).root, 'index.html');
+ fs.unlinkSync(index);
+ await f.preview.probe(session);
+ assert.equal(f.preview.status(f.project.id).state, 'unavailable');
+ fs.writeFileSync(index, 'Recreated static page');
+ await f.preview.probe(session);
+ assert.equal(f.preview.status(f.project.id).state, 'ready');
+ assert.equal((await get(session)).text, 'Recreated static page');
+});

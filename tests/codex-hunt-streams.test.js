@@ -32,7 +32,7 @@ for(const finish of ['stop','length','content_filter',null])for(const done of [t
   assert.equal(calls,1);
  });
 }
-test('a stalled DeepSeek stream hands the Builder stage to the saved fallback without applying files',async t=>{
+test('a stalled DeepSeek stream pauses the Builder without fallback or applied files',async t=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'codex-stall-')),key='LOCAL_FAKE';let calls=0,abortObserved=false,fallbackCalls=0;
  const config=loadConfig({DATABASE_PATH:path.join(root,'main.sqlite'),WORKSPACE_DIR:path.join(root,'projects'),BACKUP_DIR:path.join(root,'backups'),DEEPSEEK_API_KEY:key,DEEPSEEK_MODEL:'deepseek-flash',STUDIO_DEEPSEEK_TIMEOUT_MS:'30'});
  const r=createApp(config,{studioOptions:{schedule:()=>{}},fetchImpl:async(_url,o)=>{
@@ -46,9 +46,10 @@ test('a stalled DeepSeek stream hands the Builder stage to the saved fallback wi
  await s.drive(j.id,s.active.get(j.id));
  const failed=s.detail(j.id),first=failed.executions[0];
  assert.equal(calls,1);assert.equal(abortObserved,true);assert.equal(failed.status,'paused');
- assert.equal(first.status,'failed');assert.ok(['timeout','inactivity_timeout'].includes(first.evidence.code));assert.notEqual(first.evidence.remoteOutcomeUnknown,true);
- assert.equal(failed.state.roles.builder,'codex-personal',JSON.stringify({code:first.evidence.code,unknown:first.evidence.remoteOutcomeUnknown,decisions:failed.events.filter(e=>e.kind==='fallback_decision').map(e=>e.content)}));assert.ok(fallbackCalls>0);
- assert.ok(failed.events.some(e=>e.kind==='provider_switched'&&['timeout','inactivity_timeout'].includes(e.content.reason)&&e.content.to==='codex-personal'));
+ assert.equal(first.status,'unknown');assert.ok(['timeout','inactivity_timeout'].includes(first.evidence.code));assert.equal(first.evidence.remoteOutcomeUnknown,true);
+ assert.equal(failed.state.roles.builder,'deepseek');assert.equal(fallbackCalls,0);
+ assert.equal(failed.events.find(e=>e.kind==='fallback_decision').content.reason,'outcome_unknown');
+ assert.ok(!failed.events.some(e=>e.kind==='provider_switched'));
  assert.equal(failed.revisions.length,0);assert.equal(s.root(p.id).fingerprint(),proposal.checkpointHash);
  const usage=failed.events.find(e=>e.kind==='api_usage'&&e.content.executionId===first.id);
  assert.equal(usage.content.outcome,'unknown');assert.equal(usage.content.input,null);assert.equal(usage.content.output,null);assert.equal(usage.content.costNote.includes('Unknown usage is not zero'),true);

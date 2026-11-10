@@ -30,6 +30,8 @@ Never put secrets in project descriptions, context, provider metadata, or prompt
 
 Successful responses use `{"data": ...}`. Errors use `{"error":{"message":"..."}}`. Creation returns 201, bad input 400, missing resources 404, and unexpected failures 500 with a generic message.
 
+Trusted local clients must send the current `X-Dashboard-Token` on legacy project, AI, and team API requests. Fetch it from `GET /api/console/session` over loopback and fetch it again after a backend restart. Keep the token in memory. `GET /api/health` remains available for health checks. This is a local access boundary for a single-owner app.
+
 | Method | Path | Purpose/body |
 |---|---|---|
 | GET | /api/health | Check database connectivity |
@@ -48,7 +50,9 @@ Project statuses: active, paused, completed, archived. Task creation always prod
 Example in PowerShell:
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3000/api/projects -Method Post -ContentType 'application/json' -Body '{"name":"My first project"}'
+$base = 'http://127.0.0.1:3000'
+$headers = @{ 'X-Dashboard-Token' = (Invoke-RestMethod "$base/api/console/session").data.token }
+Invoke-RestMethod "$base/api/projects" -Headers $headers -Method Post -ContentType 'application/json' -Body '{"name":"My first project"}'
 ```
 
 ## Persistence and workspace
@@ -60,6 +64,14 @@ Each project gets a UUID directory. The database stores that relative folder nam
 ## Tests
 
 Run `npm test`. Tests use temporary directories and isolated databases, including restore tests. No production database is opened by tests.
+
+## Larger projects in Studio
+
+On an ordinary team Send, the Builder, Tester, and Reviewer get a compact project map and starter excerpts. Each role can request up to two follow-up turns, with up to three searches or reads per turn. Searches cover project paths and supported text. They return a cursor when more results may be available. Reads are tied to the saved stage revision and exclude private files, credential text, junctions, and hard links. Each provider packet still has a 24,000-byte limit. Older one-call approvals keep their original limits.
+
+To run an existing Node project's suite, open **Projects → Options for your project → Edit project**, choose **npm test** under **Test command**, and save. Studio binds the saved choice and the package's test script at Send. The Windows runner copies source and already-installed dependencies into its isolated workspace, runs `npm test` offline, then runs the Tester’s independent Node checks. The run reaches owner review only with fresh passing evidence for that revision. The Tests panel shows the saved command result and the independent checks.
+
+Install required dependencies yourself in the selected project before starting. The runner supports the root package's `npm test` with regular files in `node_modules`. It skips pretest/posttest hooks and does not install packages. Linked dependencies, suites that need network services, and suites that change the isolated inputs can be blocked. The copy limits are 20 MB of source and 160 MB of installed dependencies.
 
 ## Backup and restore
 
@@ -108,8 +120,8 @@ See PROVIDER_SETUP.md before making real calls. Existing routes remain available
 Example after configuring a verified free provider:
 
 ```powershell
-$project = Invoke-RestMethod http://127.0.0.1:3000/api/projects -Method Post -ContentType 'application/json' -Body '{"name":"Calculator demo"}'
-Invoke-RestMethod "http://127.0.0.1:3000/api/projects/$($project.data.id)/generate" -Method Post -ContentType 'application/json' -Body '{"request":"Create a JavaScript calculator function","mode":"standard"}'
+$project = Invoke-RestMethod "$base/api/projects" -Headers $headers -Method Post -ContentType 'application/json' -Body '{"name":"Calculator demo"}'
+Invoke-RestMethod "$base/api/projects/$($project.data.id)/generate" -Headers $headers -Method Post -ContentType 'application/json' -Body '{"request":"Create a JavaScript calculator function","mode":"standard"}'
 ```
 
 Generation initially supports JavaScript plus JSON/Markdown/text supporting files. Successful syntax checks do not prove behavior. Behavioral tests must be performed separately in an appropriate controlled environment and their real evidence recorded; this application does not execute the draft. No task becomes complete without a senior review and user approval. Manual review identities/evidence are trusted operator attestations, not authenticated claims.

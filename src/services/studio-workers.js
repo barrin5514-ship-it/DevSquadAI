@@ -1,5 +1,6 @@
 import {cleanOutput} from './workspace-output.js';
 import {testPlan,packageConfigFailure} from './studio-test-plan.js';
+import {installedDependencyHash,isolatedTestLaunch,npmRuntime,ownerTestCopyMatches} from './studio-npm-runner.js';
 import {inspectProcessTree} from './studio-executions.js';
 import {workerIdle} from './worker-idle.js';
 import {CodexProfiles,codexProfileIds} from './codex-profiles.js';
@@ -9,7 +10,8 @@ import fs from 'node:fs';import path from 'node:path';import {randomUUID} from '
 import {ProjectFiles,hashText} from './project-files.js';import {NativeDemoBoundary,isolationArgs} from './demo-isolation.js';import {DemoCliTransport} from './demo-cli-transport.js';import {cliEnvironment} from './cli-hello.js';
 import {councilInstruction} from './studio-repair-council.js';
 import {replyEvidence} from './studio-failure-evidence.js';
-const instructions='Read the JSON packet. Its phase and actualRoles are authoritative even if the goal text names different agents. Return only JSON with report, files, and review (null except in reviewer phase). In builder phase write the requested implementation and tests. If repairPlan is present, implement only that agreed fix and leave unrelated files and behavior alone. In tester phase use the supplied runner capabilities: node:test and node:assert/strict, no external packages/Jest. Browser code may be tested with a small node:vm DOM fixture. Write or correct independent *.test.js, *.test.mjs or *.test.cjs files only; the application runs them separately. In reviewer phase return files:[] and review:{...reviewBinding,decision:"approved" or "changes_requested",summary:"...",findings:[]}; reviewerExecutedTests stays false. Never claim to have executed tests. No tools, credentials, commands or unrelated files. Use plain-English comments.';
+const instructions='Read the JSON packet. Its phase and actualRoles are authoritative even if the goal text names different agents. Return only JSON with report, files, and review (null except in reviewer phase). In builder phase write the requested implementation and tests. If repairPlan is present, implement only that agreed fix and leave unrelated files and behavior alone. In Tester phase write independent node:test tests using node:assert/strict. If runner.command is npm test, Dev Squad also runs the existing project suite under that owner setting. Do not change the package test command. Browser code may be tested with a small node:vm DOM fixture. Write or correct independent *.test.js, *.test.mjs or *.test.cjs files only; the application runs them separately. In reviewer phase return files:[] and review:{...reviewBinding,decision:"approved" or "changes_requested",summary:"...",findings:[]}; reviewerExecutedTests stays false. Never claim to have executed tests. No tools, credentials, commands or unrelated files. Use plain-English comments.';
+const contextInstruction=' The project map lists available paths; files contains only a small starter excerpt. To get more information, return contextRequests (up to three) with operation search or read, query for search or path for read, and offset (null for the first page). Return files:[] and review:null for a context request. The next packet includes contextResults, with nextOffset when another page is available. No shell or native tools are authorized. Use only the supplied results; if essential context cannot be read, request it again so Dev Squad pauses instead of accepting guessed work. For a final result, set contextRequests to null.';
 // The native login broker is trusted, but model tools are off. All model file
 // access is mediated by ProjectFiles. Generated tests run separately in MXC.
 export class StudioWorkers {
@@ -18,8 +20,8 @@ export class StudioWorkers {
  async availability(agent,root,signal){if(signal?.aborted)return {ok:false,code:'owner_stop'};if(agent===nemotronId)return {...this.nemotron.status(),code:'provider_unavailable'};if(agent.startsWith('codex-')&&!this.profiles.configured(agent))return {ok:false,code:'auth_missing'};if(agent.startsWith('codex-'))return this.profiles.check(agent,this.transport.executables.codex,root);if(agent==='claude-code')return {ok:await Promise.resolve().then(()=>this.transport.authCheck('claude',this.transport.executables.claude,root,cliEnvironment(),null)).catch(()=>false),code:'auth_expired'};return {ok:false,code:'availability_unknown'};}
  async profileAvailable(id,root){return (await this.profiles.check(id,this.transport.executables.codex,root)).ok;}
  async call(agent,packet,root,signal,execution={}){this.team.safe(packet);if(!studioWorkerIds.includes(agent))throw Error('Selected worker has no configured project transport');
-  if(agent===nemotronId)return this.nemotron.call(packet,root,signal,execution,instructions);
-  const instruction=execution.council?councilInstruction:instructions;
+  const instruction=execution.council?councilInstruction:instructions+(packet.projectContext?contextInstruction:' Set contextRequests to null.');
+  if(agent===nemotronId)return this.nemotron.call(packet,root,signal,execution,instruction);
   if(agent!=='deepseek'){const nativeSignal=signal,deadline=execution.nativeLimits?AbortSignal.timeout(Math.max(1,Date.parse(execution.nativeLimits.expiresAt)-Date.now())):null;try{return await this.transport.run(agent.startsWith('codex-')?'codex':'claude',packet,root,{redactionSecrets:this.team.coordinator?.configuredSecrets()||[],signal:deadline?AbortSignal.any([nativeSignal,deadline]):nativeSignal,maxOutputBytes:execution.nativeLimits?.maxOutputBytes||65536,profile:agent.startsWith('codex-')?this.profiles.selection(agent):null,timeoutMs:execution.nativeLimits?Math.min(this.team.config?.studioTimeouts?.[agent]||300000,execution.nativeLimits.timeoutMs):(this.team.config?.studioTimeouts?.[agent]||300000),onEvent:execution.onEvent,onFailure:execution.onFailure,onReply:execution.onReply,streamProgress:true,codexIsolation:agent.startsWith('codex-')?isolationArgs(root,{readOnly:execution.council===true}):null,instruction,outputSchema:agent.startsWith('codex-')?fileURLToPath(new URL('./studio-worker.schema.json',import.meta.url)):null});}catch(error){if(deadline?.aborted&&!nativeSignal.aborted)throw {...error,code:'run_scope_expired',ownerStop:false};throw error;}}
   const settings=this.team.paid.settings;if(!settings?.key||settings.base!=='https://api.deepseek.com'||!settings.model)throw Error('DeepSeek key or official model configuration is missing');
   // Send starts the selected workflow. Explicit automatic-handoff policies
@@ -35,30 +37,103 @@ export class StudioWorkers {
   };
   // A completed but truncated answer can still carry final billable usage.
   // Partial stream observations never release an unknown reservation.
-  const teamSend=execution.nativeLimits?.mode==='team-send';let r,rejected=false,reportedUsage=null;try{idle=workerIdle(()=>idleAbort.abort(),this.idleMs);r=await (guarded?adapter.generateBound(body,hashText(JSON.stringify(body))):adapter.generateStudio(body,hashText(JSON.stringify(body))));}catch(e){reportedUsage=e.usage||null;recordResponseFailure(e.diagnostics);execution.usage?.record(execution.chatId,execution.executionId,settings.model,e.usage||e.observedUsage||null,e.usage?'incomplete':'unknown');if(idleAbort.signal.aborted)e.code='inactivity_timeout';if(teamSend&&!signal.aborted){rejected=[401,402,403,429].includes(e.httpStatus);if(rejected)e.code=e.httpStatus===429?'rate_limit':e.httpStatus===402?'payment_required':'auth_expired';}const localAbort=idleAbort.signal.aborted||e.code==='timeout';if(localAbort&&!signal.aborted)e.unknownOutcome=false;else e.unknownOutcome=!e.usage&&!rejected;e.stopped=true;throw e;}finally{idle?.close();if(guarded)guarded.settle(execution.executionId,r?.usage||reportedUsage,{teamSend,rejected});}
+  const teamSend=execution.nativeLimits?.mode==='team-send';let r,rejected=false,reportedUsage=null;try{idle=workerIdle(()=>idleAbort.abort(),this.idleMs);r=await (guarded?adapter.generateBound(body,hashText(JSON.stringify(body))):adapter.generateStudio(body,hashText(JSON.stringify(body))));}catch(e){reportedUsage=e.usage||null;recordResponseFailure(e.diagnostics);execution.usage?.record(execution.chatId,execution.executionId,settings.model,e.usage||e.observedUsage||null,e.usage?'incomplete':'unknown');if(idleAbort.signal.aborted)e.code='inactivity_timeout';if(teamSend&&!signal.aborted){rejected=[401,402,403,429].includes(e.httpStatus);if(rejected)e.code=e.httpStatus===429?'rate_limit':e.httpStatus===402?'payment_required':'auth_expired';}e.unknownOutcome=!e.usage&&!rejected;e.stopped=true;throw e;}finally{idle?.close();if(guarded)guarded.settle(execution.executionId,r?.usage||reportedUsage,{teamSend,rejected});}
   execution.usage?.record(execution.chatId,execution.executionId,settings.model,r.usage,'response_received');
   let value;try{value=JSON.parse(r.text);}catch(error){recordResponseFailure(r.diagnostics,'answer_json');execution.onFailure?.(replyEvidence(r.text,'answer_json',error));throw new SyntaxError('DeepSeek final answer is not valid JSON.');}
   execution.onReply?.(r.text);
   return {...value,usage:r.usage,model:settings.model,httpStatus:r.diagnostics?.httpStatus};
  }
- async tests(root,signal,onExecution=()=>{},{testFiles=null}={}){
-  const source=new ProjectFiles(root),files=source.list(),plan=testPlan(source,{testFiles});if(plan.blocked)return {executed:false,passed:false,status:'blocked',failures:[plan.blocked],summary:plan.blocked,...(plan.packageConfigFailure?{packageConfigFailure:plan.packageConfigFailure}:{})};const tests=plan.tests,lifecycle=content=>onExecution({kind:'test_process',content});
-  const parent=path.join(root,'.devsquad-tests');if(fs.existsSync(parent)&&fs.lstatSync(parent).isSymbolicLink())throw Error('Test storage is a link');fs.mkdirSync(parent,{recursive:true});const copy=path.join(parent,randomUUID());fs.mkdirSync(copy);let retainCopy=false;
-  try{let total=0;for(const relative of files){const original=source.resolve(relative),stat=fs.statSync(original);total+=stat.size;if(stat.size>1000000||total>20000000)throw Error('Project is too large for the local test copy; configure a dedicated runner');const destination=path.join(copy,relative);fs.mkdirSync(path.dirname(destination),{recursive:true});fs.copyFileSync(original,destination);}
-   const testedHash=new ProjectFiles(copy).fingerprint(),manifest=path.join(copy,'package.json'),defaultPackageScope=!fs.existsSync(manifest);
+ async tests(root,signal,onExecution=()=>{},{testFiles=null,testCommand=null}={}){
+  const source=new ProjectFiles(root),files=source.list(),plan=testPlan(source,{testFiles,testCommand});
+  const lifecycle=content=>onExecution({kind:'test_process',content});
+  const clean=value=>cleanOutput(this.team.coordinator?this.team:{coordinator:{configuredSecrets:()=>[]}},value);
+  let testedHash=null,dependencyHash=null,projectSuite=null;
+  const blocked=(summary,details={})=>clean({executed:false,passed:false,status:'blocked',failures:[summary],summary,...(testCommand?{framework:'npm',command:['npm','test'],revisionHash:testedHash,dependencyHash,projectSuite:projectSuite||{status:'blocked',executed:false,exitCode:null,summary}}:{}),...details});
+  if(plan.blocked)return blocked(plan.blocked,plan.packageConfigFailure?{packageConfigFailure:plan.packageConfigFailure}:{});
+  const parent=path.join(source.root,'.devsquad-tests');if(fs.existsSync(parent)&&fs.lstatSync(parent).isSymbolicLink())throw Error('Test storage is a link');fs.mkdirSync(parent,{recursive:true});const copy=path.join(parent,randomUUID());fs.mkdirSync(copy);let retainCopy=false;
+  try{
+   let total=0;
+   for(const relative of files){
+    let content;
+    try{content=source.read(relative,1000000);}catch(error){return blocked(error.status===413?'A project file exceeds the isolated copy limit of 1 MB.':'A project file could not be copied safely into the test workspace.');}
+    total+=content.length;
+    if(total>20000000)return blocked('The project exceeds the isolated copy limit of 20 MB.');
+    const destination=path.join(copy,relative);
+    fs.mkdirSync(path.dirname(destination),{recursive:true});
+    fs.writeFileSync(destination,content,{flag:'wx'});
+   }
+   testedHash=new ProjectFiles(copy).fingerprint();
+   const manifest=path.join(copy,'package.json'),defaultPackageScope=!fs.existsSync(manifest);
    // Keep Node's package search inside MXC without changing the project's files or module type.
    if(defaultPackageScope)fs.writeFileSync(manifest,'{}\n',{flag:'wx'});
-   const boundary=new NativeDemoBoundary(this.team),exe=boundary.exe;if(!fs.existsSync(exe))throw Error('Codex MXC sandbox is unavailable; tests were not executed');
+   let npm;
+   if(plan.npm){
+    try{
+     if(source.fingerprint()!==testedHash)return blocked('Project files changed while the test copy was prepared.');
+     const copiedPlan=testPlan(new ProjectFiles(copy),{testFiles,testCommand});
+     if(copiedPlan.blocked)return blocked(copiedPlan.blocked);
+     npm=npmRuntime();
+     dependencyHash=installedDependencyHash(source.root,copy,copiedPlan.npm.manifest);
+    }catch(error){return blocked(error.syscall?'The installed dependency tree could not be read safely.':error.message);}
+   }
+   const boundary=new NativeDemoBoundary(this.team),exe=boundary.exe;if(!fs.existsSync(exe)){if(plan.npm)return blocked('Windows MXC is unavailable.');throw Error('Codex MXC sandbox is unavailable; tests were not executed');}
    // A real, non-model OS check runs before untrusted tests. It proves this
    // selected copy cannot read its parent; it never probes a real credential.
    const decoy=path.join(parent,randomUUID()+'.txt');fs.writeFileSync(decoy,'FAKE_SANDBOX_DECOY',{flag:'wx'});
    const probe='try{require("node:fs").readFileSync(process.argv[1]);process.exit(2)}catch(e){process.exit(["EACCES","EPERM"].includes(e.code)?0:3)}';
-   try{const proof=await this.command(exe,copy,[process.execPath,'-e',probe,decoy],signal,lifecycle);if(proof.exit!==0)throw Error('Selected project sandbox check failed; tests were not executed');}finally{fs.unlinkSync(decoy);}
-   const startedAt=new Date().toISOString(),start=Date.now();const command=[process.execPath,...plan.command];const info={framework:plan.framework,commandSource:plan.source,workingDirectory:'.devsquad-tests/'+path.basename(copy),command:['node',...command.slice(1)],launcher:'Codex MXC sandbox',startedAt,revisionHash:testedHash,defaultPackageScope};onExecution({kind:'execution_started',content:info});let r;try{r=await this.command(exe,copy,command,signal,lifecycle);}catch(e){onExecution({kind:'execution_finished',content:{...info,exit:null,durationMs:Date.now()-start,code:e.code||'test_error',timedOut:e.code==='timeout',cancelled:e.ownerStop===true,error:'Test process did not finish; no pass recorded.'}});throw e;}const configFailure=r.exit===0?null:packageConfigFailure(new ProjectFiles(copy),r.stdout,r.stderr);onExecution({kind:'execution_finished',content:{...info,finishedAt:new Date().toISOString(),durationMs:Date.now()-start,exit:r.exit,...(configFailure?{packageConfigFailure:configFailure}:{}),stdout:r.stdout.slice(0,16000),stderr:(r.stderr||'').slice(0,16000),truncated:r.stdout.length>16000||(r.stderr||'').length>16000}});
+   try{const proof=await this.command(exe,copy,[process.execPath,'-e',probe,decoy],signal,lifecycle);if(proof.exit!==0){if(plan.npm)return blocked('Selected project sandbox check failed.');throw Error('Selected project sandbox check failed; tests were not executed');}}finally{fs.unlinkSync(decoy);}
+   const execute=async(framework,commandSource,shown,args)=>{
+    const start=Date.now(),launcher=plan.npm?isolatedTestLaunch(copy,args):null;
+    const info={framework,commandSource,workingDirectory:'.devsquad-tests/'+path.basename(copy),command:shown,launcher:'Codex MXC sandbox',startedAt:new Date().toISOString(),revisionHash:testedHash,defaultPackageScope,...(plan.npm?{dependencyHash}:{})};
+    onExecution({kind:'execution_started',content:info});
+    let r;
+    try{
+     r=await this.command(exe,copy,launcher?.command||[process.execPath,...args],signal,lifecycle);
+     r={...r,stderr:r.stderr??''};
+     if(launcher){
+      r=launcher.result(r);
+      launcher.clearScratch();
+     }
+    }catch(e){
+     onExecution({kind:'execution_finished',content:{...info,exit:null,durationMs:Date.now()-start,code:e.code||'test_error',timedOut:e.code==='timeout',cancelled:e.ownerStop===true,error:'Test process did not finish; no pass recorded.'}});
+     throw e;
+    }
+    const configFailure=framework==='node:test'&&r.exit!==0?packageConfigFailure(new ProjectFiles(copy),r.stdout,r.stderr):null;
+    const durationMs=Date.now()-start;
+    onExecution({kind:'execution_finished',content:clean({...info,finishedAt:new Date().toISOString(),durationMs,exit:r.exit,...(launcher?{executed:r.observed}:{}),...(configFailure?{packageConfigFailure:configFailure}:{}),stdout:r.stdout,stderr:r.stderr,truncated:r.stdout.length>16000||r.stderr.length>16000})});
+    return {r,info,configFailure,durationMs};
+   };
+   const unchanged=()=>ownerTestCopyMatches(copy,files)&&new ProjectFiles(copy).fingerprint()===testedHash&&installedDependencyHash(copy,null,{},true)===dependencyHash;
+   const stoppedTest=error=>error.code==='timeout'?'The isolated test command timed out.':error.code==='output_limit'?'The isolated test command exceeded its output limit.':'The isolated test command could not finish.';
+   if(plan.npm){
+    let result;
+    try{result=await execute('npm','owner-configured npm test',['npm','test'],[npm,'--ignore-scripts','--offline','--workspaces=false','test']);}
+    catch(error){if(!error.stopped||error.ownerStop)throw error;return blocked(stoppedTest(error),{timedOut:error.code==='timeout'});}
+    const {r,info,durationMs}=result;
+    const missing=r.exit!==0&&([127,9009].includes(r.exit)||/MODULE_NOT_FOUND|ERR_MODULE_NOT_FOUND|is not recognized as an internal or external command|could not determine executable/i.test(r.stderr));
+    const status=!r.observed||missing?'blocked':r.exit===0?'passed':'failed';
+    const summary=missing?'npm test could not start a required executable or load a required module. See the saved command output.':status==='blocked'?'The npm command could not be verified in Windows MXC.':status==='failed'?'npm test exited with code '+r.exit+'.':'npm test exited successfully.';
+    projectSuite={status,executed:r.observed,passed:status==='passed',exitCode:r.observed?r.exit:null,count:null,failed:null,summary,stdout:r.stdout,stderr:r.stderr,outputHash:hashText(r.stdout+'\n'+r.stderr),command:info.command,workingDirectory:info.workingDirectory,revisionHash:testedHash,dependencyHash,durationMs,backend:'mxc'};
+    if(status==='blocked')return blocked(summary);
+    if(status==='failed')return clean({...projectSuite,projectSuite,framework:'npm',count:null,failed:null,failures:[summary]});
+    try{if(!unchanged())return blocked('The test copy changed during npm test. Independent tests did not run.');}
+    catch{return blocked('The test copy changed during npm test. Independent tests did not run.');}
+    if(!testFiles)return blocked('The npm command completed. Independent Tester files are required to record a test pass.',{executed:true,exitCode:r.exit});
+   }
+   let result;
+   try{result=await execute(plan.framework,plan.source,['node',...plan.command],plan.command);}
+   catch(error){if(!plan.npm||!error.stopped||error.ownerStop)throw error;return blocked(stoppedTest(error),{timedOut:error.code==='timeout'});}
+   const {r,info,configFailure,durationMs}=result;
+   if(plan.npm){
+    if(!r.observed)return blocked('The independent Node process could not be verified in Windows MXC.');
+    try{if(!unchanged()||installedDependencyHash(source.root)!==dependencyHash)return blocked('The test copy or installed project dependencies changed before verification finished.');}
+    catch{return blocked('The test copy or installed project dependencies changed before verification finished.');}
+   }
    const count=Number(/(?:#|ℹ)\s*tests\s+(\d+)/.exec(r.stdout)?.[1]||0),failed=Number(/(?:#|ℹ)\s*fail\s+(\d+)/.exec(r.stdout)?.[1]||0);const skipped=Number(/(?:#|ℹ)\s*skipped\s+(\d+)/.exec(r.stdout)?.[1]||0),passedCount=Number(/(?:#|ℹ)\s*pass\s+(\d+)/.exec(r.stdout)?.[1]||0);const failures=r.stdout.split(/\r?\n/).filter(x=>/^not ok|^✖/.test(x)).map(x=>x.replace(/^not ok\s+\d+\s*-?\s*/,''));
    const loaderOnly=configFailure&&count===1&&failed===1;
    const summary=configFailure?'Node could not load '+(configFailure.path||'a package configuration outside the test copy')+' ('+configFailure.code+'). '+configFailure.detail:count+' tests; '+failed+' failed.';
-   return cleanOutput(this.team.coordinator?this.team:{coordinator:{configuredSecrets:()=>[]}}, {executed:!loaderOnly,passed:!configFailure&&r.exit===0&&count>skipped&&failed===0&&source.fingerprint()===testedHash,count:loaderOnly?0:count,failed:loaderOnly?0:failed,skipped,passedCount,framework:plan.framework,command:info.command,workingDirectory:info.workingDirectory,exitCode:r.exit,timedOut:false,stderr:r.stderr||'',failures:configFailure?[summary,...(loaderOnly?[]:failures)]:failures,summary,...(configFailure?{packageConfigFailure:configFailure}:{}),outputHash:hashText(r.stdout),revisionHash:testedHash,durationMs:Date.now()-start,backend:'mxc',names:loaderOnly?[]:tapTests(r.stdout)});
+   const passed=!configFailure&&r.exit===0&&count>skipped&&failed===0&&source.fingerprint()===testedHash;
+   return clean({executed:!loaderOnly,passed,...(plan.npm?{status:passed?'passed':'failed',projectSuite,dependencyHash}:{}),count:loaderOnly?0:count,failed:loaderOnly?0:failed,skipped,passedCount,framework:plan.framework,command:info.command,workingDirectory:info.workingDirectory,exitCode:r.exit,timedOut:false,stderr:r.stderr||'',failures:configFailure?[summary,...(loaderOnly?[]:failures)]:failures,summary,...(configFailure?{packageConfigFailure:configFailure}:{}),outputHash:hashText(r.stdout),revisionHash:testedHash,durationMs,backend:'mxc',names:loaderOnly?[]:tapTests(r.stdout)});
   }catch(error){retainCopy=error.stopped===false;throw error;}finally{if(!retainCopy&&fs.existsSync(copy)&&path.dirname(copy)===fs.realpathSync(parent)){if(fs.lstatSync(copy).isSymbolicLink())fs.unlinkSync(copy);else if(fs.realpathSync(copy)===copy)fs.rmSync(copy,{recursive:true,force:true});}}
  }
  command(exe,root,command,signal,onLifecycle=()=>{}){return new Promise((resolve,reject)=>{

@@ -2,6 +2,20 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "contextRequests": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation": {"type": "string", "enum": ["search", "read"]},
+          "query": {"type": ["string", "null"]},
+          "path": {"type": ["string", "null"]},
+          "offset": {"type": ["integer", "null"]}
+        },
+        "required": ["operation", "query", "path", "offset"]
+      }
+    },
     "report": {
       "type": "string",
       "maxLength": 6000
@@ -80,6 +94,7 @@
     }
   },
   "required": [
+    "contextRequests",
     "report",
     "files",
     "review"

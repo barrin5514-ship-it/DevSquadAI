@@ -1,7 +1,8 @@
 import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';import {randomBytes} from 'node:crypto';
 import {ApiError} from '../middleware/errors.js';import {transaction,text} from '../middleware/ai-validation.js';import {ProjectFiles} from './project-files.js';import {fileTree} from './workspace-inspection.js';import {cloneRepository,gitCommand,githubURL} from './project-git.js';
+import {ownerTestCommand} from './studio-test-plan.js';
 const appRoot=path.resolve(fileURLToPath(new URL('../../',import.meta.url))),normalize=p=>process.platform==='win32'?path.resolve(p).toLowerCase():path.resolve(p),inside=(a,b)=>normalize(b)===normalize(a)||normalize(b).startsWith(normalize(a)+path.sep);
-const settingsVersion=(project,connection)=>project.updated_at+'/'+(connection?.version??'');
+const settingsVersion=(project,connection,testSettings)=>project.updated_at+'/'+(connection?.version??'')+(testSettings?'/'+testSettings.version:'');
 export function folderIdentity(root){const s=fs.statSync(root,{bigint:true});return JSON.stringify({dev:String(s.dev),ino:String(s.ino),born:String(s.birthtimeNs)});}
 // Walk the selected path's ancestors, never its neighbors. A junction or link
 // cannot silently turn the owner's chosen folder into a different directory.
@@ -21,21 +22,35 @@ export class ProjectConnections {
  check(id){const row=this.db.prepare('SELECT * FROM studio_project_connections WHERE project_id=?').get(id);if(!row)return null;const root=row.source==='created'&&inside(this.studio.team.workspace.root,row.root)?selectedFolder(row.root):this.select(row.root);if(normalize(root)!==normalize(row.root)||folderIdentity(root)!==row.identity)throw new ApiError(409,'The registered folder was replaced or moved. Reconnect it before accessing files.');return row;}
  active(id){if(this.db.prepare('SELECT hidden FROM studio_workspace_preferences WHERE project_id=?').get(id)?.hidden)throw new ApiError(409,'Restore this project from Projects before starting new work.');}
  assertWrite(id){this.active(id);this.studio.team.fileActions?.idle(id,null,false);const row=this.check(id),root=row?.root||this.studio.root(id).root;if(row&&!row.agent_changes)throw new ApiError(403,'This project is set to read-only. Enable agent changes for this exact folder before Send or Run.');try{fs.accessSync(root,fs.constants.W_OK)}catch{throw new ApiError(403,'The project folder is not writable by the local backend. Check the folder permissions or filesystem read-only state; no worker was started.')}}
- summary(project){const preference=this.db.prepare('SELECT hidden,version FROM studio_workspace_preferences WHERE project_id=?').get(project.id);const row=this.db.prepare('SELECT * FROM studio_project_connections WHERE project_id=?').get(project.id),folder=row?.root||this.db.prepare('SELECT root FROM studio_roots WHERE project_id=?').get(project.id)?.root||path.join(this.studio.team.workspace.root,project.workspace_path);let readOnlyReason=null;if(row&&!row.agent_changes)readOnlyReason='Project access is set to read-only.';else try{fs.accessSync(folder,fs.constants.W_OK)}catch{readOnlyReason='The project folder is not writable by the local backend.';}return {id:project.id,name:project.name,description:project.description,settingsVersion:settingsVersion(project,row),workspaceHidden:!!preference?.hidden,workspaceVersion:preference?.version||0,folder,source:row?.source||'existing',agentChangesAllowed:row?!!row.agent_changes:true,accessVersion:row?.version??null,defaultLayout:row?.default_layout||'custom',repositoryURL:row?.repository_url||null,readOnlyReason};}
+ summary(project){
+  const preference=this.db.prepare('SELECT hidden,version FROM studio_workspace_preferences WHERE project_id=?').get(project.id);
+  const testSettings=this.db.prepare('SELECT test_command,version FROM studio_project_test_settings WHERE project_id=?').get(project.id);
+  const row=this.db.prepare('SELECT * FROM studio_project_connections WHERE project_id=?').get(project.id),folder=row?.root||this.db.prepare('SELECT root FROM studio_roots WHERE project_id=?').get(project.id)?.root||path.join(this.studio.team.workspace.root,project.workspace_path);
+  let readOnlyReason=null;
+  if(row&&!row.agent_changes)readOnlyReason='Project access is set to read-only.';
+  else try{fs.accessSync(folder,fs.constants.W_OK)}catch{readOnlyReason='The project folder is not writable by the local backend.';}
+  return {id:project.id,name:project.name,description:project.description,settingsVersion:settingsVersion(project,row,testSettings),workspaceHidden:!!preference?.hidden,workspaceVersion:preference?.version||0,folder,source:row?.source||'existing',agentChangesAllowed:row?!!row.agent_changes:true,accessVersion:row?.version??null,defaultLayout:row?.default_layout||'custom',repositoryURL:row?.repository_url||null,testCommand:testSettings?.test_command??null,readOnlyReason};
+ }
  access(id,body){this.studio.team.fields(body,['enabled','version','approvedBy']);if(body.approvedBy!=='owner'||typeof body.enabled!=='boolean'||!Number.isSafeInteger(body.version))throw new ApiError(400,'Use the project-specific owner access control.');return transaction(this.db,()=>{const row=this.check(id);if(!row||row.version!==body.version)throw new ApiError(409,'Project access changed. Refresh before trying again.');if(this.db.prepare('SELECT 1 FROM studio_chats WHERE project_id=? AND status IN (\'running\',\'stopping\')').get(id))throw new ApiError(409,'Stop active work before changing project access.');this.db.prepare('UPDATE studio_project_connections SET agent_changes=?,version=version+1 WHERE project_id=? AND version=?').run(body.enabled?1:0,id,body.version);return this.summary(this.studio.team.store.project(id));});}
  settings(body){const name=text(body.name,'project name',200),description=body.description?text(body.description,'description',2000):'',layout=body.defaultLayout||'conversation';if(!['conversation','development','preview','balanced'].includes(layout))throw new ApiError(400,'Choose an available workspace layout.');return {name,description,layout};}
  edit(id,body){
   const store=this.studio.team.store;
-  this.studio.team.fields(body,['name','description','defaultLayout','version'],['name','description','version']);
+  this.studio.team.fields(body,['name','description','defaultLayout','testCommand','version'],['name','description','version']);
   const {name,description,layout}=this.settings(body);
+  const {testCommand}=body;
+  if(testCommand!==undefined&&testCommand!==null&&testCommand!==ownerTestCommand)throw new ApiError(400,'Choose the default Node.js runner or npm test.');
   this.studio.team.safe({name,description});
   return transaction(this.db,()=>{
    this.active(id);
    if(this.db.prepare('SELECT 1 FROM studio_project_deletions WHERE project_id=?').get(id))throw new ApiError(404,'Project was deleted from Dev Squad.');
    const project=store.project(id),connection=this.db.prepare('SELECT version,default_layout FROM studio_project_connections WHERE project_id=?').get(id);
-   if(body.version!==settingsVersion(project,connection))throw new ApiError(409,'Project settings changed. Refresh before saving again.');
+   const testSettings=this.db.prepare('SELECT test_command,version FROM studio_project_test_settings WHERE project_id=?').get(id);
+   if(body.version!==settingsVersion(project,connection,testSettings))throw new ApiError(409,'Project settings changed. Refresh before saving again.');
    if(body.defaultLayout!==undefined&&!connection)throw new ApiError(400,'This project has no saved default layout.');
    if(body.defaultLayout!==undefined&&layout!==connection.default_layout)this.db.prepare('UPDATE studio_project_connections SET default_layout=?,version=version+1 WHERE project_id=?').run(layout,id);
+   if(testCommand!==undefined&&testCommand!==(testSettings?.test_command??null)){
+    this.db.prepare('INSERT INTO studio_project_test_settings (project_id,test_command,version) VALUES (?,?,1) ON CONFLICT(project_id) DO UPDATE SET test_command=excluded.test_command,version=version+1').run(id,testCommand);
+   }
    return this.summary(store.updateProject(id,{name,description}));
   });
  }

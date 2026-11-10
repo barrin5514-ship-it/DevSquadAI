@@ -14,9 +14,24 @@ import {randomBytes, randomUUID, timingSafeEqual, createHash} from 'node:crypto'
 import {ApiError} from '../middleware/errors.js';
 import {text,transaction} from '../middleware/ai-validation.js';
 
-// A same-origin browser capability, not multi-user authentication. No CORS.
-export function consoleRoutes(team,service){
- const r=Router(),token=randomBytes(32).toString('hex'),send=(res,data,status=200)=>res.status(status).json({data});
+// The capability is shared by the dashboard and trusted local API clients.
+export function dashboardAccess(){
+ const token=randomBytes(32).toString('hex'),expected=Buffer.from(token);
+ const local=(req,res,next)=>{
+  res.set('Cache-Control','no-store');
+  const host=req.headers.host||'',origin=req.headers.origin;
+  if(!['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket.remoteAddress)||!/^(127\.0\.0\.1|localhost|\[::1\]):\d+$/.test(host)||origin&&origin!==`http://${host}`||['cross-site','same-site'].includes(req.headers['sec-fetch-site']))return next(new ApiError(403,'Open this dashboard directly on localhost'));
+  next();
+ };
+ const requireToken=(req,res,next)=>{
+  const supplied=Buffer.from(req.headers['x-dashboard-token']||'');
+  if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected))return next(new ApiError(403,'Dashboard session expired. Refresh and try again.'));
+  next();
+ };
+ return {token,local,requireToken};
+}
+export function consoleRoutes(team,service,access){
+ const r=Router(),send=(res,data,status=200)=>res.status(status).json({data});
   // Zapier's callback is not a browser capability. It uses a separate, exact
   // callback token and can only consume one already-sent Studio handoff.
   r.post('/studio/zapier/callback',(req,res,next)=>{
@@ -28,17 +43,13 @@ export function consoleRoutes(team,service){
     send(res,team.studio.handoffs.accept(req.body?.handoffId,req.body,{source:'zapier'}));
    }catch(e){next(e);}
   });
- r.use((req,res,next)=>{
-  res.set('Cache-Control','no-store');
-  const host=req.headers.host||'',origin=req.headers.origin;
-  if(!/^(127\.0\.0\.1|localhost|\[::1\]):\d+$/.test(host)||origin&&origin!==`http://${host}`||['cross-site','same-site'].includes(req.headers['sec-fetch-site']))return next(new ApiError(403,'Open this dashboard directly on localhost'));
-  if(req.method!=='GET'){
-   const supplied=Buffer.from(req.headers['x-dashboard-token']||'');
-   const attachment=req.method==='POST'&&/^\/studio\/projects\/[^/]+\/attachments$/.test(req.path)&&req.is('application/octet-stream');if(!(attachment||req.is('application/json'))||supplied.length!==token.length||!timingSafeEqual(supplied,Buffer.from(token)))return next(new ApiError(403,'Dashboard session expired. Refresh and try again.'));
-  }
-  next();
+ r.use(access.local,(req,res,next)=>{
+  if(req.method==='GET')return next();
+  const attachment=req.method==='POST'&&/^\/studio\/projects\/[^/]+\/attachments$/.test(req.path)&&req.is('application/octet-stream');
+  if(!(attachment||req.is('application/json')))return next(new ApiError(403,'Dashboard session expired. Refresh and try again.'));
+  return access.requireToken(req,res,next);
  });
- r.get('/session',(req,res)=>send(res,{token}));
+ r.get('/session',(req,res)=>send(res,{token:access.token}));
  // Old scoped/demo dispatch is retired. Existing records remain readable, but
  // cannot start an unexpected paid job through an obsolete control.
  r.use((req,res,next)=>{if(req.method==='POST'&&/^(?:\/big-three\/hello|\/demo-workers\/|\/messenger\/setup-sample|\/shared-jobs\/[^/]+\/(?:run|messenger\/(?:prepare|start|resume|pickup))|\/tasks\/[^/]+\/(?:shared-job|paid-(?:run|quote)|review-(?:run|quote))|\/paid\/balance)/.test(req.path))return next(new ApiError(410,'The old scoped/demo workflow is retired. Use Projects and Run.'));next();});

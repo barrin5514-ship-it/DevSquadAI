@@ -40,14 +40,16 @@ export function completedCliReply(agent,raw,{singleFinal=false}={}){
  return {text,usage};
 }
 
-export function parseDemoCli(agent,raw,maxOutputBytes=65536,{singleFinal=false,onFailure,onReply}={}){
+export function parseDemoCli(agent,raw,maxOutputBytes=65536,{singleFinal=false,allowContext=false,onFailure,onReply}={}){
  if(Buffer.byteLength(raw)>maxOutputBytes)deny('Worker output exceeded its approved output limit');
  const {text,usage}=completedCliReply(agent,raw,{singleFinal});
  const safeUsage=Object.fromEntries(Object.entries(usage||{}).filter(([key,n])=>/^(?:input_tokens|output_tokens|cached_input_tokens|cache_creation_input_tokens|cache_read_input_tokens)$/.test(key)&&Number.isSafeInteger(n)&&n>=0));
  let data;
  try{
   data=JSON.parse(text);
-  if(!data||!['files,report','files,report,review'].includes(Object.keys(data).sort().join(','))||typeof data.report!=='string'||!data.report.trim()||data.report.length>6000||!Array.isArray(data.files))deny('Worker result does not match the demo contract');
+  const keys=['files,report','files,report,review'];
+  if(allowContext)keys.push('contextRequests,files,report,review');
+  if(!data||!keys.includes(Object.keys(data).sort().join(','))||typeof data.report!=='string'||!data.report.trim()||data.report.length>6000||!Array.isArray(data.files))deny('Worker result does not match the demo contract');
  }catch(error){onFailure?.(text,error,safeUsage);throw error;}
  onReply?.(text);
  // Preserve only numeric usage, never raw CLI metadata or account identifiers.

@@ -4,23 +4,43 @@ import {hashText} from '../src/services/project-files.js';
 function fixture(t,extra={}){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'project-connections-')),source=path.join(dir,'existing');fs.mkdirSync(source);fs.writeFileSync(path.join(source,'package.json'),'{"name":"fixture-app","description":"A local test"}');fs.writeFileSync(path.join(source,'main.mjs'),'export const add=(a,b)=>a+b;');fs.writeFileSync(path.join(source,'.env'),'FAKE_PRIVATE_FILE');let calls=0;const r=createApp(loadConfig({DATABASE_PATH:path.join(dir,'data/main.sqlite'),WORKSPACE_DIR:path.join(dir,'managed'),BACKUP_DIR:path.join(dir,'backups')}),{fetchImpl:async()=>{calls++;throw Error('No providers');},studioOptions:{schedule:()=>{}},...extra});t.after(async()=>{r.team.preview.close();await r.team.studio.close();r.team.messenger.close();r.db.close();fs.rmSync(dir,{recursive:true,force:true});});return {dir,source,r,manager:r.team.projectConnections,get calls(){return calls;}};}
 const inspect=(f,rest={})=>f.manager.inspect({kind:'folder',name:'Existing fixture',folder:f.source,...rest});
 const confirm=(f,r)=>f.manager.confirm({receipt:r.receipt,confirmed:true});
-test('sidebar settings save the name and layout without granting file access or changing the folder',async t=>{
+test('sidebar settings save the name, layout and test command without granting file access or changing the folder',async t=>{
  const f=fixture(t),{project}=await confirm(f,inspect(f)),chat=f.r.team.studio.session(project.id,{});
  const server=f.r.app.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(ok=>server.close(ok)));
  const origin='http://127.0.0.1:'+server.address().port,base=origin+'/api/console';
  const oldPage=await fetch(origin+'/team/projects',{redirect:'manual'});
  assert.equal(oldPage.status,302);assert.equal(oldPage.headers.get('location'),'/team#projects');
  const token=(await(await fetch(base+'/session')).json()).data.token;
- const body={name:'Renamed fixture',description:'Updated settings',defaultLayout:'preview',version:project.settingsVersion};
+ const body={name:'Renamed fixture',description:'Updated settings',defaultLayout:'preview',testCommand:'npm test',version:project.settingsVersion};
  const post=(data,cap=token)=>fetch(base+'/studio/projects/'+project.id+'/settings',{method:'POST',headers:{'content-type':'application/json','x-dashboard-token':cap},body:JSON.stringify(data)});
  assert.equal((await post(body,'wrong')).status,403);
  assert.equal((await post({...body,agentChangesAllowed:true})).status,400);
  const result=await post(body);assert.equal(result.status,200);
  const saved=(await result.json()).data;
- assert.equal(saved.name,'Renamed fixture');assert.equal(saved.description,'Updated settings');assert.equal(saved.defaultLayout,'preview');
+ assert.equal(saved.name,'Renamed fixture');assert.equal(saved.description,'Updated settings');assert.equal(saved.defaultLayout,'preview');assert.equal(saved.testCommand,'npm test');
  assert.equal(saved.folder,project.folder);assert.equal(saved.agentChangesAllowed,false);
  assert.equal(f.r.team.studio.get(chat.id).project_id,project.id);
  assert.equal((await post(body)).status,409);
+ assert.equal(f.calls,0);
+});
+test('owner test command settings persist by project and reject stale and unsupported changes',async t=>{
+ const f=fixture(t),{project}=await confirm(f,inspect(f));
+ const legacy=f.r.team.studio.project({name:'Legacy managed project'});
+ const edit=(p,changes)=>f.manager.edit(p.id,{name:p.name,description:p.description,version:p.settingsVersion,...changes});
+ assert.equal(project.testCommand,null);
+ for(const value of ['npm test && node unexpected.js','',true])assert.throws(()=>edit(project,{testCommand:value}),{status:400});
+ const saved=edit(project,{testCommand:'npm test'});
+ assert.equal(saved.testCommand,'npm test');
+ assert.equal(saved.agentChangesAllowed,false);
+ assert.equal(saved.accessVersion,project.accessVersion);
+ assert.throws(()=>edit(project,{testCommand:null}),{status:409});
+ const listed=f.r.team.studio.list().projects,other=listed.find(p=>p.id===legacy.id);
+ assert.equal(listed.find(p=>p.id===project.id).testCommand,'npm test');
+ assert.equal(other.testCommand,null);
+ assert.equal(edit(other,{testCommand:'npm test'}).testCommand,'npm test');
+ const renamed=edit(saved,{name:'Renamed fixture'});
+ assert.equal(renamed.testCommand,'npm test');
+ assert.equal(edit(renamed,{testCommand:null}).testCommand,null);
  assert.equal(f.calls,0);
 });
 function contentHash(root){const rows=[];function visit(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())visit(p);else if(e.isFile())rows.push([path.relative(root,p),fs.readFileSync(p).toString('base64')]);}}visit(root);return hashText(JSON.stringify(rows.sort()));}

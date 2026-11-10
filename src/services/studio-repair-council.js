@@ -120,7 +120,7 @@ export class StudioRepairCouncil {
  }
 
  async fallbackOffer(job,execution,repo,controller){
-  if(execution.status==='unknown'||this.s.lock(job.id)||job.state.writeAccess?.status==='held')return null;
+  if(execution.status==='unknown'||this.s.lock(job.id)&&job.state.writeAccess?.status!=='released'||job.state.writeAccess?.status==='held')return null;
   const agent=await this.offer(job,execution,repo,controller);
   if(agent&&!controller.signal.aborted)this.s.event(job.id,'repair_fallback_offered',{agent,executionId:execution.id,summary:'Two completed Builder replies from the same provider were invalid. You can choose the eligible fallback in Team and retry from the saved checkpoint.'},'system');
   return agent;
@@ -131,6 +131,7 @@ export class StudioRepairCouncil {
   if(job.status!=='paused'||scope?.mode!=='team-send'||scope.reviewOnly||controller.signal.aborted)return false;
   const execution=s.executions.list(job.id).findLast(e=>e.request_id===job.request_id&&!e.phase.startsWith('council_'));
   if(!execution?.evidence.failureEvidence)return false;
+  if(execution.agent==='deepseek'&&execution.evidence.remoteOutcomeUnknown&&['inactivity_timeout','timeout'].includes(job.state.failure?.code))return false;
   const repo=s.root(job.project_id),checkpointHash=repo.fingerprint(),pack=execution.evidence.failureEvidence;
   if(checkpointHash!==pack.checkpointHash)return false;
   if(!terms||terms.reviewer!==job.state.roles.reviewer||Date.parse(scope.expiresAt)<=Date.now()){
@@ -141,7 +142,7 @@ export class StudioRepairCouncil {
   if(prior.some(r=>r.executionId===execution.id))return false;
   const previous=this.db.prepare("SELECT content FROM studio_events WHERE chat_id=? AND kind='repair_council_result' AND json_extract(content,'$.runId')=? AND json_extract(content,'$.outcome')='agreed' ORDER BY id DESC LIMIT 1").get(job.id,terms.runId);
   const previousPlan=previous?JSON.parse(previous.content).synthesis.plan:null;
-  const adviceOnly=execution.evidence.remoteOutcomeUnknown===true||['unknown','interrupted'].includes(execution.status)||!!s.lock(job.id)||job.state.writeAccess?.status==='held';
+  const adviceOnly=execution.evidence.remoteOutcomeUnknown===true||['unknown','interrupted'].includes(execution.status)||!!s.lock(job.id)&&job.state.writeAccess?.status!=='released'||job.state.writeAccess?.status==='held';
   if(!adviceOnly&&availabilityFailures.has(job.state.failure?.code))return false;
   const round={roundId:randomUUID(),runId:terms.runId,round:prior.length+1,executionId:execution.id,checkpointHash};
   return this.discuss(job,controller,repo,pack,round,adviceOnly,previousPlan);

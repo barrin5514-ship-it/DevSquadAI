@@ -19,19 +19,42 @@ function fixture(t) {
 async function api(t) {
   const f=fixture(t), server=f.runtime.app.listen(0,'127.0.0.1'); await once(server,'listening');
   t.after(()=>new Promise(resolve=>server.close(resolve)));
-  const request=async(url,method='GET',body)=>{const r=await fetch(`http://127.0.0.1:${server.address().port}/api${url}`,{method,headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,...await r.json()};};
+  const {data:{token}}=await (await fetch('http://127.0.0.1:'+server.address().port+'/api/console/session')).json();
+  const request=async(url,method='GET',body)=>{const r=await fetch(`http://127.0.0.1:${server.address().port}/api${url}`,{method,headers:{'Content-Type':'application/json','x-dashboard-token':token},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,...await r.json()};};
   return {...f,request};
 }
 test('initializes all nine domain tables with foreign keys and migrations',t=>{
  const {runtime:{db}}=fixture(t); const names=db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(x=>x.name);
  for(const name of ['projects','tasks','agents','agent_executions','ai_providers','token_usage','project_context','project_files','error_logs']) assert.ok(names.includes(name));
  assert.equal(db.prepare('PRAGMA foreign_keys').get().foreign_keys,1);
- assert.equal(db.prepare('SELECT count(*) n FROM schema_migrations').get().n,22);
+ assert.equal(db.prepare('SELECT count(*) n FROM schema_migrations').get().n,23);
  for(const table of ['paid_review_scopes','paid_review_http','studio_project_connections','studio_workspace_preferences','studio_file_operations','studio_role_preferences','studio_deepseek_verification','studio_project_deletions','studio_retry_requests'])assert.ok(names.includes(table));
  assert.throws(()=>db.prepare("INSERT INTO tasks VALUES ('x','missing','task',NULL,'pending','now','now',NULL)").run());
 });
-test('migrations and agent seeding are idempotent',t=>{const f=fixture(t);f.restart(); assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM schema_migrations').get().n,22);assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM agents').get().n,8);});
+test('migrations and agent seeding are idempotent',t=>{const f=fixture(t);f.restart(); assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM schema_migrations').get().n,23);assert.equal(f.runtime.db.prepare('SELECT count(*) n FROM agents').get().n,8);});
 test('project creation, retrieval, listing and update API',async t=>{const {request}=await api(t);const p=await request('/projects','POST',{name:'Example',description:'Test'});assert.equal(p.status,201);assert.equal(path.isAbsolute(p.data.workspace_path),false);assert.equal((await request(`/projects/${p.data.id}`)).data.name,'Example');assert.equal((await request('/projects')).data.length,1);assert.equal((await request(`/projects/${p.data.id}`,'PATCH',{name:'Updated',status:'paused'})).data.status,'paused');});
+test('legacy API rejects missing or wrong capabilities before reading or changing data',async t=>{
+ const f=fixture(t),server=f.runtime.app.listen(0,'127.0.0.1');
+ await once(server,'listening');
+ t.after(()=>new Promise(resolve=>server.close(resolve)));
+ const base='http://127.0.0.1:'+server.address().port+'/api';
+ const {data:{token}}=await (await fetch(base+'/console/session')).json();
+ const create=headers=>fetch(base+'/projects',{method:'POST',headers:{'content-type':'application/json',...headers},body:JSON.stringify({name:'Disposable legacy project'})});
+ const dashboard=t.mock.method(f.runtime.team,'dashboard',()=>({fixture:true}));
+ const modelList=t.mock.method(f.runtime.ai,'models',()=>[]);
+ const observed=await Promise.all([fetch(base+'/team/'),create({}),fetch(base+'/models',{headers:{'x-dashboard-token':'wrong'}})]);
+ assert.deepEqual(observed.map(r=>r.status),[403,403,403]);
+ assert.equal(dashboard.mock.callCount(),0);
+ assert.equal(modelList.mock.callCount(),0);
+ assert.equal(f.runtime.store.projects().length,0);
+ const headers={'x-dashboard-token':token};
+ assert.equal((await fetch(base+'/team/',{headers})).status,200);
+ assert.equal((await fetch(base+'/models',{headers})).status,200);
+ assert.equal((await create(headers)).status,201);
+ assert.equal((await create({...headers,origin:'https://untrusted.example'})).status,403);
+ assert.equal(f.runtime.store.projects().length,1);
+ assert.equal((await fetch(base+'/health')).status,200);
+});
 test('tasks persist after restart and pending tasks are not rerun',t=>{const f=fixture(t);const p=f.runtime.service.create({name:'P'});const task=f.runtime.store.createTask(p.id,{description:'Implement'});f.restart();assert.equal(f.runtime.store.task(task.id).status,'pending');assert.equal(f.runtime.store.tasks(p.id).length,1);});
 test('context and decisions persist after restart',t=>{const f=fixture(t);const p=f.runtime.service.create({name:'P'});f.runtime.store.saveContext(p.id,'Summary',['SQLite']);f.runtime.store.saveContext(p.id,'Updated',['No AI yet']);f.restart();assert.equal(f.runtime.store.context(p.id).context_summary,'Updated');assert.deepEqual(JSON.parse(f.runtime.store.context(p.id).important_decisions),['No AI yet']);});
 test('interrupted tasks and executions require review after restart',t=>{const f=fixture(t);const p=f.runtime.service.create({name:'P'});const task=f.runtime.store.createTask(p.id,{description:'Work'});f.runtime.store.startExecution(task.id,'junior');f.runtime.db.prepare("UPDATE tasks SET status='running' WHERE id=?").run(task.id);f.restart();assert.equal(f.runtime.store.task(task.id).status,'requires_review');assert.equal(f.runtime.store.executions(task.id)[0].status,'requires_review');});
@@ -59,8 +82,9 @@ test('actual server starts from environment and serves health',async t=>{
 });
 test('malformed and oversized JSON return safe client errors',async t=>{
  const f=fixture(t),server=f.runtime.app.listen(0,'127.0.0.1');await once(server,'listening');t.after(()=>new Promise(r=>server.close(r)));
+ const {data:{token}}=await (await fetch('http://127.0.0.1:'+server.address().port+'/api/console/session')).json();
  const url=`http://127.0.0.1:${server.address().port}/api/projects`;
- for(const [body,status] of [['{broken',400],[JSON.stringify({name:'x'.repeat(40000)}),413]]){const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body});assert.equal(response.status,status);assert.ok(!(await response.text()).includes('stack'));}
+ for(const [body,status] of [['{broken',400],[JSON.stringify({name:'x'.repeat(40000)}),413]]){const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-dashboard-token':token},body});assert.equal(response.status,status);assert.ok(!(await response.text()).includes('stack'));}
 });
 test('dangling workspace junctions are rejected before writes',t=>{const f=fixture(t);const target=path.join(f.root,'gone');fs.mkdirSync(target);fs.symlinkSync(target,path.join(f.config.workspace,'dangling'),process.platform==='win32'?'junction':'dir');fs.rmdirSync(target);assert.throws(()=>f.runtime.workspace.resolve('dangling/file.txt'),/links are not allowed/);});
 test('backup directory failures return a safe message',async t=>{const f=fixture(t);const target=path.join(f.root,'occupied');fs.writeFileSync(target,'file');await assert.rejects(()=>backupDatabase(f.runtime.db,target),{message:'Backup failed; existing database and backups were preserved'});});

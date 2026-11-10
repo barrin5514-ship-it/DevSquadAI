@@ -20,7 +20,7 @@ async function failedTester(f){
 test('a Tester failure resumes at Tester in the same chat with zero Builder calls and one atomic attempt record',async t=>{
  const f=await fixture(t),{p,chat}=await failedTester(f),plan=f.s.detail(chat.id).resume;
  assert.equal(chat.status,'paused');assert.equal(plan.available,true);assert.equal(plan.phase,'tester');assert.equal(f.builderCalls(),1);assert.equal(f.testerCalls(),1);
- const staleExecution=f.s.executions.list(chat.id).at(-1);f.s.executions.record(staleExecution.id,{status:'running'});f.r.db.prepare('INSERT INTO studio_locks VALUES (?,?,?)').run(f.s.root(p.id).root,chat.id,new Date().toISOString());
+ const staleExecution=f.s.executions.list(chat.id).at(-1);assert.equal(staleExecution.status,'failed');assert.equal(f.s.lock(chat.id),null);
  const requestId=crypto.randomUUID(),root=f.s.root(p.id).root;const started=f.s.retry(chat.id,{requestId,expectedVersion:chat.version});
  assert.equal(started.id,chat.id);assert.equal(started.project_id,p.id);assert.equal(started.state.phase,'tester');
  await assert.rejects(Promise.resolve().then(()=>f.s.retry(chat.id,{requestId,expectedVersion:chat.version})),/active|Retry/i);

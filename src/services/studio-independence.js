@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import {ApiError} from '../middleware/errors.js';
 import {hashText} from './project-files.js';
+import {installedDependencyHash} from './studio-npm-runner.js';
 
 // Two logins for Codex are still the same AI family, not independent reviewers.
 export const workerFamily = id => id?.startsWith('codex-') ? 'codex' : id==='nemotron'?'nvidia':id;
@@ -35,7 +36,7 @@ export function independentTestFiles(repo, files, tester, executionId, prior=nul
 
 // Recheck the evidence at acceptance as well as during execution. A model's
 // written claim that it tested something is never sufficient evidence.
-export function hasIndependentTests(studio, job, repo) {
+export function hasIndependentTests(studio, job, repo, {verifyDependencies=false}={}) {
   const t=job.state.tests, p=job.state.testProvenance;
   if (!t?.executed || !t.passed || !Number.isSafeInteger(t.count) || t.count<1 || (t.failed??0)!==0 || (t.skipped??0)>=t.count || t.independent !== true || !p?.files?.length ||
       t.testExecutionId !== p.executionId || t.testedRevisionHash !== repo.fingerprint() ||
@@ -43,5 +44,16 @@ export function hasIndependentTests(studio, job, repo) {
       workerFamily(p.tester) === workerFamily(job.state.roles.reviewer)) return false;
   const execution=studio.executions.list(job.id).find(e=>e.id===p.executionId);
   if (!execution || execution.agent!==p.tester || execution.phase!=='tester' || execution.status!=='completed') return false;
+  const command=job.state.runApproval?.testCommand;
+  if(command!==undefined&&studio.projectTestCommand(job.project_id)!==command)return false;
+  if(command){
+    const suite=t.projectSuite;
+    if(suite?.command?.join(' ')!==command||suite.executed!==true||suite.passed!==true||suite.exitCode!==0||
+      suite.revisionHash!==t.testedRevisionHash||t.revisionHash!==t.testedRevisionHash||
+      typeof suite.dependencyHash!=='string'||suite.dependencyHash!==t.dependencyHash)return false;
+    if(verifyDependencies){
+      try{if(installedDependencyHash(repo.root)!==suite.dependencyHash)return false;}catch{return false;}
+    }
+  }
   return p.files.every(f=>fs.existsSync(repo.resolve(f.path)) && hashText(fs.readFileSync(repo.resolve(f.path),'utf8'))===f.hash);
 }

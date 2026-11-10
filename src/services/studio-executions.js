@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import {observeProcessTree} from './native-process-observer.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
@@ -35,6 +36,6 @@ export class StudioExecutions {
   for(const child of r.evidence.descendants||[]){const check=this.inspect(child.pid);if(!check.verified||check.processes.some(p=>p.pid===child.pid&&p.birth===child.birth))throw new ApiError(409,'A recorded descendant is active or cannot be checked. Lock retained.');}
   if(!r.evidence.closeObserved||r.evidence.terminationRequested&&!r.evidence.treeKillConfirmed)throw new ApiError(409,'Process-tree termination was not confirmed. Lock retained.');
   const repo=this.studio.root(j.project_id);if(hash(repo.root)!==r.root_hash||repo.fingerprint()!==r.checkpoint_hash)throw new ApiError(409,'Project files changed since this execution. Inspect them before recovery.');
-  return transaction(this.db,()=>{const current=this.studio.get(chat);if(current.version!==version||current.request_id!==r.request_id)throw new ApiError(409,'Execution changed during reconciliation.');const lock=this.db.prepare('SELECT * FROM studio_locks WHERE chat_id=?').get(chat);if(!lock||hash(lock.root)!==r.root_hash)throw new ApiError(409,'Lock ownership changed.');this.record(r.id,{status:'reconciled',reconciledAt:now()});this.db.prepare('DELETE FROM studio_locks WHERE chat_id=? AND root=?').run(chat,lock.root);return this.studio.change(chat,'paused',{alert:'Worker termination reconciled. Saved work is preserved; resume the pending step explicitly.'},'worker_reconciled',r.agent);});
+  return transaction(this.db,()=>{const current=this.studio.get(chat);if(current.version!==version||current.request_id!==r.request_id)throw new ApiError(409,'Execution changed during reconciliation.');const lock=this.db.prepare('SELECT * FROM studio_locks WHERE chat_id=?').get(chat);if(!lock||lock.root!==repo.root&&lock.root!==fs.realpathSync.native(repo.root))throw new ApiError(409,'Lock ownership changed.');this.record(r.id,{status:'reconciled',reconciledAt:now()});this.studio.releaseWrite(chat,{executionId:r.id,reason:'worker_reconciled',checkpointHash:r.checkpoint_hash});return this.studio.change(chat,'paused',{alert:'Worker termination reconciled. Saved work is preserved; resume the pending step explicitly.'},'worker_reconciled',r.agent);});
  }
 }

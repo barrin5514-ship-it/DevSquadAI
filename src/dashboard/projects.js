@@ -25,8 +25,11 @@
   d.body.append(name.wrap,description.wrap);
   const layout=project.accessVersion==null?null:field('Default workspace layout',project.defaultLayout,'select',{choices:[['conversation','Conversation focus'],['development','Development focus'],['preview','Preview focus'],['balanced','Balanced workspace']]});
   if(layout)d.body.append(layout.wrap);
+  const testCommand=field('Test command',project.testCommand??'','select',{required:false,choices:[['','Default Node.js runner'],['npm test','npm test']]});
+  testCommand.input.setAttribute('aria-label','Test command');
+  d.body.append(testCommand.wrap,p('The Tester’s independent checks are required for both options.','hint'));
   d.action('Save project settings',async()=>{
-   await api('/studio/projects/'+project.id+'/settings',{name:name.input.value,description:description.input.value,version:project.settingsVersion,...(layout?{defaultLayout:layout.input.value}:{})});
+   await api('/studio/projects/'+project.id+'/settings',{name:name.input.value,description:description.input.value,testCommand:testCommand.input.value||null,version:project.settingsVersion,...(layout?{defaultLayout:layout.input.value}:{})});
    d.close();await refresh();
    if(layout&&layout.input.value!==project.defaultLayout&&state.studioProject===project.id)window.workspaceShell?.usePreset(layout.input.value);
   });

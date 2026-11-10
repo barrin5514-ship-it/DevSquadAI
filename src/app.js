@@ -3,7 +3,7 @@ import {WorkspaceFileActions} from './services/workspace-file-actions.js';
 import {ProjectConnections} from './services/project-connections.js';
 import {ProjectStudio} from './services/project-studio.js';
 import {WorkspacePreview} from './services/workspace-preview.js';
-import {consoleRoutes} from './routes/console.js';
+import {consoleRoutes,dashboardAccess} from './routes/console.js';
 import {claimRuntime} from './services/runtime-lease.js';
 import express from 'express';
 import { openDatabase } from './database/index.js';
@@ -32,9 +32,10 @@ export function createApp(config, options = {}) {
     team.preview=new WorkspacePreview(team.studio);team.projectConnections=new ProjectConnections(team.studio,options.projectConnectionOptions||{});team.studio.projectsManager=team.projectConnections;team.fileActions=new WorkspaceFileActions(team.studio,options.fileActionOptions||{});
     // Close the network-only preview brokers with this backend, including tests.
     const listen=app.listen.bind(app);app.listen=(...args)=>{const server=listen(...args);server.once('close',()=>{team.preview.close();team.fileActions.close();});return server;};
-    app.disable('x-powered-by'); app.use(express.json({limit:'32kb'}));
-    app.use('/api/console',consoleRoutes(team,service));
-    app.use('/api/team',teamRoutes(team));
+    const access=dashboardAccess(),parseJSON=express.json({limit:'32kb'}),legacy=controllers(store,service,config);
+    app.disable('x-powered-by');
+    app.use('/api/console',parseJSON,consoleRoutes(team,service,access));
+    app.use('/api/team',access.local,access.requireToken,parseJSON,teamRoutes(team));
     app.get('/team-dashboard.css',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/dashboard.css',import.meta.url))));
     app.get('/',(req,res)=>res.redirect('/team'));
     app.get('/team',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-ancestors 'none'").sendFile(fileURLToPath(new URL('./dashboard/index.html',import.meta.url))));
@@ -57,8 +58,8 @@ export function createApp(config, options = {}) {
     app.get('/team/style-preview',(req,res)=>res.redirect('/team#styles'));
     app.get('/team/style-preview/content',(req,res)=>res.set('Content-Security-Policy',"default-src 'self'; style-src 'self'; script-src 'none'; frame-ancestors 'self'; form-action 'none'").sendFile(fileURLToPath(new URL('./dashboard/style-preview.html',import.meta.url))));
     app.get('/team-style-preview.css',(req,res)=>res.sendFile(fileURLToPath(new URL('./dashboard/style-preview.css',import.meta.url))));
-    app.use('/api',aiRoutes(ai));
-    app.use('/api',routes(controllers(store,service,config)));
+    app.get('/api/health',legacy.health);
+    app.use('/api',access.local,access.requireToken,parseJSON,aiRoutes(ai),routes(legacy));
     app.use((req,res,next)=>next(new ApiError(404,'Route not found'))); app.use(errorHandler);
     return {app,db,store,service,workspace,ai,team};
   } catch(error) { db.close(); throw error; }

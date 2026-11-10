@@ -2,7 +2,7 @@
 
 ## Totals
 
-- Number of handoffs: 90
+- Number of handoffs: 92
 - Total minutes:
 
 Times were not recorded for the entries below. Minutes spent is left blank for the owner to fill in. Historical results are owner-reported unless identified as verified by Codex.
@@ -154,3 +154,5 @@ At the end of every future task, append one row and update the handoff count. Pr
 | 2026-11-09 | | Owner | Codex | Remove the correction and council round limits and recover the paused Demo Three run. | Focused 117/117, follow-up 3/3, full serial 805/805 with clean exit. Chrome verified five simulated corrections and Awaiting Owner, then confirmed the enabled Retry in the untouched owner chat. PID 13296 healthy after verified backup. Zero live provider calls. | |
 | 2026-11-09 | | Owner | Codex | Coalesce the live worker status and stop persisting heartbeat events. | Chrome verified one visible line with both panes open, 133 simulated updates, zero heartbeat rows, and live file-save and handoff events. Final display tests 42/42 and full serial 811/811. PID 33364 healthy. Zero live provider calls. | |
 | 2026-11-09 | | Owner | Codex | Make authorized corrections council-first and explain the paused Demo Three run. | Read-only trace confirmed council was off and the saved files exceeded the Tester input guard. Simulated Chrome proved council agreement before the rewrite, two passing local tests, and Awaiting Owner. The owner chat remains paused and untouched. | |
+| 2026-11-10 | | Owner | Codex | Repair the Dev Squad readiness audit blockers using local reproductions. | Fixed Windows preview junction and hard-link reads, workspace run overlap, DeepSeek unknown-outcome fallback, legacy API access, and static refresh. Playwright Chrome passed 5/5 twice with simulated workers and real local tests. Owner acceptance persisted across restart without changes to its logic. Final Windows serial suite passed 817/817 with a clean exit. Repairs stayed local. | |
+| 2026-11-10 | | Owner | Codex | Implement larger-project context and owner test commands. | Reproduced the 24,000-byte Send cutoff. Scoped reads let all three simulated roles find the omitted source. Real Windows MXC npm and independent checks passed, with deliberate failure, missing commands, missing dependencies, and stale evidence rejected. Focused 76/76 and compatibility 2/2. Full serial 826/826 after restoring the empty stderr default. Playwright Chrome passed 5/5 on a disposable database. No live provider requests, commit, or push. | |

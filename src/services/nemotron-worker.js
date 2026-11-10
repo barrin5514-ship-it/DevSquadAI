@@ -38,7 +38,7 @@ export class NemotronWorker {
  // This check is repeated after preflight: a quote never grants permission.
  assertAuthorized(packet,root,execution){const s=this.team.studio,j=s.get(execution.chatId),scope=s.runScope.check(j,j.request_id),e=s.executions.get(execution.executionId),terms=scope?.free;
   if(!scope||!terms||terms.model!==nemotronModel||terms.maxOutput!==2048||terms.timeoutMs!==60000||s.runScope.authorizedRoles(j,scope)[packet.phase]!==nemotronId||j.project_id!==packet.projectId||j.id!==packet.chatId||j.state.phase!==packet.phase||e.chat_id!==j.id||e.agent!==nemotronId||e.phase!==packet.phase||e.status!=='starting'||e.request_id!==j.request_id||e.checkpoint_hash!==s.root(j.project_id).fingerprint()||hashText(root)!==scope.rootHash||j.status!=='running')throw failure('run_scope_limit','Nemotron requires the exact bounded task, role, folder, model and unused execution approval.');
-  const repo=s.root(j.project_id);if(packet.goal!==j.state.goal||['builder','tester','reviewer'].some(role=>packet.actualRoles?.[role]!==s.runScope.authorizedRoles(j,scope)[role])||JSON.stringify(packet.files)!==JSON.stringify(repo.snapshot(24000).files))throw failure('run_scope_limit','Packet requirements, assignments or guarded files changed.');
+  const repo=s.root(j.project_id);if(packet.goal!==j.state.goal||['builder','tester','reviewer'].some(role=>packet.actualRoles?.[role]!==s.runScope.authorizedRoles(j,scope)[role])||(execution.contextPacketHash?scope.projectContextRounds<1||execution.contextPacketHash!==hashText(JSON.stringify(packet)):JSON.stringify(packet.files)!==JSON.stringify(repo.snapshot(24000).files)))throw failure('run_scope_limit','Packet requirements, assignments or guarded files changed.');
   if(packet.phase==='reviewer'&&(packet.reviewBinding?.draftId!==j.id+':'+repo.fingerprint()||packet.reviewBinding?.artifactHash!==repo.fingerprint()||packet.reviewBinding?.testEvidenceHash!==hashText(JSON.stringify(j.state.tests))||packet.reviewBinding?.reviewerExecutedTests!==false))throw failure('run_scope_limit','Review packet is not bound to the current saved artifacts and evidence.');
   return scope;
  }
@@ -86,7 +86,9 @@ export class NemotronWorker {
 }
 
 export function validWorkerResponse(v,packet){
- if(!v||Object.keys(v).sort().join(',')!=='files,report,review'||typeof v.report!=='string'||!v.report.trim()||v.report.length>6000||!Array.isArray(v.files)||v.files.length>40||!v.files.every(f=>f&&Object.keys(f).sort().join(',')==='content,path'&&typeof f.path==='string'&&typeof f.content==='string'))return false;
+ if(!v||!['files,report,review','contextRequests,files,report,review'].includes(Object.keys(v).sort().join(','))||typeof v.report!=='string'||!v.report.trim()||v.report.length>6000||!Array.isArray(v.files)||v.files.length>40||!v.files.every(f=>f&&Object.keys(f).sort().join(',')==='content,path'&&typeof f.path==='string'&&typeof f.content==='string'))return false;
+ if(v.contextRequests!=null&&!Array.isArray(v.contextRequests))return false;
+ if(v.contextRequests?.length)return !!packet.projectContext&&v.files.length===0&&v.review===null;
  if(packet.phase!=='reviewer')return v.review===null;
  const b=packet.reviewBinding,r=v.review;
  return v.files.length===0&&r&&Object.keys(r).sort().join(',')==='artifactHash,decision,draftId,findings,reviewerExecutedTests,summary,testEvidenceHash'&&['draftId','artifactHash','testEvidenceHash'].every(k=>r[k]===b?.[k])&&r.reviewerExecutedTests===false&&['approved','changes_requested'].includes(r.decision)&&typeof r.summary==='string'&&!!r.summary.trim()&&Array.isArray(r.findings)&&r.findings.every(f=>typeof f==='string');
